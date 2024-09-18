@@ -1,0 +1,82 @@
+{ inputs, ... }:
+
+with inputs.nixpkgs.lib;
+let
+  strToPath = x: path:
+    if builtins.typeOf x == "string"
+    then builtins.toPath "${toString path}/${x}"
+    else x;
+in
+
+rec{
+  # TODO: prevent it from reading default.nix
+  getAllNixFiles = (path:
+    with builtins;
+    let
+      files = readDir path;
+      nixFiles = filter ((name: !match ("default.nix") name) filter (name: match ".*\\.nix" name != null) (attrNames files));
+    in
+    nixFiles
+  );
+
+  mkDarwin = name: { config ? name, user ? "ray" }:
+    nameValuePair name (
+      let
+        system = "aarch64-darwin";
+        pkgs = inputs.self.legacyPackages."${system}";
+        # TODO: Add user stuff
+        # userConf = import ()
+      in
+      inputs.darwin.lib.darwinSystem {
+        inherit system;
+        modules = [
+          (
+            #NOTE: I think this means it automatically enables nix-command and flakes.
+            # Don't rely on the configuration to enable a flake-compatible version of Nix.
+            { pkgs, ... }: {
+              nix = {
+                package = pkgs.nixVersions.stable;
+                extraOptions = "experimental-features = nix-command flakes";
+              };
+            }
+          )
+          (
+            { inputs, ... }: {
+              # TODO: Don't really understand what this means.
+              # Re-expose self and nixpkgs as flakes.
+              nix.registry = {
+                self.flake = inputs.self;
+                nixpkgs = {
+                  from = { id = "nixpkgs"; type = "indirect"; };
+                  flake = inputs.nixpkgs;
+                };
+              };
+            }
+          )
+          (
+            { ... }: {
+              system.stateVersion = "24.05";
+            }
+          )
+          (inputs.home-manager.nixosModules.home-manager)
+          (
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                extraSpecialArgs =
+                  let self = inputs.self; in
+                  { inherit inputs self system user; };
+              };
+            }
+          )
+          (import ../system/common/modules)
+          (import ../system/common/profiles)
+        ];
+        specialArgs =
+          let self = inputs.self; in
+          { inherit inputs name self system user; };
+      }
+
+    );
+
+}
