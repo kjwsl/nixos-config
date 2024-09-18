@@ -6,6 +6,7 @@
   # ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
+
   home.username = lib.mkDefault "ray";
   home.homeDirectory =
     if pkgs.stdenv.isLinux
@@ -42,9 +43,15 @@
       };
     };
     zsh = {
+      initExtra = ''
+        if [[ -f ../config/.config/zsh/.p10k.zsh ]]; then
+            source ../config/.config/zsh/.p10k.zsh
+        fi
+      '';
       enable = true;
       enableCompletion = true;
       autosuggestion.enable = true;
+      autocd = true;
       syntaxHighlighting.enable = true;
       shellAliases = {
         v = "nvim";
@@ -67,6 +74,9 @@
         ];
       };
     };
+  };
+
+  programs = {
     git = {
       enable = true;
       userEmail = "kjwdev01@gmail.com";
@@ -142,7 +152,6 @@
       #     	    luajitPackages.luarocks-build-treesitter-parser
       # ];
     };
-
   };
 
   home.shellAliases = {
@@ -174,7 +183,7 @@
     fishPlugins.git-abbr
     fishPlugins.autopair
 
-    arc-browser
+    # arc-browser
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello

@@ -7,6 +7,7 @@
     vim
     wget
     curl
+    librewolf-unwrapped
   ];
   nixpkgs.config.allowUnfree = true;
 
