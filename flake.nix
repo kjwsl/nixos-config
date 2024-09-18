@@ -23,21 +23,7 @@
 
 
   outputs = { nixpkgs, home-manager, nix-darwin, ... }@inputs:
-    let
-      username = "ray";
-      flakeContext = rec {
-        root_dir = ./.;
-        config_dir = "${root_dir}/config";
-        modules_dir = "${root_dir}/modules/";
-      };
-      systems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-    in
     {
-
       # Your custom packages and modifications, exported as overlays
 
       darwinConfigurations."rays-MacBook-Air" = nix-darwin.lib.darwinSystem {
