@@ -38,9 +38,9 @@
               #  useUserPackages = true;
               users.ray = import ./home/home.nix;
             };
+            users.users.ray.home = nixpkgs.lib.mkForce "/Users/ray";
           }
         ];
-
         specialArgs = {
           inherit inputs;
         };

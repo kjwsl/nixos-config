@@ -43,12 +43,12 @@
       };
     };
     zsh = {
+      enable = true;
       initExtra = ''
         if [[ -f ../config/.config/zsh/.p10k.zsh ]]; then
             source ../config/.config/zsh/.p10k.zsh
         fi
       '';
-      enable = true;
       enableCompletion = true;
       autosuggestion.enable = true;
       autocd = true;
@@ -174,15 +174,15 @@
     rustup
     fastfetch
     bat
-
+    nixd
+    ripgrep
     #fish
-    oh-my-fish
-    fishPlugins.fzf
-    fishPlugins.done
-    fishPlugins.bass
-    fishPlugins.git-abbr
-    fishPlugins.autopair
-
+    # oh-my-fish
+    # fishPlugins.fzf
+    # fishPlugins.done
+    # fishPlugins.bass
+    # fishPlugins.git-abbr
+    # fishPlugins.autopair
     # arc-browser
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
