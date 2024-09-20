@@ -26,7 +26,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-now=$(date +%Y-%m-%d %H:%M:%S)
+now=$(date "+%Y-%m-%d %H:%M:%S")
 echo "Committing the changes..."
 git commit -am "[${now}] nix-darwin: update system configuration" || true
 
