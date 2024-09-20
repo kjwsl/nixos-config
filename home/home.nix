@@ -20,7 +20,9 @@ in
     age.keyFile = "../sops/age/keys.txt"; # must have no password!
 
     secrets = {
-      omnivore_api_key = { };
+      "omnivore_api_key" = {
+        path = "/var/lib/ray/secrets.yaml";
+      };
     };
   };
 
