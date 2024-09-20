@@ -10,6 +10,7 @@
     nix-darwin.url = "github:lnl7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
+    sops-nix.url = "github:Mic92/sops-nix";
 
     # nixvim = {
     #
@@ -22,7 +23,10 @@
   };
 
 
-  outputs = { nixpkgs, home-manager, nix-darwin, ... }@inputs:
+  outputs = { nixpkgs, home-manager, nix-darwin, sops-nix, ... }@inputs:
+    let
+      configDir = toString ./. + "/config/.config";
+    in
     {
       # Your custom packages and modifications, exported as overlays
 
@@ -30,19 +34,21 @@
         system = "aarch64-darwin";
         modules = [
           { nixpkgs.config.allowUnfree = true; }
-          ./hosts/darwin/configuration.nix
+          ./hosts/darwin/darwin-configuration.nix
           home-manager.darwinModules.home-manager
           {
             home-manager = {
-              #  useGlobalPkgs = true;
-              #  useUserPackages = true;
+              # useGlobalPkgs = true;
+              useUserPackages = true;
               users.ray = import ./home/home.nix;
+              extraSpecialArgs = { inherit inputs; inherit configDir; };
             };
             users.users.ray.home = nixpkgs.lib.mkForce "/Users/ray";
           }
         ];
         specialArgs = {
           inherit inputs;
+          inherit configDir;
         };
       };
       nixosConfigurations = {

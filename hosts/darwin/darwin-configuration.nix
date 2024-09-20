@@ -1,4 +1,4 @@
-{ config, pkgs, username, system, ... }:
+{ config, pkgs, system, ... }:
 
 {
   users.users.ray.home = /Users/ray;
@@ -9,6 +9,11 @@
     curl
   ];
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.hostPlatform = "aarch64-darwin";
+  environment.shellInit = ''
+    "eval "$(/opt/homebrew/bin/brew shellenv)""
+  '';
+
   system.activationScripts.installHomebrew = {
     text = ''
       if ! command -v brew &> /dev/null; then
@@ -21,7 +26,13 @@
   };
   programs = {
     gnupg.agent.enable = true;
-    zsh.enable = true;
+    zsh =
+      {
+        enable = true;
+        shellInit = ''
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        '';
+      };
     man.enable = true;
     tmux = {
       enable = true;
@@ -48,7 +59,6 @@
     enable = true;
     casks = [
       "krita"
-      "firefox"
       "librewolf"
       "alfred"
     ];

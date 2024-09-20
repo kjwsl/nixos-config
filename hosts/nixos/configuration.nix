@@ -6,7 +6,8 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
       inputs.home-manager.nixosModules.default
       inputs.nixvim.nixosModules.nixvim
@@ -129,24 +130,24 @@
       gcc
       llvm
       kiwitalk
+      firefox-
     ];
   };
 
   home-manager = {
-    extraSpecialArgs = { 
-      inherit inputs; 
+    extraSpecialArgs = {
+      inherit inputs;
     };
     users = {
       "ray" = {
         imports = [
-	  ./home.nix
-	];
+          ./home.nix
+        ];
       };
     };
   };
 
   # Install firefox.
-  programs.firefox.enable = true;
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play

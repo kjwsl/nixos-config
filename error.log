@@ -1,0 +1,700 @@
+warning: Git tree '/Users/ray/github/nixos-config' is dirty
+building the system configuration...
+warning: Git tree '/Users/ray/github/nixos-config' is dirty
+error:
+       … from call site
+         at /nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/eval-config.nix:30:12:
+           29|
+           30|   system = eval.config.system.build.toplevel;
+             |            ^
+           31| }
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1205:18:
+         1204|         mapAttrs
+         1205|           (name: value:
+             |                  ^
+         1206|             if isAttrs value && cond value
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1208:18:
+         1207|             then recurse (path ++ [ name ]) value
+         1208|             else f (path ++ [ name ]) value);
+             |                  ^
+         1209|     in
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:254:72:
+          253|           # For definitions that have an associated option
+          254|           declaredConfig = mapAttrsRecursiveCond (v: ! isOption v) (_: v: v.value) options;
+             |                                                                        ^
+          255|
+
+       … while evaluating the attribute 'value'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:821:9:
+          820|     in warnDeprecation opt //
+          821|       { value = addErrorContext "while evaluating the option `${showOption loc}':" value;
+             |         ^
+          822|         inherit (res.defsFinal') highestPrio;
+
+       … while evaluating the option `system.build':
+
+       … while evaluating the attribute 'mergedValue'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:856:5:
+          855|     # Type-check the remaining definitions, and merge them. Or throw if no definitions.
+          856|     mergedValue =
+             |     ^
+          857|       if isDefined then
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:858:59:
+          857|       if isDefined then
+          858|         if all (def: type.check def.value) defsFinal then type.merge loc defsFinal
+             |                                                           ^
+          859|         else let allInvalid = filter (def: ! type.check def.value) defsFinal;
+
+       … while calling 'merge'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/types.nix:582:20:
+          581|       check = isAttrs;
+          582|       merge = loc: defs:
+             |                    ^
+          583|         mapAttrs (n: v: v.value) (filterAttrs (n: v: v ? value) (zipAttrsWith (name: defs:
+
+       … while calling the 'mapAttrs' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/types.nix:583:9:
+          582|       merge = loc: defs:
+          583|         mapAttrs (n: v: v.value) (filterAttrs (n: v: v ? value) (zipAttrsWith (name: defs:
+             |         ^
+          584|             (mergeDefinitions (loc ++ [name]) elemType defs).optionalValue
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/types.nix:583:35:
+          582|       merge = loc: defs:
+          583|         mapAttrs (n: v: v.value) (filterAttrs (n: v: v ? value) (zipAttrsWith (name: defs:
+             |                                   ^
+          584|             (mergeDefinitions (loc ++ [name]) elemType defs).optionalValue
+
+       … while calling 'filterAttrs'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:646:5:
+          645|     pred:
+          646|     set:
+             |     ^
+          647|     listToAttrs (concatMap (name: let v = set.${name}; in if pred name v then [(nameValuePair name v)] else []) (attrNames set));
+
+       … while calling the 'listToAttrs' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:647:5:
+          646|     set:
+          647|     listToAttrs (concatMap (name: let v = set.${name}; in if pred name v then [(nameValuePair name v)] else []) (attrNames set));
+             |     ^
+          648|
+
+       … while calling the 'concatMap' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:647:18:
+          646|     set:
+          647|     listToAttrs (concatMap (name: let v = set.${name}; in if pred name v then [(nameValuePair name v)] else []) (attrNames set));
+             |                  ^
+          648|
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:647:29:
+          646|     set:
+          647|     listToAttrs (concatMap (name: let v = set.${name}; in if pred name v then [(nameValuePair name v)] else []) (attrNames set));
+             |                             ^
+          648|
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:647:59:
+          646|     set:
+          647|     listToAttrs (concatMap (name: let v = set.${name}; in if pred name v then [(nameValuePair name v)] else []) (attrNames set));
+             |                                                           ^
+          648|
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:647:62:
+          646|     set:
+          647|     listToAttrs (concatMap (name: let v = set.${name}; in if pred name v then [(nameValuePair name v)] else []) (attrNames set));
+             |                                                              ^
+          648|
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/types.nix:583:51:
+          582|       merge = loc: defs:
+          583|         mapAttrs (n: v: v.value) (filterAttrs (n: v: v ? value) (zipAttrsWith (name: defs:
+             |                                                   ^
+          584|             (mergeDefinitions (loc ++ [name]) elemType defs).optionalValue
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:647:43:
+          646|     set:
+          647|     listToAttrs (concatMap (name: let v = set.${name}; in if pred name v then [(nameValuePair name v)] else []) (attrNames set));
+             |                                           ^
+          648|
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/types.nix:583:86:
+          582|       merge = loc: defs:
+          583|         mapAttrs (n: v: v.value) (filterAttrs (n: v: v ? value) (zipAttrsWith (name: defs:
+             |                                                                                      ^
+          584|             (mergeDefinitions (loc ++ [name]) elemType defs).optionalValue
+
+       … while evaluating the attribute 'optionalValue'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:868:5:
+          867|
+          868|     optionalValue =
+             |     ^
+          869|       if isDefined then { value = mergedValue; }
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:869:7:
+          868|     optionalValue =
+          869|       if isDefined then { value = mergedValue; }
+             |       ^
+          870|       else {};
+
+       … while evaluating the attribute 'values'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:850:9:
+          849|       in {
+          850|         values = defs''';
+             |         ^
+          851|         inherit (defs'') highestPrio;
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:846:11:
+          845|           # Avoid sorting if we don't have to.
+          846|           if any (def: def.value._type or "" == "order") defs''.values
+             |           ^
+          847|           then sortProperties defs''.values
+
+       … while calling the 'any' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:846:14:
+          845|           # Avoid sorting if we don't have to.
+          846|           if any (def: def.value._type or "" == "order") defs''.values
+             |              ^
+          847|           then sortProperties defs''.values
+
+       … while evaluating the attribute 'values'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:949:7:
+          948|     in {
+          949|       values = concatMap (def: if getPrio def == highestPrio then [(strip def)] else []) defs;
+             |       ^
+          950|       inherit highestPrio;
+
+       … while calling the 'concatMap' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:949:16:
+          948|     in {
+          949|       values = concatMap (def: if getPrio def == highestPrio then [(strip def)] else []) defs;
+             |                ^
+          950|       inherit highestPrio;
+
+       … while calling the 'concatMap' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:836:17:
+          835|         # Process mkMerge and mkIf properties.
+          836|         defs' = concatMap (m:
+             |                 ^
+          837|           map (value: { inherit (m) file; inherit value; }) (addErrorContext "while evaluating definitions from `${m.file}':" (dischargeProperties m.value))
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:836:28:
+          835|         # Process mkMerge and mkIf properties.
+          836|         defs' = concatMap (m:
+             |                            ^
+          837|           map (value: { inherit (m) file; inherit value; }) (addErrorContext "while evaluating definitions from `${m.file}':" (dischargeProperties m.value))
+
+       … while calling the 'map' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:837:11:
+          836|         defs' = concatMap (m:
+          837|           map (value: { inherit (m) file; inherit value; }) (addErrorContext "while evaluating definitions from `${m.file}':" (dischargeProperties m.value))
+             |           ^
+          838|         ) defs;
+
+       … while evaluating definitions from `/nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/modules/system':
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:837:128:
+          836|         defs' = concatMap (m:
+          837|           map (value: { inherit (m) file; inherit value; }) (addErrorContext "while evaluating definitions from `${m.file}':" (dischargeProperties m.value))
+             |                                                                                                                                ^
+          838|         ) defs;
+
+       … while calling 'dischargeProperties'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:908:25:
+          907|   */
+          908|   dischargeProperties = def:
+             |                         ^
+          909|     if def._type or "" == "merge" then
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:909:5:
+          908|   dischargeProperties = def:
+          909|     if def._type or "" == "merge" then
+             |     ^
+          910|       concatMap dischargeProperties def.contents
+
+       … while evaluating the attribute 'value'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/types.nix:587:60:
+          586|           # Push down position info.
+          587|           (map (def: mapAttrs (n: v: { inherit (def) file; value = v; }) def.value) defs)));
+             |                                                            ^
+          588|       emptyValue = { value = {}; };
+
+       … from call site
+         at /nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/modules/system/default.nix:91:29:
+           90|
+           91|     system.build.toplevel = throwAssertions (showWarnings (stdenvNoCC.mkDerivation ({
+             |                             ^
+           92|       name = "darwin-system-${cfg.darwinLabel}";
+
+       … while calling 'throwAssertions'
+         at /nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/modules/system/default.nix:13:21:
+           12|
+           13|   throwAssertions = res: if (failedAssertions != []) then throw "\nFailed assertions:\n${concatStringsSep "\n" (map (x: "- ${x}") failedAssertions)}" else res;
+             |                     ^
+           14|   showWarnings = res: fold (w: x: builtins.trace "warning: ${w}" x) res config.warnings;
+
+       … while evaluating a branch condition
+         at /nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/modules/system/default.nix:13:26:
+           12|
+           13|   throwAssertions = res: if (failedAssertions != []) then throw "\nFailed assertions:\n${concatStringsSep "\n" (map (x: "- ${x}") failedAssertions)}" else res;
+             |                          ^
+           14|   showWarnings = res: fold (w: x: builtins.trace "warning: ${w}" x) res config.warnings;
+
+       … while calling the 'map' builtin
+         at /nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/modules/system/default.nix:11:22:
+           10|
+           11|   failedAssertions = map (x: x.message) (filter (x: !x.assertion) config.assertions);
+             |                      ^
+           12|
+
+       … while calling the 'filter' builtin
+         at /nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/modules/system/default.nix:11:42:
+           10|
+           11|   failedAssertions = map (x: x.message) (filter (x: !x.assertion) config.assertions);
+             |                                          ^
+           12|
+
+       … from call site
+         at /nix/store/v6md1yisy7kh5s7dzy3mb64bgzds8diy-source/modules/system/default.nix:11:67:
+           10|
+           11|   failedAssertions = map (x: x.message) (filter (x: !x.assertion) config.assertions);
+             |                                                                   ^
+           12|
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1205:18:
+         1204|         mapAttrs
+         1205|           (name: value:
+             |                  ^
+         1206|             if isAttrs value && cond value
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1208:18:
+         1207|             then recurse (path ++ [ name ]) value
+         1208|             else f (path ++ [ name ]) value);
+             |                  ^
+         1209|     in
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:254:72:
+          253|           # For definitions that have an associated option
+          254|           declaredConfig = mapAttrsRecursiveCond (v: ! isOption v) (_: v: v.value) options;
+             |                                                                        ^
+          255|
+
+       … while evaluating the attribute 'value'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:821:9:
+          820|     in warnDeprecation opt //
+          821|       { value = addErrorContext "while evaluating the option `${showOption loc}':" value;
+             |         ^
+          822|         inherit (res.defsFinal') highestPrio;
+
+       … while evaluating the option `assertions':
+
+       … while evaluating the attribute 'mergedValue'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:856:5:
+          855|     # Type-check the remaining definitions, and merge them. Or throw if no definitions.
+          856|     mergedValue =
+             |     ^
+          857|       if isDefined then
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:857:7:
+          856|     mergedValue =
+          857|       if isDefined then
+             |       ^
+          858|         if all (def: type.check def.value) defsFinal then type.merge loc defsFinal
+
+       (8 duplicate frames omitted)
+
+       … while evaluating definitions from `/nix/store/zq1xn80s67l6y2w948a3jg1llcfqgyh8-source/nixos/common.nix':
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:837:128:
+          836|         defs' = concatMap (m:
+          837|           map (value: { inherit (m) file; inherit value; }) (addErrorContext "while evaluating definitions from `${m.file}':" (dischargeProperties m.value))
+             |                                                                                                                                ^
+          838|         ) defs;
+
+       … while calling 'dischargeProperties'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:908:25:
+          907|   */
+          908|   dischargeProperties = def:
+             |                         ^
+          909|     if def._type or "" == "merge" then
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:914:11:
+          913|         if def.condition then
+          914|           dischargeProperties def.content
+             |           ^
+          915|         else
+
+       … while calling 'dischargeProperties'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:908:25:
+          907|   */
+          908|   dischargeProperties = def:
+             |                         ^
+          909|     if def._type or "" == "merge" then
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:909:5:
+          908|   dischargeProperties = def:
+          909|     if def._type or "" == "merge" then
+             |     ^
+          910|       concatMap dischargeProperties def.contents
+
+       … while evaluating the attribute 'content'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:1013:25:
+         1012|     { _type = "if";
+         1013|       inherit condition content;
+             |                         ^
+         1014|     };
+
+       … from call site
+         at /nix/store/zq1xn80s67l6y2w948a3jg1llcfqgyh8-source/nixos/common.nix:110:20:
+          109|
+          110|       assertions = flatten (flip mapAttrsToList cfg.users (user: config:
+             |                    ^
+          111|         flip map config.assertions (assertion: {
+
+       … while calling 'flatten'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/lists.nix:431:13:
+          430|   */
+          431|   flatten = x:
+             |             ^
+          432|     if isList x
+
+       … while calling the 'concatMap' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/lists.nix:433:10:
+          432|     if isList x
+          433|     then concatMap (y: flatten y) x
+             |          ^
+          434|     else [x];
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/lists.nix:433:21:
+          432|     if isList x
+          433|     then concatMap (y: flatten y) x
+             |                     ^
+          434|     else [x];
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/lists.nix:433:24:
+          432|     if isList x
+          433|     then concatMap (y: flatten y) x
+             |                        ^
+          434|     else [x];
+
+       … while calling 'flatten'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/lists.nix:431:13:
+          430|   */
+          431|   flatten = x:
+             |             ^
+          432|     if isList x
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/lists.nix:432:5:
+          431|   flatten = x:
+          432|     if isList x
+             |     ^
+          433|     then concatMap (y: flatten y) x
+
+       … while calling the 'isList' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/lists.nix:432:8:
+          431|   flatten = x:
+          432|     if isList x
+             |        ^
+          433|     then concatMap (y: flatten y) x
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1096:10:
+         1095|     attrs:
+         1096|     map (name: f name attrs.${name}) (attrNames attrs);
+             |          ^
+         1097|
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1096:16:
+         1095|     attrs:
+         1096|     map (name: f name attrs.${name}) (attrNames attrs);
+             |                ^
+         1097|
+
+       … while calling anonymous lambda
+         at /nix/store/zq1xn80s67l6y2w948a3jg1llcfqgyh8-source/nixos/common.nix:110:66:
+          109|
+          110|       assertions = flatten (flip mapAttrsToList cfg.users (user: config:
+             |                                                                  ^
+          111|         flip map config.assertions (assertion: {
+
+       … from call site
+         at /nix/store/zq1xn80s67l6y2w948a3jg1llcfqgyh8-source/nixos/common.nix:111:9:
+          110|       assertions = flatten (flip mapAttrsToList cfg.users (user: config:
+          111|         flip map config.assertions (assertion: {
+             |         ^
+          112|           inherit (assertion) assertion;
+
+       … while calling 'flip'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/trivial.nix:317:16:
+          316|   */
+          317|   flip = f: a: b: f b a;
+             |                ^
+          318|
+
+       … while calling the 'map' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/trivial.nix:317:19:
+          316|   */
+          317|   flip = f: a: b: f b a;
+             |                   ^
+          318|
+
+       … from call site
+         at /nix/store/zq1xn80s67l6y2w948a3jg1llcfqgyh8-source/nixos/common.nix:111:18:
+          110|       assertions = flatten (flip mapAttrsToList cfg.users (user: config:
+          111|         flip map config.assertions (assertion: {
+             |                  ^
+          112|           inherit (assertion) assertion;
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1205:18:
+         1204|         mapAttrs
+         1205|           (name: value:
+             |                  ^
+         1206|             if isAttrs value && cond value
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1208:18:
+         1207|             then recurse (path ++ [ name ]) value
+         1208|             else f (path ++ [ name ]) value);
+             |                  ^
+         1209|     in
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:254:72:
+          253|           # For definitions that have an associated option
+          254|           declaredConfig = mapAttrsRecursiveCond (v: ! isOption v) (_: v: v.value) options;
+             |                                                                        ^
+          255|
+
+       … while evaluating the attribute 'value'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:821:9:
+          820|     in warnDeprecation opt //
+          821|       { value = addErrorContext "while evaluating the option `${showOption loc}':" value;
+             |         ^
+          822|         inherit (res.defsFinal') highestPrio;
+
+       … while evaluating the option `home-manager.users.ray.assertions':
+
+       (10 duplicate frames omitted)
+
+       … while evaluating definitions from `<unknown-file>':
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:837:128:
+          836|         defs' = concatMap (m:
+          837|           map (value: { inherit (m) file; inherit value; }) (addErrorContext "while evaluating definitions from `${m.file}':" (dischargeProperties m.value))
+             |                                                                                                                                ^
+          838|         ) defs;
+
+       … while calling 'dischargeProperties'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:908:25:
+          907|   */
+          908|   dischargeProperties = def:
+             |                         ^
+          909|     if def._type or "" == "merge" then
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:912:7:
+          911|     else if def._type or "" == "if" then
+          912|       if isBool def.condition then
+             |       ^
+          913|         if def.condition then
+
+       … while calling the 'isBool' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:912:10:
+          911|     else if def._type or "" == "if" then
+          912|       if isBool def.condition then
+             |          ^
+          913|         if def.condition then
+
+       … while evaluating the attribute 'condition'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:1013:15:
+         1012|     { _type = "if";
+         1013|       inherit condition content;
+             |               ^
+         1014|     };
+
+       … while evaluating the attribute 'condition'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:1013:15:
+         1012|     { _type = "if";
+         1013|       inherit condition content;
+             |               ^
+         1014|     };
+
+       … from call site
+         at /nix/store/dkqb8lnckj6r7vx1qihb1sv4yq61zyac-source/modules/home-manager/sops.nix:227:22:
+          226|
+          227|   config = lib.mkIf (cfg.secrets != {}) {
+             |                      ^
+          228|     assertions = [{
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1205:18:
+         1204|         mapAttrs
+         1205|           (name: value:
+             |                  ^
+         1206|             if isAttrs value && cond value
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1206:13:
+         1205|           (name: value:
+         1206|             if isAttrs value && cond value
+             |             ^
+         1207|             then recurse (path ++ [ name ]) value
+
+       … in the left operand of the AND (&&) operator
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1206:30:
+         1205|           (name: value:
+         1206|             if isAttrs value && cond value
+             |                              ^
+         1207|             then recurse (path ++ [ name ]) value
+
+       … while calling the 'isAttrs' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/attrsets.nix:1206:16:
+         1205|           (name: value:
+         1206|             if isAttrs value && cond value
+             |                ^
+         1207|             then recurse (path ++ [ name ]) value
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:688:37:
+          687|
+          688|       matchedOptions = mapAttrs (n: v: v.matchedOptions) resultsByName;
+             |                                     ^
+          689|
+
+       … while evaluating the attribute 'matchedOptions'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:658:15:
+          657|             in {
+          658|               matchedOptions = evalOptionValue loc opt defns';
+             |               ^
+          659|               unmatchedDefns = [];
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:658:32:
+          657|             in {
+          658|               matchedOptions = evalOptionValue loc opt defns';
+             |                                ^
+          659|               unmatchedDefns = [];
+
+       … while calling 'evalOptionValue'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:792:31:
+          791|      config value. */
+          792|   evalOptionValue = loc: opt: defs:
+             |                               ^
+          793|     let
+
+       … in the left operand of the update (//) operator
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:820:28:
+          819|
+          820|     in warnDeprecation opt //
+             |                            ^
+          821|       { value = addErrorContext "while evaluating the option `${showOption loc}':" value;
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:817:9:
+          816|       warnDeprecation =
+          817|         warnIf (opt.type.deprecationMessage != null)
+             |         ^
+          818|           "The type `types.${opt.type.name}' of option `${showOption loc}' defined in ${showFiles opt.declarations} is deprecated. ${opt.type.deprecationMessage}";
+
+       … while calling 'warnIf'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/trivial.nix:789:18:
+          788|   */
+          789|   warnIf = cond: msg: if cond then warn msg else x: x;
+             |                  ^
+          790|
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/trivial.nix:789:23:
+          788|   */
+          789|   warnIf = cond: msg: if cond then warn msg else x: x;
+             |                       ^
+          790|
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:656:23:
+          655|           if length optionDecls == length decls then
+          656|             let opt = fixupOptionType loc (mergeOptionDecls loc decls);
+             |                       ^
+          657|             in {
+
+       … while calling 'fixupOptionType'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:969:26:
+          968|   # TODO: Merge this into mergeOptionDecls
+          969|   fixupOptionType = loc: opt:
+             |                          ^
+          970|     if opt.type.getSubModules or null == null
+
+       … while evaluating a branch condition
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:970:5:
+          969|   fixupOptionType = loc: opt:
+          970|     if opt.type.getSubModules or null == null
+             |     ^
+          971|     then opt // { type = opt.type or types.unspecified; }
+
+       … from call site
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:656:44:
+          655|           if length optionDecls == length decls then
+          656|             let opt = fixupOptionType loc (mergeOptionDecls loc decls);
+             |                                            ^
+          657|             in {
+
+       … while calling 'mergeOptionDecls'
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:753:9:
+          752|   mergeOptionDecls =
+          753|    loc: opts:
+             |         ^
+          754|     foldl' (res: opt:
+
+       … while calling the 'foldl'' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:754:5:
+          753|    loc: opts:
+          754|     foldl' (res: opt:
+             |     ^
+          755|       let t  = res.type;
+
+       … while calling anonymous lambda
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:754:18:
+          753|    loc: opts:
+          754|     foldl' (res: opt:
+             |                  ^
+          755|       let t  = res.type;
+
+       … while calling the 'throw' builtin
+         at /nix/store/6p3p9axsr8grjq74wm9rp6y5vh0kscqy-source/lib/modules.nix:770:9:
+          769|       then
+          770|         throw "The option `${showOption loc}' in `${opt._file}' is already declared in ${showFiles res.declarations}."
+             |         ^
+          771|       else
+
+       error: The option `home-manager.users.ray.sops.secrets' in `/nix/store/zq1xn80s67l6y2w948a3jg1llcfqgyh8-source/nixos/common.nix' is already declared in `<unknown-file>'.

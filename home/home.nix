@@ -1,17 +1,43 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, configDir, ... }:
 
-{
-  # imports = [
-  #   ./modules
-  # ];
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
-
-  home.username = lib.mkDefault "ray";
-  home.homeDirectory =
+let
+  homeDir =
     if pkgs.stdenv.isLinux
     then lib.mkDefault "/home/ray"
     else lib.mkDefault "/Users/ray";
+in
+{
+  imports = [
+    inputs.sops-nix.homeManagerModules.sops
+  ];
+
+
+  sops = {
+    # It's also possible to use a ssh key, but only when it has no password:
+    #age.sshKeyPaths = [ "/home/user/path-to-ssh-key" ];
+    defaultSopsFile = ../sops/secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    age.keyFile = "../sops/age/keys.txt"; # must have no password!
+
+    secrets = {
+      omnivore_api_key = { };
+    };
+  };
+
+  systemd.user.services.mbsync.Unit.After = [ "sops-nix.service" ];
+  systemd.user.services."myservice" = {
+    script = ''
+      #!/bin/sh
+      echo "omnivore_api_key: ${config.sops.secrets.omnivore_api_key.key}"
+    '';
+    serviceConfig = {
+      User = config.home.username;
+      WorkingDirectory = "/var/lib/myservice";
+    };
+  };
+
+  home.username = lib.mkDefault "ray";
+  home.homeDirectory = homeDir;
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -45,8 +71,8 @@
     zsh = {
       enable = true;
       initExtra = ''
-        if [[ -f ../config/.config/zsh/.p10k.zsh ]]; then
-            source ../config/.config/zsh/.p10k.zsh
+        if [[ -f ~/.p10k.zsh ]]; then
+            source ~/.p10k.zsh
         fi
       '';
       enableCompletion = true;
@@ -166,7 +192,6 @@
     gnumake
     zoxide
     cmake
-    python3
     libclang
     unzip
     stow
