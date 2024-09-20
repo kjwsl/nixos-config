@@ -21,7 +21,7 @@ in
 
     secrets = {
       "omnivore_api_key" = {
-        path = "/var/lib/ray/secrets.yaml";
+        path = "${homeDir.content}/tmp/secrets.yaml";
       };
     };
   };
