@@ -31,4 +31,4 @@ echo "Committing the changes..."
 git commit -am "[${now}] nix-darwin: update system configuration" || true
 
 echo "Switching to the new configuration..."
-results/sw/bin/darwin-rebuild switch --flake . --show-trace
+result/sw/bin/darwin-rebuild switch --flake . --show-trace
