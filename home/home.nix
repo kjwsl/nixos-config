@@ -17,7 +17,7 @@ in
     #age.sshKeyPaths = [ "/home/user/path-to-ssh-key" ];
     defaultSopsFile = ../sops/secrets/secrets.yaml;
     defaultSopsFormat = "yaml";
-    age.keyFile = "~/.config/sops/age/keys.txt"; # must have no password!
+    age.keyFile = "${homeDir.content}/.config/sops/age/keys.txt"; # must have no password!
 
     secrets = {
       "omnivore_api_key" = {

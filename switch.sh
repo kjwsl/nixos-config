@@ -10,7 +10,7 @@ debug() {
 readarray -t changed_files <<<$(git diff --name-only)
 debug "Changed files: ${changed_files[@]}"
 
-err_msg=$(nix run nix-darwin build -- --flake . --show-trace 2>&1)
+nix run nix-darwin build -- --flake . --show-trace 
 if [ $? -ne 0 ]; then
     log_msg=""
   for file in "${changed_files[@]}"; do
