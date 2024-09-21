@@ -1,2 +1,4 @@
 result
 sops/**/keys.txt
+.venv
+__pycache__
