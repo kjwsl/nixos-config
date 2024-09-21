@@ -52,6 +52,7 @@
               users.ray = import ./home/home.nix;
               extraSpecialArgs = { inherit inputs; inherit configDir; };
             };
+            backupFileExtension = "backup";
             users.users.ray.home = nixpkgs.lib.mkForce "/Users/ray";
           }
         ];
