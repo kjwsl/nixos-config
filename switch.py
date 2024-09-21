@@ -55,9 +55,9 @@ def commit():
     subprocess.run(["git", "commit", "-am", commit_msg])
 
 
-def switch(switch_cmd: str):
+def switch(switch_cmd: list):
     print("Switching system...")
-    ret = subprocess.run(["nix", "run", switch_cmd, "build", "--",
+    ret = subprocess.run(["nix", "run", *switch_cmd, "build", "--",
                           "--flake", ".#default", "--show-trace"], capture_output=True)
 
 
