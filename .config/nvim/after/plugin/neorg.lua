@@ -1,0 +1,6 @@
+vim.keymap.set('n', '<leader>no', '<cmd>Neorg<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>nw', function()
+  vim.ui.select({ 'default', 'notes' }, { prompt = 'Workspace: ' }, function(input)
+    vim.cmd('Neorg workspace ' .. input)
+  end)
+end, { noremap = true, silent = true })
