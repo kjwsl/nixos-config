@@ -2,7 +2,7 @@ from enum import Enum
 import subprocess
 import time
 import os
-from logging import log, debug
+from logging import debug, error
 
 
 class HostSystem(Enum):
@@ -41,31 +41,49 @@ def system_menu() -> HostSystem:
             exit(0)
 
 
-def build(build_cmd: str) -> int:
+def shell_cmd(cmd: list) -> (bool, str):
+    process = subprocess.Popen(
+        cmd,  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    while True:
+        output = process.stdout.readline()
+        if output == "" and process.poll() is not None:
+            break
+        if output:
+            print(output.strip())
+
+    stderr = process.communicate()[1]
+    if stderr:
+        if "warning" in stderr:
+            return (True, "")
+        error(stderr)
+        return (False, stderr)
+    return (True, "")
+
+
+def build(build_cmd: str) -> (bool, str):
     print("Starting building the system...")
-    ret = subprocess.run(["nix", "run", build_cmd, "build", "--",
-                          "--flake", ".#default", "--show-trace"], capture_output=True)
-    return ret.returncode
+    return shell_cmd(["nix", "run", build_cmd, "build", "--",
+                      "--flake", ".#default"])
 
 
 def commit():
     print("Making a commit...")
     now = time.strftime("%Y-%m-%d %H-%M-%S")
     commit_msg = f"[{now}] Update System Configuration"
-    subprocess.run(["git", "commit", "-am", commit_msg])
+    return shell_cmd(["git", "commit", "-am", commit_msg])
 
 
-def switch(switch_cmd: list):
+def switch(switch_cmd: list) -> (bool, str):
     print("Switching system...")
-    ret = subprocess.run(["nix", "run", *switch_cmd, "build", "--",
-                          "--flake", ".#default", "--show-trace"], capture_output=True)
+    return subprocess.run(["nix", "run", *switch_cmd, "build", "--",
+                           "--flake", ".#default", "--show-trace"])
 
 
 def main():
     current_system = system_menu()
     debug(f"Current System: ${current_system}")
     build_cmd = ""
-    switch_cmd = ""
+    switch_cmd = [""]
     match current_system:
         case HostSystem.HOME:
             build_cmd = "home-manager/master"
@@ -75,14 +93,15 @@ def main():
             switch_cmd = ["result/bin/sw/darwin-rebuild", "--flake", "."]
     debug("Build Command: ${build_cmd}")
     debug("Switch Command: ${switch_cmd}")
-    ret = build(build_cmd)
-    debug(f"Build return code: {ret}")
+    status, err = build(build_cmd)
+    debug(f"Status: ${status}")
 
-    if ret != 0:
+    if status is False:
         return
 
-    commit()
+    status, err = commit()
     switch(switch_cmd)
+    print("Done!")
 
 
 if __name__ == "__main__":
