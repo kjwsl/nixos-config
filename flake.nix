@@ -11,6 +11,7 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
     sops-nix.url = "github:Mic92/sops-nix";
+    neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
 
     # nixvim = {
     #
@@ -23,12 +24,20 @@
   };
 
 
-  outputs = { nixpkgs, home-manager, nix-darwin, sops-nix, ... }@inputs:
+  outputs = { nixpkgs, home-manager, nix-darwin, sops-nix, neovim-nightly, ... }@inputs:
     let
       configDir = toString ./. + "/config/.config";
     in
     {
       # Your custom packages and modifications, exported as overlays
+
+      homeConfigurations.default = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages."x86_64-linux";
+        extraSpecialArgs = { inherit inputs; };
+        modules = [
+          ./home/home.nix
+        ];
+      };
 
       darwinConfigurations."rays-MacBook-Air" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";

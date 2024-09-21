@@ -27,16 +27,16 @@ in
   };
 
   systemd.user.services.mbsync.Unit.After = [ "sops-nix.service" ];
-  systemd.user.services."myservice" = {
-    script = ''
-      #!/bin/sh
-      echo "omnivore_api_key: ${config.sops.secrets.omnivore_api_key.key}"
-    '';
-    serviceConfig = {
-      User = config.home.username;
-      WorkingDirectory = "/var/lib/myservice";
-    };
-  };
+  # systemd.user.services."myservice" = {
+  #   script = ''
+  #     #!/bin/sh
+  #     echo "omnivore_api_key: ${config.sops.secrets.omnivore_api_key.key}"
+  #   '';
+  #   serviceConfig = {
+  #     User = config.home.username;
+  #     WorkingDirectory = "/var/lib/myservice";
+  #   };
+  # };
 
   home.username = lib.mkDefault "ray";
   home.homeDirectory = homeDir;
@@ -161,7 +161,9 @@ in
     };
     zoxide = {
       enable = true;
+      enableBashIntegration = true;
       enableZshIntegration = true;
+      enableFishIntegration = true;
     };
 
 
@@ -203,6 +205,8 @@ in
     bat
     nixd
     ripgrep
+    git-repo
+    nodejs_22
     #fish
     # oh-my-fish
     # fishPlugins.fzf
@@ -232,6 +236,7 @@ in
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
+    ".config".source = ../config/.config;
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
@@ -268,6 +273,10 @@ in
   #
   #  /etc/profiles/per-user/ray/etc/profile.d/hm-session-vars.sh
   #
+  home.sessionPath = [
+
+
+  ];
   home.sessionVariables = {
     EDITOR = "nvim";
   };
