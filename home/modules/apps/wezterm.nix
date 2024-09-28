@@ -2,11 +2,11 @@
 
 with lib;
 let
-  cfg = config.ray.modules.app.wezterm;
+  cfg = config.larp.app.wezterm;
   config_dir = flakeContext.conf_dir;
 in
 {
-  options.ray.modules.app.wezterm = {
+  options.larp.app.wezterm = {
     enable = mkEnableOption "Wezterm Configuration";
   };
 

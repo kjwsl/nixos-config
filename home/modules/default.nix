@@ -4,6 +4,6 @@
     ./apps
     ./dev
     ./shell
-
+    ./opts
   ];
 }

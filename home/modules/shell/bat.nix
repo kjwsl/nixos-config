@@ -1,10 +1,10 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-let cfg = config.ray.modules.shell.bat;
+let cfg = config.larp.shell.bat;
 in
 {
-  options.ray.modules.shell.bat = {
+  options.larp.shell.bat = {
     enable = mkEnableOption "bat configuration";
   };
 
