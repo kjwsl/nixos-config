@@ -7,26 +7,26 @@ let
     else lib.mkDefault "/Users/ray";
 in
 {
-  imports = [
-    inputs.sops-nix.homeManagerModules.sops
-    ./modules
-  ];
+  # imports = [
+  #   inputs.sops-nix.homeManagerModules.sops
+  #   ./modules
+  # ];
 
-  larp.opts.dotfiles.enable = true;
+  # larp.opts.dotfiles.enable = false;
 
-  sops = {
-    # It's also possible to use a ssh key, but only when it has no password:
-    #age.sshKeyPaths = [ "/home/user/path-to-ssh-key" ];
-    defaultSopsFile = ../sops/secrets/secrets.yaml;
-    defaultSopsFormat = "yaml";
-    age.keyFile = "${homeDir.content}/.config/sops/age/keys.txt"; # must have no password!
+  # sops = {
+  #   # It's also possible to use a ssh key, but only when it has no password:
+  #   #age.sshKeyPaths = [ "/home/user/path-to-ssh-key" ];
+  #   defaultSopsFile = ../sops/secrets/secrets.yaml;
+  #   defaultSopsFormat = "yaml";
+  #   age.keyFile = "${homeDir.content}/.config/sops/age/keys.txt"; # must have no password!
 
-    secrets = {
-      "omnivore_api_key" = {
-        path = "${homeDir.content}/tmp/secrets.yaml";
-      };
-    };
-  };
+  #   secrets = {
+  #     "omnivore_api_key" = {
+  #       path = "${homeDir.content}/tmp/secrets.yaml";
+  #     };
+  #   };
+  # };
 
 
   systemd.user.services.mbsync.Unit.After = [ "sops-nix.service" ];
@@ -63,6 +63,9 @@ in
 
   home.packages = with pkgs; [
     gnumake
+    gcc
+    llvm
+    python312Packages.python
     zoxide
     cmake
     libclang
@@ -104,11 +107,33 @@ in
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
+  xdg.configFile = {
+      "nvim" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/.config/nvim";
+      };
+  };
   home.file = {
-    ".config" = {
-      recursive = true;
-      source = ../config/.config;
-    };
+      "notes" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/notes";
+      };
+      "modules" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules";
+      };
+      ".vst3" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/.vst3";
+      };
+      ".aliasrc" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/.aliasrc";
+      };
+      ".gitconfig" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/.gitconfig";
+      };
+      ".zshrc" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/.zshrc";
+      };
+      ".bashrc" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/.bashrc";
+      };
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.

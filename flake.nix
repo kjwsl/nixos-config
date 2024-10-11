@@ -59,7 +59,7 @@
       # Your custom packages and modifications, exported as overlays
 
       homeConfigurations."ray" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages."aarch64-darwin";
+        pkgs = nixpkgs.legacyPackages."x86_64-linux";
         extraSpecialArgs = { inherit inputs; };
         modules = [
           ./home/home.nix
