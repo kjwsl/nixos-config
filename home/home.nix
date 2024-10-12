@@ -1,10 +1,21 @@
-{ config, pkgs, lib, inputs, configDir, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 let
   homeDir =
     if pkgs.stdenv.isLinux
     then lib.mkDefault "/home/ray"
     else lib.mkDefault "/Users/ray";
+
+  mkDotfiles = { path, files }:
+    builtins.listToAttrs (map
+      (file: {
+        name = file;
+        value = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/${path}/${file}";
+        };
+      })
+      files);
+
 in
 {
   imports = [
@@ -12,7 +23,30 @@ in
     ./modules
   ];
 
-  larp.opts.dotfiles.enable = true;
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = (_: true);
+    };
+  };
+
+  xdg.configFile = mkDotfiles {
+    path = ".dotfiles/.config";
+    files = [
+      "clangd"
+      "eza"
+      "fish"
+      "gh"
+      "sops"
+      "kitty"
+      "lazygit"
+      "nvim"
+      "omf"
+      "waybar"
+      "wezterm"
+      "zsh"
+    ];
+  };
 
   sops = {
     # It's also possible to use a ssh key, but only when it has no password:
@@ -104,22 +138,21 @@ in
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
-  home.file = {
-    ".config" = {
-      recursive = true;
-      source = ../config/.config;
+  home.file = mkDotfiles
+    {
+      path = ".dotfiles";
+      files = [
+        ".aliasrc"
+        ".bashrc"
+        ".fonts"
+        ".gitconfig"
+        ".p10k.zsh"
+        ".zshrc"
+        "images"
+        "modules"
+        "notes"
+      ];
     };
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-  };
 
   home.sessionPath = [
 
@@ -147,11 +180,9 @@ in
         g = "git";
         ls = "ls -ah --color";
         ll = "ls -lah --color";
-
       };
     };
     zsh = {
-      enable = true;
       initExtra = ''
         if [[ -f ~/.p10k.zsh ]]; then
             source ~/.p10k.zsh
@@ -183,7 +214,7 @@ in
       };
     };
     git = {
-      enable = true;
+      # enable = true;
       userEmail = "kjwdev01@gmail.com";
       userName = "kjwsl";
       aliases = {
@@ -202,7 +233,7 @@ in
     };
 
     gh = {
-      enable = true;
+      # enable = true;
       settings = {
         git_protocol = "ssh";
         prompt = "enabled";
