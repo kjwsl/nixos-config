@@ -18,10 +18,10 @@ let
 
 in
 {
-  imports = [
-    inputs.sops-nix.homeManagerModules.sops
-    ./modules
-  ];
+  # imports = [
+  #   inputs.sops-nix.homeManagerModules.sops
+  #   ./modules
+  # ];
 
   nixpkgs = {
     config = {
@@ -48,19 +48,19 @@ in
     ];
   };
 
-  sops = {
-    # It's also possible to use a ssh key, but only when it has no password:
-    #age.sshKeyPaths = [ "/home/user/path-to-ssh-key" ];
-    defaultSopsFile = ../sops/secrets/secrets.yaml;
-    defaultSopsFormat = "yaml";
-    age.keyFile = "${homeDir.content}/.config/sops/age/keys.txt"; # must have no password!
+  # sops = {
+  #   # It's also possible to use a ssh key, but only when it has no password:
+  #   #age.sshKeyPaths = [ "/home/user/path-to-ssh-key" ];
+  #   defaultSopsFile = ../sops/secrets/secrets.yaml;
+  #   defaultSopsFormat = "yaml";
+  #   age.keyFile = "${homeDir.content}/.config/sops/age/keys.txt"; # must have no password!
 
-    secrets = {
-      "omnivore_api_key" = {
-        path = "${homeDir.content}/tmp/secrets.yaml";
-      };
-    };
-  };
+  #   secrets = {
+  #     "omnivore_api_key" = {
+  #       path = "${homeDir.content}/tmp/secrets.yaml";
+  #     };
+  #   };
+  # };
 
 
   systemd.user.services.mbsync.Unit.After = [ "sops-nix.service" ];
@@ -97,6 +97,9 @@ in
 
   home.packages = with pkgs; [
     gnumake
+    gcc
+    llvm
+    python312Packages.python
     zoxide
     cmake
     libclang
