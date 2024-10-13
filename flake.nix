@@ -24,59 +24,46 @@
   };
 
 
-  outputs = { nixpkgs, home-manager, nix-darwin, sops-nix, neovim-nightly, ... }@inputs:
+  outputs = { nixpkgs, home-manager, nix-darwin, flake-utils, sops-nix, neovim-nightly, ... }@inputs:
     let
       lib = nixpkgs.lib;
       configDir = toString ./. + "/config/.config";
-      forAllSystems = nixpkgs.lib.genAttrs [
+      systems = [
         "x86_64-linux"
         "aarch64-darwin"
       ];
 
-      mkHome = { user, system }: {
-        user = home-manager.lib.homeManagerConfiguration
-          {
-            pkgs = nixpkgs.legacyPackages.${system};
-            extraSpecialArgs = { inherit inputs; };
-            modules = [
-              ./home/home.nix
-            ];
-          };
-      };
-
-      # { system = []}
-      mkHomes = users:
-        map
-          (user:
-            forAllSystems (system:
-              mkHome { inherit user system; }
-            )
-          )
-          users;
-
+      mkHome = { user, system }:
+        let
+          pkgs = nixpkgs.legacyPackages."${system}";
+        in
+        home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          extraSpecialArgs = { inherit inputs; };
+          modules = [
+            ./home/home.nix
+          ];
+        };
     in
     {
       # Your custom packages and modifications, exported as overlays
 
-      homeConfigurations."ray" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages."x86_64-linux";
-        extraSpecialArgs = { inherit inputs; };
-        modules = [
-          ./home/home.nix
-        ];
-      };
-      # homeConfigurations = mkHomes [
-      #   "ray"
-      #   "wow"
-      # ];
-      # homeConfigurations."macbook" = home-manager.lib.homeManagerConfiguration {
-      #   pkgs = nixpkgs.legacyPackages."aarch64-darwin";
+      # homeConfigurations."ray" = home-manager.lib.homeManagerConfiguration {
+      #   pkgs = nixpkgs.legacyPackages."x86_64-linux";
       #   extraSpecialArgs = { inherit inputs; };
       #   modules = [
       #     ./home/home.nix
       #   ];
       # };
-      #
+      homeConfigurations."default" = mkHome {
+        user = "ray";
+        system = "x86_64-linux";
+      };
+      homeConfigurations."mac" = mkHome {
+        user = "ray";
+        system = "aarch64-darwin";
+      };
+
       darwinConfigurations."rays-MacBook-Air" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
