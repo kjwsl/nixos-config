@@ -150,8 +150,12 @@ in
         ".fonts"
         ".gitconfig"
         ".p10k.zsh"
+        ".clang-format"
         ".zshrc"
+        ".oh-my-bash"
+        ".vst3"
         "images"
+        "programs"
         "modules"
         "notes"
       ];
