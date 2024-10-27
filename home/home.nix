@@ -110,17 +110,11 @@ in
     fastfetch
     bat
     nixd
+    luarocks
+    eza
     ripgrep
     git-repo
     nodejs_22
-    #fish
-    # oh-my-fish
-    # fishPlugins.fzf
-    # fishPlugins.done
-    # fishPlugins.bass
-    # fishPlugins.git-abbr
-    # fishPlugins.autopair
-    # arc-browser
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
