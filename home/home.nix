@@ -99,7 +99,6 @@ in
     gnumake
     gcc
     llvm
-    python312Packages.python
     zoxide
     cmake
     libclang
@@ -278,6 +277,7 @@ in
 
 
     lazygit.enable = true;
+    pyenv.enable = true;
 
     neovim = {
       enable = true;
