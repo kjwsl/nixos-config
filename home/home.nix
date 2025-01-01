@@ -272,6 +272,7 @@ in
 
 
     lazygit.enable = true;
+    pyenv.enable = true;
 
     neovim = {
       enable = true;
