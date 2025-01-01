@@ -96,13 +96,7 @@ in
   };
 
   home.packages = with pkgs; [
-    gnumake
-    gcc
-    llvm
-    python312Packages.python
     zoxide
-    cmake
-    libclang
     unzip
     stow
     ripgrep
