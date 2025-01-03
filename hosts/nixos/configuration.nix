@@ -14,6 +14,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -83,7 +85,13 @@
     description = "ray";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-    #  thunderbird
+      thunderbird
+      discord
+      wezterm
+      fzf
+      telegram-desktop
+      steam
+      qbittorrent
     ];
     shell = pkgs.fish;
   };
@@ -91,6 +99,10 @@
   # Install firefox.
   programs.firefox.enable = true;
   programs.fish.enable = true;
+  programs.steam = {
+    enable = true;
+    protontricks.enable = true;
+  };
 
 
   # Allow unfree packages
@@ -99,15 +111,38 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
+    brave
     curl
     git
-    oh-my-fish
-    brave
+    ibus
+    ibus-engines.hangul
+    ibus-engines.libpinyin
+    ibus-engines.mozc
     libgcc
-    python314
+    nerdfonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    oh-my-fish
+    python3Full
+    rustup
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    wget
+    wineWowPackages.stable
+    wine
+    (wine.override { wineBuild = "wine64"; })
+    wine64
+    winetricks
+    wineWowPackages.waylandFull
   ];
+
+  i18n.supportedLocales = [ "en_US.UTF-8/UTF-8" "ko_KR.UTF-8/UTF-8" "zh_CN.UTF-8/UTF-8" ];
+  i18n.inputMethod = {
+    enable = true;
+    type = "ibus";
+    ibus = {
+      engines = with pkgs.ibus-engines; [ libpinyin hangul mozc ];
+    };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
