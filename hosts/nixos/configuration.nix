@@ -10,7 +10,7 @@
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
       inputs.home-manager.nixosModules.default
-      inputs.nixvim.nixosModules.nixvim
+    #  inputs.nixvim.nixosModules.nixvim
     ];
 
 
@@ -130,7 +130,7 @@
       gcc
       llvm
       kiwitalk
-      firefox-
+      firefox
     ];
   };
 
@@ -141,7 +141,7 @@
     users = {
       "ray" = {
         imports = [
-          ./home.nix
+          ../../home/home.nix
         ];
       };
     };
