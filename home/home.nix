@@ -30,23 +30,23 @@ in
     };
   };
 
-  xdg.configFile = mkDotfiles {
-    path = ".dotfiles/.config";
-    files = [
-      "clangd"
-      "eza"
-      "fish"
-      "gh"
-      "sops"
-      "kitty"
-      "lazygit"
-      "nvim"
-      "omf"
-      "waybar"
-      "wezterm"
-      "zsh"
-    ];
-  };
+  # xdg.configFile = mkDotfiles {
+  #   path = ".dotfiles/.config";
+  #   files = [
+  #     "clangd"
+  #     "eza"
+  #     "fish"
+  #     "gh"
+  #     "sops"
+  #     "kitty"
+  #     "lazygit"
+  #     "nvim"
+  #     "omf"
+  #     "waybar"
+  #     "wezterm"
+  #     "zsh"
+  #   ];
+  # };
 
   # sops = {
   #   # It's also possible to use a ssh key, but only when it has no password:
@@ -96,19 +96,18 @@ in
   };
 
   home.packages = with pkgs; [
-    zoxide
-    unzip
-    stow
+    bat
+    fzf
+    fastfetch
+    git-repo
+    luarocks
+    nixd
+    nodejs_22
     ripgrep
     rustup
-    fastfetch
-    bat
-    nixd
-    luarocks
-    eza
-    ripgrep
-    git-repo
-    nodejs_22
+    stow
+    unzip
+    zoxide
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -129,25 +128,25 @@ in
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
-  home.file = mkDotfiles
-    {
-      path = ".dotfiles";
-      files = [
-        ".aliasrc"
-        ".bashrc"
-        ".fonts"
-        ".gitconfig"
-        ".p10k.zsh"
-        ".clang-format"
-        ".zshrc"
-        ".oh-my-bash"
-        ".vst3"
-        "images"
-        "programs"
-        "modules"
-        "notes"
-      ];
-    };
+  # home.file = mkDotfiles
+  #   {
+  #     path = ".dotfiles";
+  #     files = [
+  #       ".aliasrc"
+  #       ".bashrc"
+  #       ".fonts"
+  #       ".gitconfig"
+  #       ".p10k.zsh"
+  #       ".clang-format"
+  #       ".zshrc"
+  #       ".oh-my-bash"
+  #       ".vst3"
+  #       "images"
+  #       "programs"
+  #       "modules"
+  #       "notes"
+  #     ];
+  #   };
 
   home.sessionPath = [
 
@@ -239,11 +238,6 @@ in
       ];
     };
 
-    fzf = {
-      enable = true;
-      tmux.enableShellIntegration = true;
-    };
-
     tmux = {
       enable = true;
       plugins = with pkgs.tmuxPlugins; [
@@ -271,6 +265,8 @@ in
 
 
 
+    eza.enable = true;
+    wezterm.enable = true;
     lazygit.enable = true;
     pyenv.enable = true;
 
