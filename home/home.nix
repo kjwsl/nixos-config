@@ -239,7 +239,7 @@ in
     };
 
     tmux = {
-      enable = true;
+      enable = false;
       plugins = with pkgs.tmuxPlugins; [
         catppuccin
         jump
@@ -266,7 +266,7 @@ in
 
 
     eza.enable = true;
-    wezterm.enable = true;
+    wezterm.enable = false;
     lazygit.enable = true;
     pyenv.enable = true;
 
