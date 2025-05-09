@@ -11,76 +11,119 @@ debug() {
     fi
 }
 
-platform_menu() {
-    PS3="Choose Platform: "
-    platform_options=("Home" "Darwin" "NixOS" "Quit")
-    select opt in "${platform_options[@]}"; do
-        case $opt in
-            "Home")
-                BUILD_CMD="nix run home-manager/master build -- --flake .#default"
-                SWITCH_CMD="nix run home-manager/master switch -- --flake .#default"
-                ;;
-            "Darwin")
-                BUILD_CMD="nix run nix-darwin build -- --flake .#rays-MacBook-Air"
-                SWITCH_CMD="nix run nix-darwin switch -- --flake .#rays-MacBook-Air"
-                ;;
-            "NixOS")
-                BUILD_CMD="nix run nixos-rebuild build -- --flake .#default"
-                SWITCH_CMD="nix run nixos-rebuild switch -- --flake .#default"
-                ;;
-            "Quit")
-                echo "Quitting..."
-                exit 0
-                ;;
-            *) 
-                echo "Invalid option $REPLY"
-                continue
-                ;;
-        esac
-        debug "Build Command: ${BUILD_CMD}"
-        debug "Switch Command: ${SWITCH_CMD}"
-        return 0
-    done
+# Function to display menu
+show_menu() {
+    echo "1) Home"
+    echo "2) Darwin"
+    echo "3) NixOS"
+    echo "4) Quit"
 }
 
-build() {
-    local build_cmd=$1
-    debug "Building with command: ${build_cmd}"
+# Function to handle NixOS switch
+handle_nixos() {
+    echo "Build Command: sudo nixos-rebuild build --flake .#default"
+    echo "Switch Command: sudo nixos-rebuild switch --flake .#default"
     
-    if ! eval "${build_cmd}"; then
-        echo "Build failed"
-        exit 1
+    read -p "Do you want to build first? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Building with command: sudo nixos-rebuild build --flake .#default"
+        sudo nixos-rebuild build --flake .#default
+        if [ $? -eq 0 ]; then
+            echo "Build successful!"
+            read -p "Do you want to switch now? (y/n) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                echo "Switching with command: sudo nixos-rebuild switch --flake .#default"
+                sudo nixos-rebuild switch --flake .#default
+            fi
+        else
+            echo "Build failed"
+            exit 1
+        fi
+    else
+        echo "Switching with command: sudo nixos-rebuild switch --flake .#default"
+        sudo nixos-rebuild switch --flake .#default
     fi
 }
 
-commit() {
-    local now
-    now=$(date "+%Y-%m-%d %H:%M:%S")
-    echo "Committing the changes..."
-    if ! git commit -am "[${now}] Update system configuration"; then
-        echo "Warning: Commit failed, but continuing..."
-    fi
-}
-
-switch() {
-    local switch_cmd=$1
-    echo "Switching to the new configuration..."
-    if ! eval "${switch_cmd}"; then
-        echo "Switch failed"
-        exit 1
-    fi
-}
-
-main() {
-    local BUILD_CMD
-    local SWITCH_CMD
+# Function to handle Home Manager switch
+handle_home() {
+    echo "Build Command: home-manager build --flake .#default"
+    echo "Switch Command: home-manager switch --flake .#default"
     
-    platform_menu
-    build "${BUILD_CMD}"
-    commit
-    switch "${SWITCH_CMD}"
-    echo "Done!"
+    read -p "Do you want to build first? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Building with command: home-manager build --flake .#default"
+        home-manager build --flake .#default
+        if [ $? -eq 0 ]; then
+            echo "Build successful!"
+            read -p "Do you want to switch now? (y/n) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                echo "Switching with command: home-manager switch --flake .#default"
+                home-manager switch --flake .#default
+            fi
+        else
+            echo "Build failed"
+            exit 1
+        fi
+    else
+        echo "Switching with command: home-manager switch --flake .#default"
+        home-manager switch --flake .#default
+    fi
 }
 
-main
+# Function to handle Darwin switch
+handle_darwin() {
+    echo "Build Command: darwin-rebuild build --flake .#rays-MacBook-Air"
+    echo "Switch Command: darwin-rebuild switch --flake .#rays-MacBook-Air"
+    
+    read -p "Do you want to build first? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Building with command: darwin-rebuild build --flake .#rays-MacBook-Air"
+        darwin-rebuild build --flake .#rays-MacBook-Air
+        if [ $? -eq 0 ]; then
+            echo "Build successful!"
+            read -p "Do you want to switch now? (y/n) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                echo "Switching with command: darwin-rebuild switch --flake .#rays-MacBook-Air"
+                darwin-rebuild switch --flake .#rays-MacBook-Air
+            fi
+        else
+            echo "Build failed"
+            exit 1
+        fi
+    else
+        echo "Switching with command: darwin-rebuild switch --flake .#rays-MacBook-Air"
+        darwin-rebuild switch --flake .#rays-MacBook-Air
+    fi
+}
+
+# Main menu loop
+while true; do
+    show_menu
+    read -p "Choose Platform: " choice
+    case $choice in
+        1)
+            handle_home
+            ;;
+        2)
+            handle_darwin
+            ;;
+        3)
+            handle_nixos
+            ;;
+        4)
+            echo "Goodbye!"
+            exit 0
+            ;;
+        *)
+            echo "Invalid option. Please try again."
+            ;;
+    esac
+done
 
