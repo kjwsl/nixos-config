@@ -5,6 +5,16 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target configuration to deploy'
+        required: true
+        default: 'default'
+        type: choice
+        options:
+          - default
+          - workmachine
 
 jobs:
   test:
@@ -31,8 +41,38 @@ jobs:
       - name: Build Home Configurations
         run: |
           nix build .#homeConfigurations.default.activationPackage
-          nix build .#homeConfigurations.mac.activationPackage
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            nix build .#homeConfigurations.mac.activationPackage
+          fi
 
       - name: Check Darwin Configuration
         if: runner.os == 'macOS'
-        run: nix build .#darwinConfigurations.rays-MacBook-Air.system 
+        run: nix build .#darwinConfigurations.rays-MacBook-Air.system
+
+  deploy:
+    needs: test
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Deploy Configuration
+        env:
+          TARGET: ${{ github.event.inputs.target }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          # Add host key
+          mkdir -p ~/.ssh
+          ssh-keyscan $HOST >> ~/.ssh/known_hosts
+
+          # Copy configuration to remote host
+          rsync -avz --delete ./ $USER@$HOST:/tmp/nixos-config/
+
+          # Run deployment
+          ssh $USER@$HOST "cd /tmp/nixos-config && sudo ./scripts/deploy.sh -t $TARGET" 
