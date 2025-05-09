@@ -1,79 +1,86 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-SCRIPT_PATH=$(dirname -- ${BASH_SOURCE[0]})
+set -euo pipefail
+
+SCRIPT_PATH=$(dirname -- "${BASH_SOURCE[0]}")
 DEBUG=1
-BUILD_HOME="home-manager/master"
-BUILD_DARWIN="nix-darwin"
-PLATFORM_BUILD_CMD=""
-BUILD_CMD="nix run ${PLATFORM_BUILD_CMD} build -- --flake ${SCRIPT_PATH}"
 
 debug() {
     if [ -n "$DEBUG" ]; then
-        echo $@
+        echo "$@"
     fi
 }
 
 platform_menu() {
     PS3="Choose Platform: "
     platform_options=("Home" "Darwin" "NixOS" "Quit")
-    select opt in "${platform_options[@]}"
-do
-    case $opt in
-        "Home")
-            PLATFORM_BUILD_CMD="home-manager/master"
-            ;;
-        "Darwin")
-            PLATFORM_BUILD_CMD="nix-darwin"
-            ;;
-        "Quit")
-            echo "Quitting... "
-            exit 0;
-            ;;
-        *) echo "invalid option $REPLY";;
-    esac
-    BUILD_CMD="nix run ${PLATFORM_BUILD_CMD} build -- --flake ${SCRIPT_PATH}"
-    debug "Build Command: ${BUILD_CMD}"
-    echo ${BUILD_CMD}
-    return 0
-done
+    select opt in "${platform_options[@]}"; do
+        case $opt in
+            "Home")
+                BUILD_CMD="nix run home-manager/master build -- --flake .#default"
+                SWITCH_CMD="nix run home-manager/master switch -- --flake .#default"
+                ;;
+            "Darwin")
+                BUILD_CMD="nix run nix-darwin build -- --flake .#rays-MacBook-Air"
+                SWITCH_CMD="nix run nix-darwin switch -- --flake .#rays-MacBook-Air"
+                ;;
+            "NixOS")
+                BUILD_CMD="nix run nixos-rebuild build -- --flake .#default"
+                SWITCH_CMD="nix run nixos-rebuild switch -- --flake .#default"
+                ;;
+            "Quit")
+                echo "Quitting..."
+                exit 0
+                ;;
+            *) 
+                echo "Invalid option $REPLY"
+                continue
+                ;;
+        esac
+        debug "Build Command: ${BUILD_CMD}"
+        debug "Switch Command: ${SWITCH_CMD}"
+        return 0
+    done
 }
 
 build() {
-    BUILD_CMD=$1
-    readarray -t changed_files <<<$(git diff --name-only)
-    debug "Changed files: ${changed_files[@]}"
-
-    ${BUILD_CMD}
-    if [ $? -ne 0 ]; then
-        log_msg=""
-        for file in "${changed_files[@]}"; do
-            debug "Checking for $file"
-            log_msg="${log_msg}$(grep --color=always -n -e \"/nix/store/*/${file}*\" <<<${err_msg})"
-        done
-        if [ -z "$log_msg" ]; then
-            echo $err_msg
-            echo "The error message doesn't include any of the changed files."
-            exit 1
-        fi
-        sort -u <<<${log_msg}
+    local build_cmd=$1
+    debug "Building with command: ${build_cmd}"
+    
+    if ! eval "${build_cmd}"; then
+        echo "Build failed"
         exit 1
     fi
 }
 
 commit() {
+    local now
     now=$(date "+%Y-%m-%d %H:%M:%S")
     echo "Committing the changes..."
-    git commit -am "[${now}] nix-darwin: update system configuration" || true
+    if ! git commit -am "[${now}] Update system configuration"; then
+        echo "Warning: Commit failed, but continuing..."
+    fi
 }
-
 
 switch() {
+    local switch_cmd=$1
     echo "Switching to the new configuration..."
-    result/sw/bin/darwin-rebuild switch --flake . --show-trace
+    if ! eval "${switch_cmd}"; then
+        echo "Switch failed"
+        exit 1
+    fi
 }
 
-BUILD_CMD=$(platform_menu)
-build BUILD_CMD
-commit
-switch
+main() {
+    local BUILD_CMD
+    local SWITCH_CMD
+    
+    platform_menu
+    build "${BUILD_CMD}"
+    commit
+    switch "${SWITCH_CMD}"
+    echo "Done!"
+}
+
+main
 

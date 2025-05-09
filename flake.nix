@@ -33,6 +33,9 @@
         "aarch64-darwin"
       ];
 
+      # Helper function to get absolute path
+      getPath = path: builtins.toString (builtins.path { path = ./. + "/${path}"; });
+
       mkHome = { user, system }:
         let
           pkgs = nixpkgs.legacyPackages."${system}";
@@ -88,15 +91,17 @@
       };
       nixosConfigurations = {
         default = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
-            ./hosts/nixos/configuration.nix
+            ./hosts/nixos/default/configuration.nix
           ];
         };
         workmachine = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
-            ./hosts/workmachine/configuration.nix
+            ./hosts/nixos/workmachine/configuration.nix
           ];
         };
       };
