@@ -23,13 +23,6 @@ in
   #   ./modules
   # ];
 
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-      allowUnfreePredicate = (_: true);
-    };
-  };
-
   # xdg.configFile = mkDotfiles {
   #   path = ".dotfiles/.config";
   #   files = [
@@ -75,8 +68,8 @@ in
   #   };
   # };
 
-  home.username = lib.mkDefault "ray";
-  home.homeDirectory = homeDir;
+  home.username = "ray";
+  home.homeDirectory = "/home/ray";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -85,7 +78,7 @@ in
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "24.05"; # Please read the comment before changing.
+  home.stateVersion = "24.11"; # Please read the comment before changing.
 
   home.shellAliases = {
     v = "nvim";
@@ -124,6 +117,28 @@ in
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+
+    # Development tools
+    git
+    lazygit
+    fzf
+    zoxide
+    tmux
+    wezterm
+    kitty
+    rofi
+    code-cursor
+
+    # Communication
+    discord
+    telegram-desktop
+
+    # Entertainment
+    steam
+    qbittorrent
+
+    # Shell
+    oh-my-fish
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -170,6 +185,13 @@ in
       '';
     };
     fish = {
+      enable = true;
+      plugins = [
+        {
+          name = "oh-my-fish";
+          src = pkgs.oh-my-fish;
+        }
+      ];
       shellAliases = {
         g = "git";
         ls = "ls -ah --color";
@@ -208,9 +230,9 @@ in
       };
     };
     git = {
-      # enable = true;
-      userEmail = "kjwdev01@gmail.com";
-      userName = "kjwsl";
+      enable = true;
+      userEmail = "ray@example.com";
+      userName = "ray";
       aliases = {
         i = "init";
         aa = "add .";
@@ -272,6 +294,8 @@ in
 
     neovim = {
       enable = true;
+      viAlias = true;
+      vimAlias = true;
       # plugins = with pkgs; [
       #         vimPlugins.nvim-treesitter
       #     	    vimPlugins.nvim-treesitter.withAllGrammars
@@ -311,4 +335,12 @@ in
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  # Services configuration
+  services = {
+    # Enable syncthing
+    syncthing = {
+      enable = true;
+    };
+  };
 }

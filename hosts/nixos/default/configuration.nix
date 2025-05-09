@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running 'nixos-help').
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports = [
@@ -13,7 +13,17 @@
     ../common/hardware.nix
     ../common/security.nix
     ../common/development.nix
+    # Import Home Manager from flake inputs
+    inputs.home-manager.nixosModules.home-manager
   ] ++ (if builtins.pathExists ./hardware-configuration.nix then [ ./hardware-configuration.nix ] else []);
+
+  # Home Manager configuration
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    backupFileExtension = "backup";
+    users.ray = import ../../../home/home.nix;
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -89,18 +99,6 @@
     isNormalUser = true;
     description = "ray";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      thunderbird
-      discord
-      wezterm
-      lazygit
-      fzf
-      telegram-desktop
-      steam
-      qbittorrent
-      zoxide
-      code-cursor
-    ];
     shell = pkgs.fish;
   };
 
@@ -120,7 +118,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    brave
+    # System tools
     curl
     git
     ibus
@@ -128,15 +126,10 @@
     ibus-engines.libpinyin
     ibus-engines.mozc
     libgcc
-    oh-my-fish
-    kitty # required by hyprland
-    rofi #  required by hyprland
-    tmux
-    python3Full
-    rustup
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    neovim
+    vim
     wget
+
+    # Wine configuration
     wineWowPackages.stable
     wine
     (wine.override { wineBuild = "wine64"; })
