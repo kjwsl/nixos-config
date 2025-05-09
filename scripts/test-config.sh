@@ -4,6 +4,7 @@ set -euo pipefail
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo "🔍 Testing NixOS configuration..."
@@ -42,11 +43,16 @@ else
     exit 1
 fi
 
-if nix build .#homeConfigurations.mac.activationPackage; then
-    echo -e "${GREEN}✓ Mac Home configuration built successfully${NC}"
+# Only test macOS configurations on macOS
+if [[ "$(uname)" == "Darwin" ]]; then
+    if nix build .#homeConfigurations.mac.activationPackage; then
+        echo -e "${GREEN}✓ Mac Home configuration built successfully${NC}"
+    else
+        echo -e "${RED}✗ Failed to build Mac Home configuration${NC}"
+        exit 1
+    fi
 else
-    echo -e "${RED}✗ Failed to build Mac Home configuration${NC}"
-    exit 1
+    echo -e "${YELLOW}⚠ Skipping Mac Home configuration test (not on macOS)${NC}"
 fi
 
 echo -e "${GREEN}✅ All tests passed!${NC}" 
