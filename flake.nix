@@ -12,19 +12,13 @@
     flake-utils.url = "github:numtide/flake-utils";
     sops-nix.url = "github:Mic92/sops-nix";
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
-
-    # nixvim = {
-    #
-    #   url = "github:nix-community/nixvim";
-    #   # If you are not running an unstable channel of nixpkgs, select the corresponding branch of nixvim.
-    #   # url = "github:nix-community/nixvim/nixos-24.05";
-    #
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-
-  outputs = { self, nixpkgs, home-manager, nix-darwin, flake-utils, sops-nix, neovim-nightly, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, nix-darwin, flake-utils, sops-nix, neovim-nightly, devshell, ... }@inputs:
     let
       lib = nixpkgs.lib;
       configDir = toString ./. + "/config/.config";
@@ -49,7 +43,7 @@
       mkNixosConfig = { system, hostname }:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
+          specialArgs = { inherit inputs; inherit system; inherit devshell; };
           modules = [
             ./hosts/nixos/${hostname}/configuration.nix
             home-manager.nixosModules.home-manager
@@ -74,14 +68,10 @@
     in
     {
       # Your custom packages and modifications, exported as overlays
+      overlays = [
+        devshell.overlays.default
+      ];
 
-      # homeConfigurations."ray" = home-manager.lib.homeManagerConfiguration {
-      #   pkgs = nixpkgs.legacyPackages."x86_64-linux";
-      #   extraSpecialArgs = { inherit inputs; };
-      #   modules = [
-      #     ./home/home.nix
-      #   ];
-      # };
       homeConfigurations = {
         default = mkHome {
           user = "ray";
@@ -101,7 +91,6 @@
           home-manager.darwinModules.home-manager
           {
             home-manager = {
-              # useGlobalPkgs = true;
               useUserPackages = true;
               users.ray = import ./home/home.nix;
               extraSpecialArgs = { inherit inputs; inherit configDir; };
@@ -131,11 +120,10 @@
       devShells = {
         default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            devshell
+            devshell.packages.${system}.default
             # Add other development tools here
           ];
         };
       };
     };
-  # outputs
 }

@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running 'nixos-help').
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, system, devshell, ... }:
 
 {
   imports = [
@@ -60,7 +60,7 @@
     vim
     wget
     git
-    devshell
+    devshell.packages.${system}.default
   ];
 
   # Allow unfree packages
