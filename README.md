@@ -1,117 +1,133 @@
 # NixOS Configuration
 
-This repository contains my personal NixOS and macOS (via nix-darwin) configurations. It uses flakes for dependency management and includes configurations for both Linux and macOS systems.
+A modular and extensible NixOS configuration with support for multiple desktop environments, development tools, and custom package overlays.
 
-## Directory Structure
+## Structure
 
 ```
 .
-├── flake.nix              # Main flake configuration
-├── flake.lock            # Flake lock file
-├── hosts/                # System-specific configurations
-│   ├── nixos/           # NixOS configurations
-│   │   ├── default/     # Default NixOS configuration
-│   │   └── workmachine/ # Work machine configuration
-│   └── darwin/          # macOS configurations
-├── home/                 # Home Manager configurations
-│   ├── modules/         # Reusable home-manager modules
-│   ├── profiles/        # User profiles (desktop, laptop, etc.)
-│   └── home.nix         # Main home-manager configuration
-├── lib/                  # Custom library functions
-├── nix/                  # Nix-specific configurations
-│   ├── overlays/        # Custom overlays
-│   └── pkgs/            # Custom packages
-├── shells/              # Development shell configurations
-├── sops/                # SOPS encrypted secrets
-└── switch.py           # Helper script for applying configurations
-```
-
-## Prerequisites
-
-- Nix with flakes enabled
-- For macOS: nix-darwin
-- For secrets management: SOPS
-
-## Usage
-
-### Linux (NixOS)
-
-To apply the configuration:
-
-```bash
-# Using the Python script
-./switch.py
-
-# Or using the shell script
-./switch.sh
-```
-
-### macOS
-
-To apply the configuration:
-
-```bash
-darwin-rebuild switch --flake .#rays-MacBook-Air
-```
-
-### Home Manager
-
-To apply home-manager configurations:
-
-```bash
-# For Linux
-home-manager switch --flake .#default
-
-# For macOS
-home-manager switch --flake .#mac
+├── home/                    # Home Manager configuration
+│   ├── home.nix            # Main home configuration
+│   ├── modules/            # Home Manager modules
+│   │   ├── apps/          # Application modules
+│   │   ├── shell/         # Shell configuration modules
+│   │   └── dev/           # Development tools modules
+│   └── profiles/          # User profiles
+│       ├── desktop.nix    # Desktop profile
+│       ├── development.nix # Development profile
+│       ├── work.nix       # Work profile
+│       └── desktop-environments/ # DE-specific configurations
+│           ├── hyprland.nix
+│           └── gnome.nix
+├── overlays/               # Custom package overlays
+│   ├── default.nix        # Main overlay configuration
+│   ├── dev-tools.nix      # Development tools overlays
+│   ├── desktop-environments.nix # DE-specific overlays
+│   └── applications.nix   # Application overlays
+├── hosts/                  # Host-specific configurations
+│   ├── nixos/             # NixOS hosts
+│   └── darwin/            # macOS hosts
+└── flake.nix              # Main flake configuration
 ```
 
 ## Features
 
-- Flake-based configuration management
-- Cross-platform support (Linux and macOS)
-- Home Manager integration
-- SOPS for secrets management
-- Custom development shells
-- Modular configuration structure
+### Desktop Environments
+- **Hyprland**: Modern Wayland compositor with dynamic workspaces
+- **GNOME**: Traditional desktop environment with custom extensions
+- Support for KDE and XFCE (configurable)
 
-## Configuration Details
+### Profiles
+- **Desktop**: Full desktop experience with multimedia and gaming
+- **Development**: Development-focused setup with tools and IDEs
+- **Work**: Professional work environment with communication tools
 
-### Systems
+### Overlays
+Custom package modifications and groupings:
 
-- Linux (NixOS)
-  - Default configuration
-  - Work machine configuration
-- macOS
-  - MacBook Air configuration
+#### Development Tools
+- Node.js version management
+- Python package customizations
+- Rust toolchain configuration
+- Development utilities package
 
-### Inputs
+#### Desktop Environments
+- GNOME Shell customizations
+- Hyprland patches and configurations
+- Desktop utilities package
 
-- nixpkgs (unstable)
-- home-manager
-- nix-darwin
-- flake-utils
-- sops-nix
-- neovim-nightly
+#### Applications
+- Firefox with custom policies
+- VSCode/Cursor with specific extensions
+- Custom application packages
+- Version overrides
 
-## Maintenance
+## Usage
 
-1. Update flake inputs:
-```bash
-nix flake update
+### Switching Desktop Environments
+```nix
+# In home.nix
+ray.home.profiles.desktop-environments.active = "hyprland"; # or "gnome"
 ```
 
-2. Apply updates:
-```bash
-# For NixOS
-sudo nixos-rebuild switch --flake .#default
-
-# For macOS
-darwin-rebuild switch --flake .#rays-MacBook-Air
+### Enabling Profiles
+```nix
+# In home.nix
+ray.home.profiles.active = "development"; # or "desktop", "work"
 ```
 
-## Notes
+### Using Custom Packages
+```nix
+# In home.nix
+home.packages = with pkgs; [
+  pkgs.dev-tools      # Custom development tools
+  pkgs.desktop-utils  # Desktop utilities
+  pkgs.my-apps        # Custom applications
+];
+```
 
-- Make sure to have the necessary permissions when applying system-wide changes
-- Backup your data before making significant changes
-- Review the configuration before applying it to your system 
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/nixos-config.git
+cd nixos-config
+```
+
+2. Build the configuration:
+```bash
+nix build .#homeConfigurations.default.activationPackage
+```
+
+3. Activate the configuration:
+```bash
+./result/activate
+```
+
+## Customization
+
+### Adding New Overlays
+1. Create a new overlay file in `overlays/`
+2. Add the overlay to `overlays/default.nix`
+3. Use the overlay in your configuration
+
+### Creating New Profiles
+1. Add a new profile file in `home/profiles/`
+2. Update `home/profiles/default.nix`
+3. Enable the profile in `home/home.nix`
+
+### Modifying Desktop Environments
+1. Edit the corresponding DE file in `home/profiles/desktop-environments/`
+2. Add custom overlays in `overlays/desktop-environments.nix`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details. 
