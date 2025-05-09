@@ -93,6 +93,7 @@
       telegram-desktop
       steam
       qbittorrent
+      zoxide
     ];
     shell = pkgs.fish;
   };
