@@ -24,14 +24,14 @@ handle_nixos() {
     echo "Build Command: sudo nixos-rebuild build --flake .#default"
     echo "Switch Command: sudo nixos-rebuild switch --flake .#default"
     
-    read -p "Do you want to build first? (y/n) " -n 1 -r
+    read -p "Do you want to build first? (y/N) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "Building with command: sudo nixos-rebuild build --flake .#default"
         sudo nixos-rebuild build --flake .#default
         if [ $? -eq 0 ]; then
             echo "Build successful!"
-            read -p "Do you want to switch now? (y/n) " -n 1 -r
+            read -p "Do you want to switch now? (y/N) " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
                 echo "Switching with command: sudo nixos-rebuild switch --flake .#default"
@@ -52,14 +52,14 @@ handle_home() {
     echo "Build Command: home-manager build --flake .#default"
     echo "Switch Command: home-manager switch --flake .#default"
     
-    read -p "Do you want to build first? (y/n) " -n 1 -r
+    read -p "Do you want to build first? (y/N) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "Building with command: home-manager build --flake .#default"
         home-manager build --flake .#default
         if [ $? -eq 0 ]; then
             echo "Build successful!"
-            read -p "Do you want to switch now? (y/n) " -n 1 -r
+            read -p "Do you want to switch now? (y/N) " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
                 echo "Switching with command: home-manager switch --flake .#default"
