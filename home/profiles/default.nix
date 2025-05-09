@@ -17,6 +17,7 @@ in
     ./desktop.nix
     ./development.nix
     ./work.nix
+    ./desktop-environments
   ];
 
   config = {
