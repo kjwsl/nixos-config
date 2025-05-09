@@ -1,0 +1,153 @@
+[env]
+# Common environment variables for all environments
+EDITOR = "nvim"
+SHELL = "fish"
+
+# Python development environment
+[env.python]
+name = "Python Development"
+packages = [
+  "python3",
+  "python3Packages.pip",
+  "python3Packages.virtualenv",
+  "python3Packages.pytest",
+  "python3Packages.black",
+  "python3Packages.flake8",
+  "python3Packages.mypy",
+  "python3Packages.ipython",
+  "python3Packages.jupyter",
+  "python3Packages.poetry",
+]
+
+# Node.js development environment
+[env.nodejs]
+name = "Node.js Development"
+packages = [
+  "nodejs_20",
+  "yarn",
+  "nodePackages.typescript",
+  "nodePackages.typescript-language-server",
+  "nodePackages.prettier",
+  "nodePackages.eslint",
+  "nodePackages.npm-check-updates",
+]
+
+# Rust development environment
+[env.rust]
+name = "Rust Development"
+packages = [
+  "rustc",
+  "cargo",
+  "rustfmt",
+  "clippy",
+  "rust-analyzer",
+  "cargo-watch",
+  "cargo-edit",
+  "cargo-expand",
+  "cargo-udeps",
+]
+
+# Go development environment
+[env.go]
+name = "Go Development"
+packages = [
+  "go",
+  "gopls",
+  "delve",
+  "golangci-lint",
+  "go-tools",
+]
+
+# Web development environment
+[env.web]
+name = "Web Development"
+packages = [
+  "nodejs_20",
+  "yarn",
+  "nodePackages.typescript",
+  "nodePackages.prettier",
+  "nodePackages.eslint",
+  "chromium",
+  "firefox",
+  "wget",
+  "curl",
+]
+
+# System development environment
+[env.system]
+name = "System Development"
+packages = [
+  "gcc",
+  "gdb",
+  "valgrind",
+  "strace",
+  "ltrace",
+  "perf",
+  "systemd",
+  "pkg-config",
+]
+
+# Database development environment
+[env.database]
+name = "Database Development"
+packages = [
+  "postgresql",
+  "mysql",
+  "sqlite",
+  "redis",
+  "mongodb",
+  "pgcli",
+  "mycli",
+]
+
+# Machine Learning environment
+[env.ml]
+name = "Machine Learning"
+packages = [
+  "python3",
+  "python3Packages.numpy",
+  "python3Packages.pandas",
+  "python3Packages.scipy",
+  "python3Packages.scikit-learn",
+  "python3Packages.tensorflow",
+  "python3Packages.torch",
+  "python3Packages.jupyter",
+  "python3Packages.matplotlib",
+  "python3Packages.seaborn",
+]
+
+# DevOps environment
+[env.devops]
+name = "DevOps"
+packages = [
+  "docker",
+  "docker-compose",
+  "kubernetes",
+  "kubectl",
+  "helm",
+  "terraform",
+  "ansible",
+  "awscli2",
+  "azure-cli",
+  "google-cloud-sdk",
+]
+
+# Scripts to run when entering each environment
+[scripts]
+python = "python3 -m venv .venv && source .venv/bin/activate"
+nodejs = "yarn install"
+rust = "cargo build"
+go = "go mod download"
+web = "yarn install"
+system = "make"
+database = "pg_ctl start"
+ml = "python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt"
+devops = "docker-compose up -d"
+
+# Commands available in all environments
+[commands]
+format = "prettier --write ."
+lint = "eslint ."
+test = "pytest"
+build = "make build"
+clean = "make clean" 
