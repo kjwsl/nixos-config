@@ -60,6 +60,7 @@
     vim
     wget
     git
+    devshell
   ];
 
   # Allow unfree packages

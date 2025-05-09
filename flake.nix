@@ -127,6 +127,15 @@
         };
       };
 
+      # Development shell template
+      devShells = {
+        default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            devshell
+            # Add other development tools here
+          ];
+        };
+      };
     };
   # outputs
 }
