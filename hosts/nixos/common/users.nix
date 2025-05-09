@@ -5,6 +5,6 @@
     isNormalUser = true;
     description = "ray";
     extraGroups = [ "networkmanager" "wheel" ];
-    shell = lib.mkDefault pkgs.fish;
+    shell = lib.mkForce pkgs.fish;
   };
 } 

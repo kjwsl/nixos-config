@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [
@@ -22,9 +22,8 @@
     # Add work-specific packages here
     slack
     zoom-us
-    teams
     libreoffice
-  ];
+  ] ++ lib.optional (pkgs.stdenv.isDarwin) pkgs.teams;
 
   # Work-specific services
   services = {
