@@ -1,0 +1,38 @@
+name: NixOS Configuration
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Flakes
+        run: |
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+
+      - name: Check Flake
+        run: nix flake check
+
+      - name: Build NixOS Configurations
+        run: |
+          nix build .#nixosConfigurations.default.config.system.build.toplevel
+          nix build .#nixosConfigurations.workmachine.config.system.build.toplevel
+
+      - name: Build Home Configurations
+        run: |
+          nix build .#homeConfigurations.default.activationPackage
+          nix build .#homeConfigurations.mac.activationPackage
+
+      - name: Check Darwin Configuration
+        if: runner.os == 'macOS'
+        run: nix build .#darwinConfigurations.rays-MacBook-Air.system 

@@ -1,4 +1,33 @@
+# Nix build outputs
 result
+result-*
+
+# Nix garbage collection roots
+/nix/var/nix/gcroots/auto/*
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+*#
+
+# Environment files
+.env
+.envrc
+.direnv
+
 sops/**/keys.txt
 .venv
 __pycache__
