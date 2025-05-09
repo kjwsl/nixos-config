@@ -10,19 +10,19 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.eza = {
-      enable = true;
-      enableAliases = true;
-      git = true;
-      icons = true;
-      extraOptions = [
-        "--group-directories-first"
-        "--header"
-      ];
-    };
-    
     home.packages = with pkgs; [
       eza
     ];
+    
+    home.shellAliases = {
+      ls = lib.mkForce "eza --group-directories-first --icons";
+      ll = lib.mkForce "eza --group-directories-first --icons -la";
+      lt = "eza --group-directories-first --icons -T";
+      la = "eza --group-directories-first --icons -a";
+      l = "eza --group-directories-first --icons -l";
+      
+      lsg = "eza --group-directories-first --icons --git";
+      llg = "eza --group-directories-first --icons -la --git";
+    };
   };
 } 

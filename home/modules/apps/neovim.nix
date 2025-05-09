@@ -10,19 +10,20 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.neovim = {
-      enable = true;
-      viAlias = true;
-      vimAlias = true;
-      withNodeJs = true;
-      withRuby = true;
-      withPython3 = true;
-      defaultEditor = true;
-    };
-    
+    # Basic neovim setup
     home.packages = with pkgs; [
       neovim
       neovim-remote
     ];
+    
+    home.shellAliases = {
+      vi = "nvim";
+      vim = "nvim";
+    };
+    
+    home.sessionVariables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+    };
   };
 } 

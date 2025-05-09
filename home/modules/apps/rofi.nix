@@ -10,21 +10,26 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.rofi = {
-      enable = true;
-      theme = "catppuccin-mocha";
-      plugins = with pkgs; [
-        rofi-calc
-        rofi-emoji
-        rofi-power-menu
-      ];
-    };
-    
     home.packages = with pkgs; [
       rofi
       rofi-calc
       rofi-emoji
       rofi-power-menu
     ];
+    
+    xdg.configFile = {
+      "rofi/config.rasi" = {
+        text = ''
+          configuration {
+            modi: "drun,window,run,ssh,combi";
+            theme: "catppuccin-mocha";
+            show-icons: true;
+            terminal: "wezterm";
+            drun-display-format: "{name}";
+            sidebar-mode: true;
+          }
+        '';
+      };
+    };
   };
 } 

@@ -2,11 +2,11 @@
 
 with lib;
 let
-  cfg = config.larp.dev.neovim;
+  cfg = config.ray.home.modules.dev.neovim;
   plg = pkgs.vimPlugins;
 in
 {
-  options.larp.dev.neovim = {
+  options.ray.home.modules.dev.neovim = {
     enable = mkEnableOption "Neovim Dev";
     useVimPlugins = mkEnableOption "Neovim Plugins";
   };

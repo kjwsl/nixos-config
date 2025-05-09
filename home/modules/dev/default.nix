@@ -8,5 +8,6 @@
     ./rust.nix
     ./nodejs.nix
     ./pyenv.nix
+    ./neovim.nix
   ];
 }

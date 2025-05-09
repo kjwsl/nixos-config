@@ -51,16 +51,9 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.ray = {
-                  home = {
-                    username = "ray";
-                    homeDirectory = "/home/ray";
-                    stateVersion = "24.11";
-                  };
-                  programs = {
-                    home-manager.enable = true;
-                  };
-                };
+                extraSpecialArgs = { inherit inputs; };
+                users.ray = ./home/home.nix;
+                backupFileExtension = "backup";
               };
             }
           ];

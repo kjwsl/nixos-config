@@ -217,9 +217,6 @@ in
   config = mkIf cfg.enable {
     programs.fastfetch = {
       enable = true;
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
       
       # Apply custom settings
       settings = let
@@ -252,6 +249,9 @@ in
         };
       };
     };
+    
+    # Make fastfetch available in the environment
+    home.packages = [ pkgs.fastfetch ];
   };
 }
 

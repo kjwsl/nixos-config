@@ -11,7 +11,7 @@ in
 
   config = mkIf cfg.enable {
     programs.tmux = {
-      enable = true;
+      enable = mkForce true;
       plugins = with pkgs.tmuxPlugins; [
         catppuccin
         jump

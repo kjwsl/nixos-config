@@ -131,8 +131,8 @@ in
     # Enable required packages
     home.packages = with pkgs; [
       # GNOME packages
-      gnome.gnome-tweaks
-      gnome.gnome-shell-extensions
+      gnome-tweaks
+      gnome-shell-extensions
       gnome.gnome-terminal
       gnome.gnome-calculator
       gnome.gnome-calendar
@@ -140,7 +140,7 @@ in
       gnome.gnome-weather
       gnome.gnome-system-monitor
       gnome.gnome-disk-utility
-      gnome.gnome-screenshot
+      gnome-screenshot
       gnome.gnome-sound-recorder
       gnome.gnome-clocks
       gnome.gnome-contacts
@@ -164,11 +164,11 @@ in
       gnome.gnome-session
       gnome.gnome-settings-daemon
       gnome.gnome-shell
-      gnome.gnome-shell-extensions
+      gnome-shell-extensions
       gnome.gnome-software
       gnome.gnome-system-monitor
       gnome.gnome-terminal
-      gnome.gnome-tweaks
+      gnome-tweaks
       gnome.gnome-user-docs
       gnome.gnome-user-share
       gnome.gnome-video-effects

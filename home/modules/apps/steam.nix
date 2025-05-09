@@ -11,6 +11,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Define home packages for Steam
     home.packages = with pkgs; [
       steam
       steam-run

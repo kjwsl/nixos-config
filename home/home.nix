@@ -36,8 +36,6 @@ in
     v = "nvim";
     vim = "nvim";
     g = "git";
-    ls = "ls -ah --color";
-    ll = "ls -lah --color";
   };
 
   # Enable modules
@@ -46,7 +44,7 @@ in
       wezterm.enable = true;
       discord.enable = true;
       kitty.enable = true;
-      neovim.enable = true;
+      neovim.enable = false;
       telegram.enable = true;
       steam.enable = true;
       qbittorrent.enable = true;
@@ -67,6 +65,10 @@ in
       rust.enable = true;
       nodejs.enable = true;
       pyenv.enable = true;
+      neovim = {
+        enable = true;
+        useVimPlugins = true;
+      };
     };
   };
 
@@ -157,8 +159,6 @@ in
       ];
       shellAliases = {
         g = "git";
-        ls = "ls -ah --color";
-        ll = "ls -lah --color";
       };
     };
     git = {
@@ -207,11 +207,6 @@ in
     wezterm.enable = false;
     lazygit.enable = true;
     pyenv.enable = true;
-    neovim = {
-      enable = true;
-      viAlias = true;
-      vimAlias = true;
-    };
   };
 
   # Services configuration
