@@ -121,9 +121,8 @@
     ibus-engines.libpinyin
     ibus-engines.mozc
     libgcc
-    noto-fonts-cjk-sans
-    noto-fonts-cjk-serif
     oh-my-fish
+    tmux
     python3Full
     rustup
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
@@ -135,6 +134,16 @@
     wine64
     winetricks
     wineWowPackages.waylandFull
+  ];
+
+  fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    noto-fonts-emoji
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.caskaydia-mono
+    nerd-fonts.caskaydia-cove
   ];
 
   i18n.supportedLocales = [ "en_US.UTF-8/UTF-8" "ko_KR.UTF-8/UTF-8" "zh_CN.UTF-8/UTF-8" ];
