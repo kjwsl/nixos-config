@@ -61,7 +61,7 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -88,6 +88,7 @@
       thunderbird
       discord
       wezterm
+      lazygit
       fzf
       telegram-desktop
       steam
@@ -119,13 +120,13 @@
     ibus-engines.libpinyin
     ibus-engines.mozc
     libgcc
-    nerdfonts
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
     oh-my-fish
     python3Full
     rustup
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    neovim
     wget
     wineWowPackages.stable
     wine
