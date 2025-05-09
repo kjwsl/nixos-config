@@ -1,10 +1,10 @@
 {
-  description = "My Configurations";
+  description = "My NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-darwin.url = "github:lnl7/nix-darwin/master";
@@ -24,14 +24,12 @@
   };
 
 
-  outputs = { nixpkgs, home-manager, nix-darwin, flake-utils, sops-nix, neovim-nightly, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, nix-darwin, flake-utils, sops-nix, neovim-nightly, ... }@inputs:
     let
       lib = nixpkgs.lib;
       configDir = toString ./. + "/config/.config";
-      systems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
 
       # Helper function to get absolute path
       getPath = path: builtins.toString (builtins.path { path = ./. + "/${path}"; });
@@ -47,6 +45,32 @@
             ./home/home.nix
           ];
         };
+
+      mkNixosConfig = { system, hostname }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./hosts/nixos/${hostname}/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.ray = {
+                  home = {
+                    username = "ray";
+                    homeDirectory = "/home/ray";
+                    stateVersion = "24.11";
+                  };
+                  programs = {
+                    home-manager.enable = true;
+                  };
+                };
+              };
+            }
+          ];
+        };
     in
     {
       # Your custom packages and modifications, exported as overlays
@@ -58,13 +82,15 @@
       #     ./home/home.nix
       #   ];
       # };
-      homeConfigurations."default" = mkHome {
-        user = "ray";
-        system = "x86_64-linux";
-      };
-      homeConfigurations."mac" = mkHome {
-        user = "ray";
-        system = "aarch64-darwin";
+      homeConfigurations = {
+        default = mkHome {
+          user = "ray";
+          system = "x86_64-linux";
+        };
+        mac = mkHome {
+          user = "ray";
+          system = "aarch64-darwin";
+        };
       };
 
       darwinConfigurations."rays-MacBook-Air" = nix-darwin.lib.darwinSystem {
@@ -89,20 +115,15 @@
           inherit configDir;
         };
       };
+
       nixosConfigurations = {
-        default = nixpkgs.lib.nixosSystem {
+        default = mkNixosConfig {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/nixos/default/configuration.nix
-          ];
+          hostname = "default";
         };
-        workmachine = nixpkgs.lib.nixosSystem {
+        workmachine = mkNixosConfig {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/nixos/workmachine/configuration.nix
-          ];
+          hostname = "workmachine";
         };
       };
 

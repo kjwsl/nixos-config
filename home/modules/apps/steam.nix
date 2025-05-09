@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 with lib;
+
 let
   cfg = config.ray.home.modules.apps.steam;
 in
@@ -10,13 +11,21 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.steam = {
-      enable = true;
-      protontricks.enable = true;
-    };
-    
     home.packages = with pkgs; [
       steam
+      steam-run
     ];
+
+    # Steam configuration
+    home.sessionVariables = {
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+    };
+
+    # Create Steam compatibility tools directory
+    home.activation = {
+      createSteamCompatDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.steam/root/compatibilitytools.d"
+      '';
+    };
   };
 } 

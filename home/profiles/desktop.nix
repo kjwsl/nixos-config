@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.ray.home.profiles.desktop;
+  cfg = config.ray.home.profiles;
 in
 {
   options.ray.home.profiles.desktop = {
@@ -27,6 +27,25 @@ in
         eza.enable = true;
       };
     };
+
+    # Additional desktop-specific packages
+    home.packages = with pkgs; [
+      # Gaming
+      steam-run
+      protontricks
+      winetricks
+      lutris
+      
+      # Multimedia
+      vlc
+      mpv
+      spotify
+      
+      # System utilities
+      htop
+      neofetch
+      fastfetch
+    ];
   };
 }
 
