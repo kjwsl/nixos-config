@@ -18,6 +18,56 @@ let
 
 in
 {
+  imports = [
+    ./modules/apps
+    ./modules/shell
+    ./modules/dev
+  ];
+
+  # Basic configuration
+  home.username = "ray";
+  home.homeDirectory = homeDir;
+  home.stateVersion = "24.11";
+
+  # Shell aliases
+  home.shellAliases = {
+    v = "nvim";
+    vim = "nvim";
+    g = "git";
+    ls = "ls -ah --color";
+    ll = "ls -lah --color";
+  };
+
+  # Enable modules
+  ray.home.modules = {
+    apps = {
+      wezterm.enable = true;
+      discord.enable = true;
+      kitty.enable = true;
+      neovim.enable = true;
+      telegram.enable = true;
+      steam.enable = true;
+      qbittorrent.enable = true;
+      rofi.enable = true;
+      waybar.enable = true;
+    };
+    shell = {
+      fish.enable = true;
+      zoxide.enable = true;
+      bat.enable = true;
+      eza.enable = true;
+    };
+    dev = {
+      git.enable = true;
+      tmux.enable = true;
+      fzf.enable = true;
+      ripgrep.enable = true;
+      rust.enable = true;
+      nodejs.enable = true;
+      pyenv.enable = true;
+    };
+  };
+
   # imports = [
   #   inputs.sops-nix.homeManagerModules.sops
   #   ./modules
@@ -67,26 +117,6 @@ in
   #     WorkingDirectory = "/var/lib/myservice";
   #   };
   # };
-
-  home.username = "ray";
-  home.homeDirectory = "/home/ray";
-
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "24.11"; # Please read the comment before changing.
-
-  home.shellAliases = {
-    v = "nvim";
-    vim = "nvim";
-    g = "git";
-    ls = "ls -ah --color";
-    ll = "ls -lah --color";
-  };
 
   home.packages = with pkgs; [
     bat

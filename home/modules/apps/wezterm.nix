@@ -1,18 +1,21 @@
-{ config, lib, pkgs, flakeContext, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 let
-  cfg = config.larp.app.wezterm;
-  config_dir = flakeContext.conf_dir;
+  cfg = config.ray.home.modules.apps.wezterm;
 in
 {
-  options.larp.app.wezterm = {
-    enable = mkEnableOption "Wezterm Configuration";
+  options.ray.home.modules.apps.wezterm = {
+    enable = mkEnableOption "WezTerm terminal emulator";
   };
 
   config = mkIf cfg.enable {
-    xdg.configFile."wezterm".source = "${config_dir}/.config/wezterm";
-    programs.wezterm.enable = true;
+    programs.wezterm = {
+      enable = true;
+    };
+    
+    home.packages = with pkgs; [
+      wezterm
+    ];
   };
-
 }
