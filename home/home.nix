@@ -22,12 +22,16 @@ in
     ./modules/apps
     ./modules/shell
     ./modules/dev
+    ./profiles
   ];
 
   # Basic configuration
   home.username = "ray";
   home.homeDirectory = homeDir;
   home.stateVersion = "24.11";
+
+  # Set the active profile
+  ray.home.profiles.active = "desktop";
 
   # Shell aliases
   home.shellAliases = {

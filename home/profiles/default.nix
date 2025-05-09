@@ -1,16 +1,25 @@
 { config, lib, pkgs, ... }:
+
 with lib;
 let
-  cfg = config.ray.home.profile;
+  cfg = config.ray.home.profiles;
 in
 {
-  import = [
-    ./desktop
+  options.ray.home.profiles = {
+    active = mkOption {
+      type = types.enum [ "desktop" "development" "work" ];
+      default = "desktop";
+      description = "The active profile to use";
+    };
+  };
+
+  imports = [
+    ./desktop.nix
+    ./development.nix
+    ./work.nix
   ];
 
-  option.ray.home.profile = mkOption {
-    type = types.string;
-    default = "desktop";
-
+  config = {
+    ray.home.profiles.${cfg.active}.enable = true;
   };
 }
