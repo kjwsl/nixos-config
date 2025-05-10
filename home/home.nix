@@ -1,6 +1,11 @@
 { config, pkgs, lib, inputs, ... }:
 
+with lib;  # Add this line to make lib functions available
+
 let
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+  
   # Platform detection
   isLinux = pkgs.stdenv.isLinux;
   isDarwin = pkgs.stdenv.isDarwin;
@@ -25,17 +30,35 @@ let
   dotfiles = [
     ".aliasrc"
     ".bashrc"
-    ".fonts"
+    ".bash_eww"
+    ".bash_local"
+    ".clang-format"
+    ".envrc"
     ".gitconfig"
     ".p10k.zsh"
-    ".clang-format"
-    ".zshrc"
-    ".oh-my-bash"
+    ".profile"
+    ".vim"
     ".vst3"
+    ".zshenv"
+    ".zshrc"
+    ".config/fish"
+    ".config/fontconfig"
+    ".config/gh"
+    ".config/ghostty"
+    ".config/gtk-3.0"
+    ".config/gtk-4.0"
+    ".config/hypr"
+    ".config/kitty"
+    ".config/nix"
+    ".config/nvim"
+    ".config/omf"
+    ".config/sops"
+    ".config/tmux"
+    ".config/wezterm"
+    ".config/zsh"
     "images"
-    "programs"
     "modules"
-    "notes"
+    "scripts"
   ];
   
   # Define platform-specific packages
@@ -64,6 +87,9 @@ let
       wezterm
       kitty
       
+      # Browsers and editors
+      # brave and code-cursor are managed by Homebrew on macOS
+      
       # Other utilities
       unzip
       oh-my-fish
@@ -76,7 +102,6 @@ let
       telegram-desktop
       steam
       qbittorrent
-      code-cursor
     ];
     
     # All packages combined by platform
@@ -123,40 +148,40 @@ in
   ray.home.modules = {
     # Cross-platform applications
     apps = {
-      wezterm.enable = true;
-      kitty.enable = true;
-      neovim.enable = false;
+      wezterm.enable = mkForce false;
+      kitty.enable = mkForce false;
+      neovim.enable = mkForce false;
     } 
     # Linux-specific applications
     // lib.optionalAttrs isLinux {
-      discord.enable = true;
-      telegram.enable = true;
-      steam.enable = true;
-      qbittorrent.enable = true;
-      rofi.enable = true;
-      waybar.enable = true;
+      discord.enable = mkForce true;
+      telegram.enable = mkForce true;
+      steam.enable = mkForce true;
+      qbittorrent.enable = mkForce true;
+      rofi.enable = mkForce true;
+      waybar.enable = mkForce true;
     };
     
     # Shell modules - cross-platform
     shell = {
-      fish.enable = true;
-      zoxide.enable = true;
-      bat.enable = true;
-      eza.enable = true;
+      fish.enable = mkForce false;
+      zoxide.enable = mkForce true;
+      bat.enable = mkForce true;
+      eza.enable = mkForce true;
     };
     
     # Development modules - cross-platform
     dev = {
-      git.enable = true;
-      tmux.enable = true;
-      fzf.enable = true;
-      ripgrep.enable = true;
-      rust.enable = true;
-      nodejs.enable = true;
-      pyenv.enable = true;
+      git.enable = mkForce true;
+      tmux.enable = mkForce true;
+      fzf.enable = mkForce true;
+      ripgrep.enable = mkForce true;
+      rust.enable = mkForce true;
+      nodejs.enable = mkForce true;
+      pyenv.enable = mkForce true;
       neovim = {
-        enable = true;
-        useVimPlugins = true;
+        enable = mkForce true;
+        useVimPlugins = mkForce true;
       };
     };
   };
@@ -172,27 +197,8 @@ in
   # Programs configuration
   programs = {
     # Shell configuration
-    bash = {
-      initExtra = ''
-        if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
-        then
-          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-          exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
-        fi
-      '';
-    };
-    
-    fish = {
-      enable = true;
-      plugins = [
-        {
-          name = "oh-my-fish";
-          src = pkgs.oh-my-fish;
-        }
-      ];
-      shellAliases = {
-        g = "git";
-      };
+    zsh = {
+      enable = false;
     };
     
     # Git configuration
@@ -243,9 +249,7 @@ in
       enableFishIntegration = true;
     };
     eza.enable = true;
-    wezterm.enable = false;
     lazygit.enable = true;
-    pyenv.enable = true;
     
     # Enable home-manager
     home-manager.enable = true;

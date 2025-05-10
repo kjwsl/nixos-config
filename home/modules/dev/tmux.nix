@@ -6,31 +6,24 @@ let
 in
 {
   options.ray.home.modules.dev.tmux = {
-    enable = mkEnableOption "tmux terminal multiplexer";
+    enable = mkEnableOption "tmux terminal multiplexer" // { default = false; };
   };
 
-  config = mkIf cfg.enable {
-    programs.tmux = {
-      enable = mkForce true;
-      plugins = with pkgs.tmuxPlugins; [
-        catppuccin
-        jump
-        yank
-        tmux-fzf
-        sensible
-        resurrect
-        continuum
-        mode-indicator
-        vim-tmux-navigator
+  config = mkMerge [
+    (mkIf false {}) # Always disabled, no config
+    (mkIf cfg.enable {
+      home.packages = with pkgs; [
+        tmux
+        tmuxPlugins.catppuccin
+        tmuxPlugins.jump
+        tmuxPlugins.yank
+        tmuxPlugins.tmux-fzf
+        tmuxPlugins.sensible
+        tmuxPlugins.resurrect
+        tmuxPlugins.continuum
+        tmuxPlugins.mode-indicator
+        tmuxPlugins.vim-tmux-navigator
       ];
-      mouse = true;
-      prefix = "C-s";
-      clock24 = true;
-      keyMode = "vi";
-    };
-    
-    home.packages = with pkgs; [
-      tmux
-    ];
-  };
+    })
+  ];
 } 

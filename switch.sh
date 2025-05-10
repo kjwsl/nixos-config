@@ -99,29 +99,29 @@ handle_darwin() {
         return 1
     fi
 
-    echo "Build Command: darwin-rebuild build --flake .#$HOSTNAME"
-    echo "Switch Command: darwin-rebuild switch --flake .#$HOSTNAME"
+    echo "Build Command: nix run nix-darwin -- build --flake .#rays-MacBook-Air"
+    echo "Switch Command: nix run nix-darwin -- switch --flake .#rays-MacBook-Air"
     
     read -p "Do you want to build first? (y/N) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "Building with command: darwin-rebuild build --flake .#$HOSTNAME"
-        darwin-rebuild build --flake .#$HOSTNAME
+        echo "Building with command: nix run nix-darwin -- build --flake .#rays-MacBook-Air"
+        nix run nix-darwin -- build --flake .#rays-MacBook-Air
         if [ $? -eq 0 ]; then
             echo "Build successful!"
             read -p "Do you want to switch now? (y/N) " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                echo "Switching with command: darwin-rebuild switch --flake .#$HOSTNAME"
-                darwin-rebuild switch --flake .#$HOSTNAME
+                echo "Switching with command: nix run nix-darwin -- switch --flake .#rays-MacBook-Air"
+                nix run nix-darwin -- switch --flake .#rays-MacBook-Air
             fi
         else
             echo "Build failed"
             exit 1
         fi
     else
-        echo "Switching with command: darwin-rebuild switch --flake .#$HOSTNAME"
-        darwin-rebuild switch --flake .#$HOSTNAME
+        echo "Switching with command: nix run nix-darwin -- switch --flake .#rays-MacBook-Air"
+        nix run nix-darwin -- switch --flake .#rays-MacBook-Air
     fi
 }
 

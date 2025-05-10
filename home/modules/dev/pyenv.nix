@@ -11,7 +11,7 @@ in
 
   config = mkIf cfg.enable {
     programs.pyenv = {
-      enable = true;
+      enable = mkDefault true;
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableFishIntegration = true;

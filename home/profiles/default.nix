@@ -26,11 +26,11 @@ in
       ray.home.modules = mkMerge [
         {
           apps = {
-            wezterm.enable = true;
-            kitty.enable = true;
+            wezterm.enable = false;
+            kitty.enable = false;
           };
           shell = {
-            fish.enable = true;
+            fish.enable = false;
             zoxide.enable = true;
             bat.enable = true;
             eza.enable = true;
@@ -53,19 +53,19 @@ in
     (mkIf (cfg.active == "development") {
       ray.home.modules = {
         apps = {
-          wezterm.enable = true;
-          kitty.enable = true;
-          neovim.enable = true;
+          wezterm.enable = false;
+          kitty.enable = false;
+          neovim.enable = false;
         };
         shell = {
-          fish.enable = true;
+          fish.enable = false;
           zoxide.enable = true;
           bat.enable = true;
           eza.enable = true;
         };
         dev = {
           git.enable = true;
-          tmux.enable = true;
+          tmux.enable = false;
           fzf.enable = true;
           ripgrep.enable = true;
           rust.enable = true;
@@ -79,20 +79,20 @@ in
     (mkIf (cfg.active == "work") {
       ray.home.modules = {
         apps = {
-          wezterm.enable = true;
-          kitty.enable = true;
-          neovim.enable = true;
+          wezterm.enable = false;
+          kitty.enable = false;
+          neovim.enable = false;
           telegram.enable = true;
         };
         shell = {
-          fish.enable = true;
+          fish.enable = false;
           zoxide.enable = true;
           bat.enable = true;
           eza.enable = true;
         };
         dev = {
           git.enable = true;
-          tmux.enable = true;
+          tmux.enable = false;
           fzf.enable = true;
           ripgrep.enable = true;
           nodejs.enable = true;

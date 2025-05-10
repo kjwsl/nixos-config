@@ -18,32 +18,6 @@ in
       _ZO_DATA_DIR = "$HOME/.local/share/zoxide";
     };
     
-    xdg.configFile = {
-      "bash/bash_profile.d/zoxide.sh" = {
-        text = ''
-          if command -v zoxide >/dev/null; then
-            eval "$(zoxide init bash)"
-          fi
-        '';
-      };
-      
-      "zsh/zshrc.d/zoxide.zsh" = {
-        text = ''
-          if (( $+commands[zoxide] )); then
-            eval "$(zoxide init zsh)"
-          fi
-        '';
-      };
-      
-      "fish/conf.d/zoxide.fish" = {
-        text = ''
-          if type -q zoxide
-            zoxide init fish | source
-          fi
-        '';
-      };
-    };
-    
     home.shellAliases = {
       cd = "z";
       cdi = "zi";

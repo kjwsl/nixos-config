@@ -11,22 +11,22 @@ in
   config = mkIf cfg.enable {
     ray.home.modules = {
       apps = {
-        wezterm.enable = true;
-        kitty.enable = true;
-        rofi.enable = true;
-        waybar.enable = true;
-        discord.enable = true;
-        telegram.enable = true;
-        steam.enable = true;
-        qbittorrent.enable = true;
+        wezterm.enable = mkForce false;
+        kitty.enable = mkForce false;
+        rofi.enable = mkForce true;
+        waybar.enable = mkForce true;
+        discord.enable = mkForce true;
+        telegram.enable = mkForce true;
+        steam.enable = mkForce true;
+        qbittorrent.enable = mkForce true;
       };
       shell = {
-        fish.enable = true;
-        zoxide.enable = true;
-        bat.enable = true;
-        eza.enable = true;
+        fish.enable = mkForce false;
+        zoxide.enable = mkForce true;
+        bat.enable = mkForce true;
+        eza.enable = mkForce true;
         fastfetch = {
-          enable = true;
+          enable = mkForce true;
           theme = "catppuccin";
         };
       };
