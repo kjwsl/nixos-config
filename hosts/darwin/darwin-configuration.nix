@@ -67,6 +67,16 @@
       autohide = true;
       orientation = "bottom";
       showhidden = true;
+      autohide-delay = 0.0;
+      autohide-time-modifier = 0.5;
+      expose-animation-duration = 0.1;
+      tilesize = 48;
+      mineffect = "scale";
+      launchanim = true;
+      static-only = false;
+      show-recents = false;
+      show-process-indicators = true;
+      mouse-over-hilite-stack = true;
     };
     finder = {
       AppleShowAllExtensions = true;
@@ -94,4 +104,11 @@
     };
   };
   system.stateVersion = 5;
+
+  # Add a separate activation script to fully reset the Dock
+  system.activationScripts.postUserActivation.text = ''
+    # Restart the Dock completely
+    echo "Resetting the Dock..."
+    killall Dock || true
+  '';
 }
