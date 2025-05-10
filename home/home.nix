@@ -1,11 +1,16 @@
 { config, pkgs, lib, inputs, ... }:
 
 let
-  homeDir =
-    if pkgs.stdenv.isLinux
-    then lib.mkDefault "/home/ray"
-    else lib.mkDefault "/Users/ray";
+  # Platform detection
+  isLinux = pkgs.stdenv.isLinux;
+  isDarwin = pkgs.stdenv.isDarwin;
+  
+  # Home directory based on platform
+  homeDir = if isLinux
+            then lib.mkDefault "/home/ray"
+            else lib.mkDefault "/Users/ray";
 
+  # Helper for managing dotfiles
   mkDotfiles = { path, files }:
     builtins.listToAttrs (map
       (file: {
@@ -16,35 +21,114 @@ let
       })
       files);
 
+  # Dotfiles to link
+  dotfiles = [
+    ".aliasrc"
+    ".bashrc"
+    ".fonts"
+    ".gitconfig"
+    ".p10k.zsh"
+    ".clang-format"
+    ".zshrc"
+    ".oh-my-bash"
+    ".vst3"
+    "images"
+    "programs"
+    "modules"
+    "notes"
+  ];
+  
+  # Define platform-specific packages
+  pkgSets = rec {
+    # Cross-platform packages
+    common = with pkgs; [
+      # Shell utilities
+      bat
+      fzf
+      fastfetch
+      git
+      lazygit
+      zoxide
+      
+      # Development tools
+      git-repo
+      luarocks
+      nixd
+      nodejs_22
+      ripgrep
+      rustup
+      stow
+      tmux
+      
+      # Terminal emulators
+      wezterm
+      kitty
+      
+      # Other utilities
+      unzip
+      oh-my-fish
+    ];
+    
+    # Linux-only packages
+    linux = with pkgs; [
+      rofi
+      discord
+      telegram-desktop
+      steam
+      qbittorrent
+      code-cursor
+    ];
+    
+    # All packages combined by platform
+    all = common ++ (if isLinux then linux else []);
+  };
 in
 {
   # Basic configuration
-  home.username = "ray";
-  home.homeDirectory = homeDir;
-  home.stateVersion = "24.11";
-
-  # Set the active profile and desktop environment
-  ray.home = {
-    profiles = {
-      active = "desktop";
-      desktopEnvironment = "gnome";
+  home = {
+    username = "ray";
+    homeDirectory = homeDir;
+    stateVersion = "24.11";
+    
+    # Shell aliases
+    shellAliases = {
+      v = "nvim";
+      vim = "nvim";
+      g = "git";
+    };
+    
+    # Session configuration
+    sessionPath = [ ];
+    sessionVariables = {
+      EDITOR = "nvim";
+    };
+    
+    # Package installation
+    packages = pkgSets.all;
+    
+    # Dotfiles management
+    file = mkDotfiles {
+      path = ".dotfiles";
+      files = dotfiles;
     };
   };
 
-  # Shell aliases
-  home.shellAliases = {
-    v = "nvim";
-    vim = "nvim";
-    g = "git";
+  # Set the active profile and desktop environment
+  ray.home.profiles = {
+    active = "desktop";
+    desktopEnvironment = "gnome";
   };
 
-  # Enable modules - conditionally enable Linux-specific ones
+  # Enable modules with platform-specific configuration
   ray.home.modules = {
+    # Cross-platform applications
     apps = {
       wezterm.enable = true;
       kitty.enable = true;
       neovim.enable = false;
-    } // lib.optionalAttrs pkgs.stdenv.isLinux {
+    } 
+    # Linux-specific applications
+    // lib.optionalAttrs isLinux {
       discord.enable = true;
       telegram.enable = true;
       steam.enable = true;
@@ -52,12 +136,16 @@ in
       rofi.enable = true;
       waybar.enable = true;
     };
+    
+    # Shell modules - cross-platform
     shell = {
       fish.enable = true;
       zoxide.enable = true;
       bat.enable = true;
       eza.enable = true;
     };
+    
+    # Development modules - cross-platform
     dev = {
       git.enable = true;
       tmux.enable = true;
@@ -81,67 +169,9 @@ in
     ./profiles
   ];
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-  home.file = mkDotfiles {
-    path = ".dotfiles";
-    files = [
-      ".aliasrc"
-      ".bashrc"
-      ".fonts"
-      ".gitconfig"
-      ".p10k.zsh"
-      ".clang-format"
-      ".zshrc"
-      ".oh-my-bash"
-      ".vst3"
-      "images"
-      "programs"
-      "modules"
-      "notes"
-    ];
-  };
-
-  home.sessionPath = [ ];
-
-  home.sessionVariables = {
-    EDITOR = "nvim";
-  };
-
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-  home.packages = with pkgs; [
-    bat
-    fzf
-    fastfetch
-    git-repo
-    luarocks
-    nixd
-    nodejs_22
-    ripgrep
-    rustup
-    stow
-    unzip
-    zoxide
-    git
-    lazygit
-    fzf
-    zoxide
-    tmux
-    wezterm
-    kitty
-    oh-my-fish
-  ] ++ lib.optionals pkgs.stdenv.isLinux [
-    rofi
-    discord
-    telegram-desktop
-    steam
-    qbittorrent
-    code-cursor  # Moved to Linux-only as it has unfree license issues on macOS
-  ];
-
   # Programs configuration
   programs = {
+    # Shell configuration
     bash = {
       initExtra = ''
         if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
@@ -151,6 +181,7 @@ in
         fi
       '';
     };
+    
     fish = {
       enable = true;
       plugins = [
@@ -163,6 +194,8 @@ in
         g = "git";
       };
     };
+    
+    # Git configuration
     git = {
       enable = true;
       userEmail = "ray@example.com";
@@ -181,6 +214,8 @@ in
         di = "diff";
       };
     };
+    
+    # Tmux configuration
     tmux = {
       enable = false;
       plugins = with pkgs.tmuxPlugins; [
@@ -199,6 +234,8 @@ in
       clock24 = true;
       keyMode = "vi";
     };
+    
+    # Other programs
     zoxide = {
       enable = true;
       enableBashIntegration = true;
@@ -209,6 +246,9 @@ in
     wezterm.enable = false;
     lazygit.enable = true;
     pyenv.enable = true;
+    
+    # Enable home-manager
+    home-manager.enable = true;
   };
 
   # Services configuration
@@ -217,7 +257,4 @@ in
       enable = true;
     };
   };
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
 }
