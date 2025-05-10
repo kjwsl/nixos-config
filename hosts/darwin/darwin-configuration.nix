@@ -44,6 +44,7 @@
       "eza"                # Modern ls replacement
       "neovim"             # Modern vim implementation
       "bat"                # Better cat with syntax highlighting
+      "lazygit"           # Git GUI
     ];
     casks = [
       # Existing casks
