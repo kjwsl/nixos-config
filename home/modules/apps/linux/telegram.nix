@@ -3,10 +3,6 @@
 with lib;
 let
   cfg = config.ray.home.modules.apps.telegram;
-  # Only define Linux packages if we're on Linux
-  telegramPackages = if pkgs.stdenv.isLinux then with pkgs; [
-    telegram-desktop
-  ] else [];
 in
 {
   options.ray.home.modules.apps.telegram = {
@@ -14,6 +10,8 @@ in
   };
 
   config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
-    home.packages = telegramPackages;
+    home.packages = with pkgs; [
+      telegram-desktop
+    ];
   };
 } 

@@ -3,10 +3,6 @@
 with lib;
 let
   cfg = config.ray.home.modules.apps.waybar;
-  # Only define Linux packages if we're on Linux
-  waybarPackages = if pkgs.stdenv.isLinux then with pkgs; [
-    waybar
-  ] else [];
 in
 {
   options.ray.home.modules.apps.waybar = {
@@ -14,7 +10,9 @@ in
   };
 
   config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
-    home.packages = waybarPackages;
+    home.packages = with pkgs; [
+      waybar
+    ];
     
     xdg.configFile = {
       "waybar/config" = {

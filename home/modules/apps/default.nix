@@ -1,20 +1,30 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-
 {
-  # Import submodules directly at the top level
+  # Import all modules
   imports = [
+    # Cross-platform modules
     ./wezterm.nix
     ./kitty.nix
     ./neovim.nix
+    
+    # Linux-specific modules
+    ./rofi.nix
+    ./waybar.nix
     ./discord.nix
     ./telegram.nix
     ./steam.nix
     ./qbittorrent.nix
-    ./rofi.nix
-    ./waybar.nix
   ];
-  
-  # No option declarations here - they are already defined in the individual module files
+
+  # On Darwin, explicitly disable Linux-only modules
+  config = mkIf pkgs.stdenv.isDarwin {
+    ray.home.modules.apps.rofi.enable = mkForce false;
+    ray.home.modules.apps.waybar.enable = mkForce false;
+    ray.home.modules.apps.discord.enable = mkForce false;
+    ray.home.modules.apps.telegram.enable = mkForce false;
+    ray.home.modules.apps.steam.enable = mkForce false;
+    ray.home.modules.apps.qbittorrent.enable = mkForce false;
+  };
 }

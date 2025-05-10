@@ -38,13 +38,14 @@ in
     g = "git";
   };
 
-  # Enable modules
+  # Enable modules - conditionally enable Linux-specific ones
   ray.home.modules = {
     apps = {
       wezterm.enable = true;
-      discord.enable = true;
       kitty.enable = true;
       neovim.enable = false;
+    } // lib.optionalAttrs pkgs.stdenv.isLinux {
+      discord.enable = true;
       telegram.enable = true;
       steam.enable = true;
       qbittorrent.enable = true;
@@ -129,13 +130,14 @@ in
     tmux
     wezterm
     kitty
+    oh-my-fish
+  ] ++ lib.optionals pkgs.stdenv.isLinux [
     rofi
-    code-cursor
     discord
     telegram-desktop
     steam
     qbittorrent
-    oh-my-fish
+    code-cursor  # Moved to Linux-only as it has unfree license issues on macOS
   ];
 
   # Programs configuration

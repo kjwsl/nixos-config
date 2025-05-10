@@ -9,7 +9,7 @@ in
     enable = mkEnableOption "GNOME desktop environment";
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     # Enable GNOME
     dconf.settings = {
       "org/gnome/desktop/interface" = {

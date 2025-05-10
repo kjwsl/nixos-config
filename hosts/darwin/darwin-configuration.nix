@@ -10,6 +10,27 @@
   ];
   nixpkgs.config.allowUnfree = true;
   nixpkgs.hostPlatform = "aarch64-darwin";
+  
+  # Overlays to handle problematic packages
+  nixpkgs.overlays = [
+    (final: prev: {
+      # Provide empty/stub packages for Linux-only applications on Darwin
+      rofi = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "rofi-stub" {} "mkdir -p $out" else prev.rofi;
+      waybar = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "waybar-stub" {} "mkdir -p $out" else prev.waybar;
+      discord = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "discord-stub" {} "mkdir -p $out" else prev.discord;
+      telegram-desktop = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "telegram-desktop-stub" {} "mkdir -p $out" else prev.telegram-desktop;
+      steam = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "steam-stub" {} "mkdir -p $out" else prev.steam;
+      steam-run = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "steam-run-stub" {} "mkdir -p $out" else prev.steam-run;
+      qbittorrent = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "qbittorrent-stub" {} "mkdir -p $out" else prev.qbittorrent;
+      gnome-tweaks = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "gnome-tweaks-stub" {} "mkdir -p $out" else prev.gnome-tweaks;
+      
+      # Handle any other Linux-only dependencies
+      rofi-calc = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "rofi-calc-stub" {} "mkdir -p $out" else prev.rofi-calc;
+      rofi-emoji = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "rofi-emoji-stub" {} "mkdir -p $out" else prev.rofi-emoji;
+      rofi-power-menu = if pkgs.stdenv.isDarwin then prev.runCommandNoCC "rofi-power-menu-stub" {} "mkdir -p $out" else prev.rofi-power-menu;
+    })
+  ];
+  
   environment.shellInit = ''
     "eval "$(/opt/homebrew/bin/brew shellenv)""
   '';
@@ -52,7 +73,9 @@
       ShowPathbar = true;
     };
   };
-  security.pam.enableSudoTouchIdAuth = true;
+
+  # Updated TouchID configuration
+  security.pam.services.sudo_local.touchIdAuth = true;
 
   # Auto upgrade nix packages and the demon service.
   homebrew = {
@@ -70,6 +93,5 @@
       "extra-experimental-features" = [ "nix-command" "flakes" ];
     };
   };
-  services.nix-daemon.enable = true;
   system.stateVersion = 5;
 }

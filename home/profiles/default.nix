@@ -23,24 +23,30 @@ in
   config = mkMerge [
     # Desktop profile
     (mkIf (cfg.active == "desktop") {
-      ray.home.modules = {
-        apps = {
-          wezterm.enable = true;
-          kitty.enable = true;
-          rofi.enable = true;
-          waybar.enable = true;
-          discord.enable = true;
-          telegram.enable = true;
-          steam.enable = true;
-          qbittorrent.enable = true;
-        };
-        shell = {
-          fish.enable = true;
-          zoxide.enable = true;
-          bat.enable = true;
-          eza.enable = true;
-        };
-      };
+      ray.home.modules = mkMerge [
+        {
+          apps = {
+            wezterm.enable = true;
+            kitty.enable = true;
+          };
+          shell = {
+            fish.enable = true;
+            zoxide.enable = true;
+            bat.enable = true;
+            eza.enable = true;
+          };
+        }
+        (mkIf pkgs.stdenv.isLinux {
+          apps = {
+            rofi.enable = true;
+            waybar.enable = true;
+            discord.enable = true;
+            telegram.enable = true;
+            steam.enable = true;
+            qbittorrent.enable = true;
+          };
+        })
+      ];
     })
     
     # Development profile
@@ -96,7 +102,7 @@ in
     })
     
     # Hyprland desktop environment
-    (mkIf (cfg.desktopEnvironment == "hyprland") {
+    (mkIf (cfg.desktopEnvironment == "hyprland" && pkgs.stdenv.isLinux) {
       home.packages = with pkgs; [
         hyprland
         waybar
@@ -111,7 +117,7 @@ in
     })
     
     # GNOME desktop environment
-    (mkIf (cfg.desktopEnvironment == "gnome") {
+    (mkIf (cfg.desktopEnvironment == "gnome" && pkgs.stdenv.isLinux) {
       home.packages = with pkgs; [
         gnome-tweaks
         dconf-editor

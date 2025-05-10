@@ -79,7 +79,9 @@
       darwinConfigurations."rays-MacBook-Air" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
-          { nixpkgs.config.allowUnfree = true; }
+          { 
+            nixpkgs.config.allowUnfree = true;
+          }
           ./hosts/darwin/darwin-configuration.nix
           home-manager.darwinModules.home-manager
           {

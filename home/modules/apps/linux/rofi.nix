@@ -3,13 +3,6 @@
 with lib;
 let
   cfg = config.ray.home.modules.apps.rofi;
-  # Only define Linux packages if we're on Linux
-  rofiPackages = if pkgs.stdenv.isLinux then with pkgs; [
-    rofi
-    rofi-calc
-    rofi-emoji
-    rofi-power-menu
-  ] else [];
 in
 {
   options.ray.home.modules.apps.rofi = {
@@ -17,7 +10,12 @@ in
   };
 
   config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
-    home.packages = rofiPackages;
+    home.packages = with pkgs; [
+      rofi
+      rofi-calc
+      rofi-emoji
+      rofi-power-menu
+    ];
     
     xdg.configFile = {
       "rofi/config.rasi" = {

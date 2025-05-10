@@ -5,6 +5,10 @@ set -euo pipefail
 SCRIPT_PATH=$(dirname -- "${BASH_SOURCE[0]}")
 DEBUG=1
 
+# Detect system type
+SYSTEM_TYPE=$(uname -s)
+HOSTNAME=$(hostname -s)
+
 debug() {
     if [ -n "$DEBUG" ]; then
         echo "$@"
@@ -14,13 +18,26 @@ debug() {
 # Function to display menu
 show_menu() {
     echo "1) Home"
-    echo "2) Darwin"
-    echo "3) NixOS"
+    if [ "$SYSTEM_TYPE" = "Darwin" ]; then
+        echo "2) Darwin (macOS)"
+    else
+        echo "2) Darwin (Not available on this system)"
+    fi
+    if [ "$SYSTEM_TYPE" = "Linux" ]; then
+        echo "3) NixOS"
+    else
+        echo "3) NixOS (Not available on this system)"
+    fi
     echo "4) Quit"
 }
 
 # Function to handle NixOS switch
 handle_nixos() {
+    if [ "$SYSTEM_TYPE" != "Linux" ]; then
+        echo "Error: NixOS is only available on Linux systems"
+        return 1
+    fi
+    
     echo "Build Command: sudo nixos-rebuild build --flake .#default"
     echo "Switch Command: sudo nixos-rebuild switch --flake .#default"
     
@@ -77,29 +94,34 @@ handle_home() {
 
 # Function to handle Darwin switch
 handle_darwin() {
-    echo "Build Command: darwin-rebuild build --flake .#rays-MacBook-Air"
-    echo "Switch Command: darwin-rebuild switch --flake .#rays-MacBook-Air"
+    if [ "$SYSTEM_TYPE" != "Darwin" ]; then
+        echo "Error: Darwin configuration is only available on macOS systems"
+        return 1
+    fi
+
+    echo "Build Command: darwin-rebuild build --flake .#$HOSTNAME"
+    echo "Switch Command: darwin-rebuild switch --flake .#$HOSTNAME"
     
-    read -p "Do you want to build first? (y/n) " -n 1 -r
+    read -p "Do you want to build first? (y/N) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "Building with command: darwin-rebuild build --flake .#rays-MacBook-Air"
-        darwin-rebuild build --flake .#rays-MacBook-Air
+        echo "Building with command: darwin-rebuild build --flake .#$HOSTNAME"
+        darwin-rebuild build --flake .#$HOSTNAME
         if [ $? -eq 0 ]; then
             echo "Build successful!"
-            read -p "Do you want to switch now? (y/n) " -n 1 -r
+            read -p "Do you want to switch now? (y/N) " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                echo "Switching with command: darwin-rebuild switch --flake .#rays-MacBook-Air"
-                darwin-rebuild switch --flake .#rays-MacBook-Air
+                echo "Switching with command: darwin-rebuild switch --flake .#$HOSTNAME"
+                darwin-rebuild switch --flake .#$HOSTNAME
             fi
         else
             echo "Build failed"
             exit 1
         fi
     else
-        echo "Switching with command: darwin-rebuild switch --flake .#rays-MacBook-Air"
-        darwin-rebuild switch --flake .#rays-MacBook-Air
+        echo "Switching with command: darwin-rebuild switch --flake .#$HOSTNAME"
+        darwin-rebuild switch --flake .#$HOSTNAME
     fi
 }
 

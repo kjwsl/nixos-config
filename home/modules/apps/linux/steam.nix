@@ -4,11 +4,6 @@ with lib;
 
 let
   cfg = config.ray.home.modules.apps.steam;
-  # Only define Linux packages if we're on Linux
-  steamPackages = if pkgs.stdenv.isLinux then with pkgs; [
-    steam
-    steam-run
-  ] else [];
 in
 {
   options.ray.home.modules.apps.steam = {
@@ -17,7 +12,10 @@ in
 
   config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     # Define home packages for Steam
-    home.packages = steamPackages;
+    home.packages = with pkgs; [
+      steam
+      steam-run
+    ];
 
     # Steam configuration
     home.sessionVariables = {
