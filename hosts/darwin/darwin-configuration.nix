@@ -43,6 +43,7 @@
       "zoxide"             # Smarter cd command
       "eza"                # Modern ls replacement
       "neovim"             # Modern vim implementation
+      "bat"                # Better cat with syntax highlighting
     ];
     casks = [
       # Existing casks

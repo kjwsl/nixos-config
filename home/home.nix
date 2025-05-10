@@ -66,7 +66,7 @@ let
     # Cross-platform packages
     common = with pkgs; [
       # Shell utilities
-      bat
+      # bat is managed by Homebrew on macOS
       fzf
       fastfetch
       git
