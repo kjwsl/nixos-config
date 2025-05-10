@@ -40,6 +40,8 @@
       "sketchybar"          # Customizable menubar replacement
       "ifstat"              # Network monitoring for widgets
       "jq"                  # JSON processor for scripts
+      "zoxide"             # Smarter cd command
+      "eza"                # Modern ls replacement
     ];
     casks = [
       # Existing casks

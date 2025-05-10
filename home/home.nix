@@ -71,7 +71,7 @@ let
       fastfetch
       git
       lazygit
-      zoxide
+      # zoxide and eza are managed by Homebrew on macOS
       
       # Development tools
       git-repo
@@ -243,12 +243,17 @@ in
     
     # Other programs
     zoxide = {
-      enable = true;
+      enable = mkForce true;
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableFishIntegration = true;
     };
-    eza.enable = true;
+    eza = {
+      enable = mkForce true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+    };
     lazygit.enable = true;
     
     # Enable home-manager
