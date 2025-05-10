@@ -119,6 +119,7 @@ in
     shellAliases = {
       v = "nvim";
       vim = "nvim";
+      vi = "nvim";
       g = "git";
     };
     

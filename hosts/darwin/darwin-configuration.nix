@@ -42,6 +42,7 @@
       "jq"                  # JSON processor for scripts
       "zoxide"             # Smarter cd command
       "eza"                # Modern ls replacement
+      "neovim"             # Modern vim implementation
     ];
     casks = [
       # Existing casks
