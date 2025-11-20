@@ -20,6 +20,7 @@
             "alfred"
             "aldente"
             "font-jetbrains-mono-nerd-font"
+            "steam"
         ];
         onActivation.cleanup = "uninstall";
     };
