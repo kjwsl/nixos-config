@@ -16,6 +16,7 @@
     nodejs_24
     ripgrep
     rustup
+    tmux
     tree
     zoxide
   ];
