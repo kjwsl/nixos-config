@@ -7,15 +7,17 @@
     eza
     fastfetch
     fd
-    fish # Added fish to packages
+    fish
     fzf
     git
     lazygit
     mise
     neovim
     nodejs_24
+    nushell
     ripgrep
     rustup
+    starship
     tmux
     tree
     zoxide
