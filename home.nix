@@ -1,6 +1,7 @@
 { config, pkgs, ... }: {
   home.packages = with pkgs; [
     bat
+    btop
     cargo-watch
     chezmoi
     delta
@@ -20,6 +21,7 @@
     starship
     tmux
     tree
+    yazi
     zoxide
   ];
 
