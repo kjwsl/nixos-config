@@ -10,6 +10,7 @@
     fd
     fish
     fzf
+    gcc
     git
     lazygit
     mise
@@ -22,6 +23,7 @@
     tmux
     tree
     yazi
+    zig
     zoxide
   ];
 
