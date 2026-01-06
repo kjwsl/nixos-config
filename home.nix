@@ -4,6 +4,8 @@
     btop
     cargo-watch
     chezmoi
+    clang-tools
+    cmake
     delta
     difftastic
     eza
@@ -16,8 +18,10 @@
     glow
     jujutsu
     lazygit
+    lazyjj
     mise
     neovim
+    ninja
     nodejs_24
     nushell
     ripgrep
