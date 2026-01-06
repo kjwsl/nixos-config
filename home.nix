@@ -5,6 +5,7 @@
     cargo-watch
     chezmoi
     delta
+    difftastic
     eza
     fastfetch
     fd
