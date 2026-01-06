@@ -15,12 +15,14 @@
         ];
         
         casks = [
-            "brave-browser"
-            "wezterm@nightly"
-            "alfred"
             "aldente"
+            "alfred"
+            "brave-browser"
             "font-jetbrains-mono-nerd-font"
             "steam"
+            "telegram"
+            "thunderbird"
+            "wezterm@nightly"
         ];
         onActivation.cleanup = "uninstall";
     };
