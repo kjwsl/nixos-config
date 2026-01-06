@@ -15,3 +15,7 @@ conflict:
 linux:
     nix run home-manager -- build --flake .#ray-linux
     result/activate
+
+darwin:
+    nix run home-manager -- build --flake .#ray-darwin
+    result/activate
