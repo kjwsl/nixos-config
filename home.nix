@@ -12,6 +12,8 @@
     fzf
     gcc
     git
+    glow
+    jujutsu
     lazygit
     mise
     neovim
