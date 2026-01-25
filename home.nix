@@ -29,6 +29,7 @@
     starship
     tmux
     tree
+    uv
     yazi
     zellij
     zig
