@@ -22,7 +22,6 @@
     mise
     neovim
     ninja
-    nodejs_24
     nushell
     ripgrep
     rustup
