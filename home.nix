@@ -17,16 +17,21 @@
     git
     glow
     jujutsu
+    just
     lazygit
     lazyjj
     mise
     neovim
+    so # Ask questions on StackOverflow https://github.com/samtay/so
     ninja
     nushell
     ripgrep
     rustup
+    silver-searcher
     starship
+    tldr
     tmux
+    tre-command
     tree
     uv
     yazi
