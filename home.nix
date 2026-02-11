@@ -13,7 +13,6 @@
     choose
     clang-tools
     cmake
-    cod
     delta
     difftastic
     dust
@@ -65,7 +64,7 @@
     television
     tere
     termscp
-    tldr
+    tealdeer # tldr
     tlrc
     tmux
     tokei
