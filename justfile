@@ -19,3 +19,7 @@ linux:
 darwin:
     nix run home-manager -- build --flake .#ray-darwin
     result/activate
+
+termux:
+    nix run home-manager -- build --flake .#ray-termux
+    result/activate

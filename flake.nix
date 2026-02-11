@@ -52,6 +52,7 @@
       homeConfigurations = {
         ray-linux = makeHome "x86_64-linux" "ray" "/home/ray" [];
         ray-darwin = makeHome "aarch64-darwin" "ray" "/Users/ray" [];
+        ray-termux = makeHome "aarch64-linux" "ray" "/data/data/com.termux.nix/files/home" [];
       };
 
     };
