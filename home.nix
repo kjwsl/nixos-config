@@ -1,39 +1,82 @@
 { config, pkgs, ... }: {
   home.packages = with pkgs; [
+    # frawk
+    #loop
+    amazon-q-cli
+    atuin
     bat
+    bottom
+    broot
     btop
     cargo-watch
     chezmoi
+    choose
     clang-tools
     cmake
+    cod
     delta
     difftastic
+    dust
+    eva
     eza
     fastfetch
     fd
     fish
+    fselect
     fzf
     gcc
     git
+    git-absorb
+    gitoxide
+    gitui
     glow
+    gpg-tui
+    hexyl
+    httm
+    hyperfine
     jujutsu
     just
     lazygit
     lazyjj
+    lemmeknow
+    lsd
+    mcfly
     mise
+    navi
     neovim
-    so # Ask questions on StackOverflow https://github.com/samtay/so
     ninja
     nushell
+    ouch
+    procs
+    repgrep
     ripgrep
+    rm-improved
+    rnr
+    runiq
+    ruplacer
+    rust-parallel
     rustup
+    scout
+    sd
     silver-searcher
+    skim
+    so # Ask questions on StackOverflow https://github.com/samtay/so
     starship
+    television
+    tere
+    termscp
     tldr
+    tlrc
     tmux
+    tokei
     tre-command
     tree
+    trippy
     uv
+    vaultwarden
+    xcp
+    xh
+    xxh
     yazi
     zellij
     zig
