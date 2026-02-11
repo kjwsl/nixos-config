@@ -63,9 +63,8 @@
     starship
     television
     tere
-    termscp
-    tealdeer # tldr
-    tlrc
+    # termscp
+    tealdeer # tldr tlrc
     tmux
     tokei
     tre-command
