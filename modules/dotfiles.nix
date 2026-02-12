@@ -21,8 +21,8 @@
     ".justfile".source = ../dotfiles/dot_justfile;
     
     # Directories that need raw file management
-    ".cargo".source = ../dotfiles/dot_cargo;
-    ".local".source = ../dotfiles/dot_local;
+    ".cargo/config.toml".source = ../dotfiles/dot_cargo/config.toml;
+    ".local/bin/start-screenpipe.ps1".source = ../dotfiles/dot_local/bin/executable_start-screenpipe.ps1;
     ".fonts".source = ../dotfiles/dot_fonts;
     ".vim".source = ../dotfiles/dot_vim;
     ".gemini".source = ../dotfiles/dot_gemini;
