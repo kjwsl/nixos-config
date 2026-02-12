@@ -53,7 +53,7 @@
       # Core settings
       export EDITOR="nvim"
       export VISUAL=$EDITOR
-      export PAGER="bat"
+      export PAGER="less -FR"
       export MANPAGER="sh -c 'col -bx | bat -l man -p'"
       
       # Enable transient prompt
@@ -747,7 +747,7 @@ Directory: $dir" \
     
     environmentVariables = {
       EDITOR = "nvim";
-      PAGER = "bat";
+      PAGER = "less -FR";
       MANPAGER = "sh -c 'col -bx | bat -l man -p'";
     };
   };
