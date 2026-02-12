@@ -22,48 +22,48 @@ in
     # macOS-specific configurations
     (lib.mkIf isDarwin {
       # AeroSpace (macOS window manager)
-      ".config/aerospace".source = ~/.local/share/chezmoi/dot_config/aerospace;
+      ".config/aerospace".source = ./dotfiles/aerospace;
       
       # SketchyBar (macOS menu bar)
-      ".config/sketchybar".source = ~/.local/share/chezmoi/dot_config/sketchybar;
+      ".config/sketchybar".source = ./dotfiles/sketchybar;
       
       # Karabiner Elements (macOS key remapping)
-      ".config/karabiner".source = ~/.local/share/chezmoi/dot_config/karabiner;
+      ".config/karabiner".source = ./dotfiles/karabiner;
     })
 
     # Linux-specific configurations
     (lib.mkIf isLinux {
       # Hyprland configuration (complex, keep as file for now)
-      ".config/hypr".source = ~/.local/share/chezmoi/dot_config/hypr;
+      ".config/hypr".source = ./dotfiles/hypr;
       
       # Waybar configuration (complex JSON, keep as file)
-      ".config/waybar".source = ~/.local/share/chezmoi/dot_config/waybar;
+      ".config/waybar".source = ./dotfiles/waybar;
       
       # EWW widget system (complex, keep as file)
-      ".config/eww".source = ~/.local/share/chezmoi/dot_config/eww;
+      ".config/eww".source = ./dotfiles/eww;
       
       # Desktop environment configurations
-      ".config/cinnamon".source = ~/.local/share/chezmoi/dot_config/cinnamon;
-      ".config/fontconfig".source = ~/.local/share/chezmoi/dot_config/fontconfig;
-      ".config/gtk-3.0".source = ~/.local/share/chezmoi/dot_config/gtk-3.0;
-      ".config/gtk-4.0".source = ~/.local/share/chezmoi/dot_config/gtk-4.0;
+      ".config/cinnamon".source = ./dotfiles/cinnamon;
+      ".config/fontconfig".source = ./dotfiles/fontconfig;
+      ".config/gtk-3.0".source = ./dotfiles/gtk-3.0;
+      ".config/gtk-4.0".source = ./dotfiles/gtk-4.0;
       
       # System integration
-      ".config/xdg-desktop-portal".source = ~/.local/share/chezmoi/dot_config/xdg-desktop-portal;
-      ".config/ibus".source = ~/.local/share/chezmoi/dot_config/ibus;
-      ".config/nemo".source = ~/.local/share/chezmoi/dot_config/nemo;
-      ".config/menus".source = ~/.local/share/chezmoi/dot_config/menus;
+      ".config/xdg-desktop-portal".source = ./dotfiles/xdg-desktop-portal;
+      ".config/ibus".source = ./dotfiles/ibus;
+      ".config/nemo".source = ./dotfiles/nemo;
+      ".config/menus".source = ./dotfiles/menus;
       
       # Status bars and widgets
-      ".config/yasb".source = ~/.local/share/chezmoi/dot_config/yasb;
+      ".config/yasb".source = ./dotfiles/yasb;
     })
 
     # Cross-platform configurations
     {
       # Audio production plugins (cross-platform)
-      ".vst".source = ~/.local/share/chezmoi/dot_vst;
-      ".vst3".source = ~/.local/share/chezmoi/dot_vst3;
-      ".clap".source = ~/.local/share/chezmoi/dot_clap;
+      ".vst".source = ./dotfiles/dot_vst;
+      ".vst3".source = ./dotfiles/dot_vst3;
+      ".clap".source = ./dotfiles/dot_clap;
     }
   ];
 

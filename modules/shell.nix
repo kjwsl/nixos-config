@@ -207,8 +207,8 @@ Directory: $dir" \
   
   # Additional fish config files that need to be managed as raw files
   home.file = {
-    ".config/fish/alias.fish".source = ~/.local/share/chezmoi/dot_config/fish/alias.fish;
-    ".config/fish/functions.fish".source = ~/.local/share/chezmoi/dot_config/fish/functions.fish;
-    ".config/fish/fish_plugins".source = ~/.local/share/chezmoi/dot_config/fish/fish_plugins;
+    ".config/fish/alias.fish".source = ./dotfiles/alias.fish;
+    ".config/fish/functions.fish".source = ./dotfiles/functions.fish;
+    ".config/fish/fish_plugins".source = ./dotfiles/fish_plugins;
   };
 }

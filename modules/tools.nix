@@ -94,42 +94,42 @@
   # File-based configurations for tools that need complex configs or don't have good HM modules
   home.file = {
     # Yazi theme (complex theme file)
-    ".config/yazi/theme.toml".source = ~/.local/share/chezmoi/dot_config/yazi/theme.toml;
-    ".config/yazi/keymap.toml".source = ~/.local/share/chezmoi/dot_config/yazi/keymap.toml;
+    ".config/yazi/theme.toml".source = ./dotfiles/yazi/theme.toml;
+    ".config/yazi/keymap.toml".source = ./dotfiles/yazi/keymap.toml;
     
     # Btop theme
-    ".config/btop/themes".source = ~/.local/share/chezmoi/dot_config/btop/themes;
+    ".config/btop/themes".source = ./dotfiles/btop/themes;
     
     # Fastfetch config
-    ".config/fastfetch".source = ~/.local/share/chezmoi/dot_config/fastfetch;
+    ".config/fastfetch".source = ./dotfiles/fastfetch;
     
     # Development and shell tools with complex configs
-    ".config/nushell".source = ~/.local/share/chezmoi/dot_config/nushell;
-    ".config/sheldon".source = ~/.local/share/chezmoi/dot_config/sheldon;
-    ".config/omf".source = ~/.local/share/chezmoi/dot_config/omf;
-    ".config/zsh".source = ~/.local/share/chezmoi/dot_config/zsh;
+    ".config/nushell".source = ./dotfiles/nushell;
+    ".config/sheldon".source = ./dotfiles/sheldon;
+    ".config/omf".source = ./dotfiles/omf;
+    ".config/zsh".source = ./dotfiles/zsh;
     
     # Security and privacy tools
-    ".config/sops".source = ~/.local/share/chezmoi/dot_config/sops;
-    ".config/syncthing".source = ~/.local/share/chezmoi/dot_config/syncthing;
+    ".config/sops".source = ./dotfiles/sops;
+    ".config/syncthing".source = ./dotfiles/syncthing;
     
     # AI and language tools
-    ".config/ai".source = ~/.local/share/chezmoi/dot_config/ai;
-    ".config/harper-ls".source = ~/.local/share/chezmoi/dot_config/harper-ls;
-    ".config/goose".source = ~/.local/share/chezmoi/dot_config/goose;
+    ".config/ai".source = ./dotfiles/ai;
+    ".config/harper-ls".source = ./dotfiles/harper-ls;
+    ".config/goose".source = ./dotfiles/goose;
     
     # Media and download tools
-    ".config/yt-dlp".source = ~/.local/share/chezmoi/dot_config/yt-dlp;
-    ".config/pulse".source = ~/.local/share/chezmoi/dot_config/pulse;
-    ".config/qBittorrent".source = ~/.local/share/chezmoi/dot_config/qBittorrent;
+    ".config/yt-dlp".source = ./dotfiles/yt-dlp;
+    ".config/pulse".source = ./dotfiles/pulse;
+    ".config/qBittorrent".source = ./dotfiles/qBittorrent;
     
     # Version control and development
-    ".config/private_jj".source = ~/.local/share/chezmoi/dot_config/private_jj;
+    ".config/private_jj".source = ./dotfiles/private_jj;
     
     # System info tools
-    ".config/neofetch".source = ~/.local/share/chezmoi/dot_config/neofetch;
+    ".config/neofetch".source = ./dotfiles/neofetch;
     
     # Nix configuration
-    ".config/nix".source = ~/.local/share/chezmoi/dot_config/nix;
+    ".config/nix".source = ./dotfiles/nix;
   };
 }

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if command -v nvim > /dev/null; then
+    export VISUAL='nvim'
+    export EDITOR='nvim'
+else
+    export VISUAL='vim'
+    export EDITOR='vim'
+fi
+
+if [[ $(uname -s) == 'Darwin' ]]; then
+    export PATH=$HOME/binaries/darwin:$PATH
+elif [[ $(uname -s) == 'Linux' ]]; then
+    export PATH=$HOME/binaries/x86_64-linux:$PATH
+fi
+
+if [[ -d /usr/local/bin ]]; then
+    export PATH=/usr/local/bin:$PATH
+fi
+
+# -----------------------------------------------------------------------------
+# Claude Code Token Optimization
+# -----------------------------------------------------------------------------
+export MAX_THINKING_TOKENS=8000
+export ENABLE_TOOL_SEARCH=auto:5
+export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=60
+export CLAUDE_CODE_SUBAGENT_MODEL=haiku

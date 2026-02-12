@@ -6,37 +6,37 @@
   
   home.file = {
     # Shell configurations that need raw access
-    ".aliasrc".source = ~/.local/share/chezmoi/dot_aliasrc;
-    ".bash_local".source = ~/.local/share/chezmoi/dot_bash_local;
-    ".bashrc".source = ~/.local/share/chezmoi/dot_bashrc;
-    ".profile".source = ~/.local/share/chezmoi/dot_profile;
-    ".zshrc".source = ~/.local/share/chezmoi/dot_zshrc;
-    ".zshenv".source = ~/.local/share/chezmoi/dot_zshenv;
-    ".p10k.zsh".source = ~/.local/share/chezmoi/dot_p10k.zsh;
+    ".aliasrc".source = ./dotfiles/dot_aliasrc;
+    ".bash_local".source = ./dotfiles/dot_bash_local;
+    ".bashrc".source = ./dotfiles/dot_bashrc;
+    ".profile".source = ./dotfiles/dot_profile;
+    ".zshrc".source = ./dotfiles/dot_zshrc;
+    ".zshenv".source = ./dotfiles/dot_zshenv;
+    ".p10k.zsh".source = ./dotfiles/dot_p10k.zsh;
     
     # Development configurations
-    ".clang-format".source = ~/.local/share/chezmoi/dot_clang-format;
-    ".clang-tidy".source = ~/.local/share/chezmoi/dot_clang-tidy;
-    ".envrc".source = ~/.local/share/chezmoi/dot_envrc;
-    ".justfile".source = ~/.local/share/chezmoi/dot_justfile;
+    ".clang-format".source = ./dotfiles/dot_clang-format;
+    ".clang-tidy".source = ./dotfiles/dot_clang-tidy;
+    ".envrc".source = ./dotfiles/dot_envrc;
+    ".justfile".source = ./dotfiles/dot_justfile;
     
     # Directories that need raw file management
-    ".cargo".source = ~/.local/share/chezmoi/dot_cargo;
-    ".local".source = ~/.local/share/chezmoi/dot_local;
-    ".fonts".source = ~/.local/share/chezmoi/dot_fonts;
-    ".vim".source = ~/.local/share/chezmoi/dot_vim;
-    ".gemini".source = ~/.local/share/chezmoi/dot_gemini;
+    ".cargo".source = ./dotfiles/dot_cargo;
+    ".local".source = ./dotfiles/dot_local;
+    ".fonts".source = ./dotfiles/dot_fonts;
+    ".vim".source = ./dotfiles/dot_vim;
+    ".gemini".source = ./dotfiles/dot_gemini;
     
     # Global gitignore and other git files not handled by git module
-    ".gitignore".source = ~/.local/share/chezmoi/dot_gitignore;
-    ".gitmodules".source = ~/.local/share/chezmoi/dot_gitmodules;
+    ".gitignore".source = ./dotfiles/dot_gitignore;
+    ".gitmodules".source = ./dotfiles/dot_gitmodules;
     
     # IDE configurations
-    ".config/ideavim".source = ~/.local/share/chezmoi/dot_config/ideavim;
-    ".config/zed".source = ~/.local/share/chezmoi/dot_config/zed;
+    ".config/ideavim".source = ./dotfiles/ideavim;
+    ".config/zed".source = ./dotfiles/zed;
     
     # Doom Emacs (too complex to nixify)
-    ".config/doom".source = ~/.local/share/chezmoi/dot_config/doom;
+    ".config/doom".source = ./dotfiles/doom;
   };
   
   # Note: The following are handled by chezmoi external repositories and should NOT be nixified:
