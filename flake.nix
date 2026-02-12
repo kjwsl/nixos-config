@@ -26,6 +26,8 @@
             {
               home.username = username;
               home.homeDirectory = homeDirectory;
+              # Pass system to modules for platform detection
+              _module.args.system = system;
             }
           ] ++ extraModules;
         };
@@ -45,6 +47,8 @@
             home-manager.users.${username} = {
               imports = [ ./home.nix ];
               home.homeDirectory = "/Users/${username}";
+              # Pass system to modules for platform detection
+              _module.args.system = "aarch64-darwin";
             };
           }
         ];

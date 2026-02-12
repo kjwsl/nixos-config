@@ -1,7 +1,7 @@
 # https://just.systems
 
-default:
-    echo 'Hello, world!'
+_default:
+    just -l
 
 conflict:
     #!/usr/bin/env bash

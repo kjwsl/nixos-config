@@ -1,0 +1,177 @@
+{ config, pkgs, lib, ... }:
+
+{
+  programs.git = {
+    enable = true;
+    
+    userName = "ray";
+    userEmail = "kjwsl@fatherslab.com";
+    
+    extraConfig = {
+      core = {
+        compression = 9;
+        autocrlf = "input";
+        whitespace = "error";
+        preloadindex = true;
+        pager = "delta";
+      };
+      
+      interactive = {
+        diffFilter = "delta --color-only";
+      };
+      
+      delta = {
+        navigate = true;
+        dark = true;
+      };
+      
+      diff = {
+        renames = "copies";
+        interHunkContext = 10;
+      };
+      
+      pull = {
+        default = "current";
+        rebase = true;
+      };
+      
+      rebase = {
+        autoStash = true;
+        missingCommitsCheck = "warn";
+      };
+      
+      color = {
+        ui = "auto";
+      };
+      
+      "oh-my-zsh" = {
+        git-commit-alias = "61bacd95b285a9792a05d1c818d9cee15ebe53c6";
+      };
+      
+      "includeIf \"gitdir:~/work/\"" = {
+        path = "~/.config/git/config-work";
+      };
+    } // lib.optionalAttrs (lib.hasAttr "gh" pkgs) {
+      "credential \"https://github.com\"" = {
+        helper = "";
+        helper = "!${pkgs.gh}/bin/gh auth git-credential";
+      };
+      "credential \"https://gist.github.com\"" = {
+        helper = "";
+        helper = "!${pkgs.gh}/bin/gh auth git-credential";
+      };
+    } // lib.optionalAttrs (lib.hasAttr "git-lfs" pkgs) {
+      "filter \"lfs\"" = {
+        clean = "git-lfs clean -- %f";
+        smudge = "git-lfs smudge -- %f";
+        process = "git-lfs filter-process";
+        required = true;
+      };
+    };
+    
+    aliases = {
+      # Submodule aliases
+      sm = "submodule";
+      spl = "submodule foreach git pull";
+      sinit = "submodule init";
+      sdeinit = "submodule deinit";
+      supdate = "submodule update --remote --rebase";
+      sadd = "submodule add";
+      
+      # Basic git aliases
+      cl = "clone";
+      co = "checkout";
+      br = "branch";
+      st = "status";
+      sw = "switch";
+      ss = "stash";
+      cm = "commit";
+      cmm = "commit -m";
+      pl = "pull";
+      plr = "pull --rebase";
+      ps = "push";
+      m = "merge";
+      ms = "merge --squash";
+      rb = "rebase";
+      t = "tag";
+      df = "diff";
+      dfh = "diff HEAD";
+      lg = "log --graph --decorate";
+      rs = "reset";
+      rss = "reset --soft";
+      rsh = "reset --hard";
+      
+      # Conventional commit aliases (complex functions)
+      build = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"build${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      chore = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"chore${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      ci = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"ci${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      docs = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"docs${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      feat = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"feat${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      fix = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"fix${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      perf = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"perf${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      refactor = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"refactor${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      rev = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"revert${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      style = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"style${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      test = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"test${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+      wip = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"wip${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
+    };
+    
+    delta = {
+      enable = true;
+      options = {
+        navigate = true;
+        dark = true;
+        line-numbers = true;
+      };
+    };
+  };
+
+  programs.lazygit = {
+    enable = true;
+    settings = {
+      customCommands = [
+        {
+          key = "O";
+          command = "git checkout --ours {{ .SelectedFile.Name }}";
+          context = "global";
+          loadingText = "take ours";
+        }
+        {
+          key = "T";
+          command = "git checkout --theirs {{ .SelectedFile.Name }}";
+          context = "global";
+          loadingText = "take theirs";
+        }
+        {
+          key = "C";
+          command = "git cherry-pick {{ .SelectedLocalBranch.Name }}";
+          context = "localBranches";
+          prompts = [
+            {
+              type = "confirm";
+              title = "Cherry-pick {{ .SelectedLocalBranch.Name }}?";
+              body = "Are you sure you want to cherry-pick {{ .SelectedLocalBranch.Name }}?";
+            }
+          ];
+        }
+      ];
+      
+      gui = {
+        theme = {
+          activeBorderColor = [ "#f38ba8" "bold" ];
+          inactiveBorderColor = [ "#a6adc8" ];
+          optionsTextColor = [ "#89b4fa" ];
+          selectedLineBgColor = [ "#313244" ];
+          cherryPickedCommitBgColor = [ "#45475a" ];
+          cherryPickedCommitFgColor = [ "#f38ba8" ];
+          unstagedChangesColor = [ "#f38ba8" ];
+          defaultFgColor = [ "#cdd6f4" ];
+          searchingActiveBorderColor = [ "#f9e2af" ];
+        };
+        authorColors = {
+          "*" = "#b4befe";
+        };
+      };
+    };
+  };
+}

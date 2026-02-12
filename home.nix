@@ -1,30 +1,44 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, lib, ... }:
+
+{
+  imports = [
+    ./modules/shell.nix
+    ./modules/starship.nix
+    ./modules/git.nix
+    ./modules/terminals.nix
+    ./modules/multiplexers.nix
+    ./modules/editors.nix
+    ./modules/tools.nix
+    ./modules/platforms.nix
+    ./modules/dotfiles.nix
+  ];
+
+  # Only include packages that aren't managed by HM modules
   home.packages = with pkgs; [
-    # frawk
-    #loop
+    # CLI Tools (remove duplicates that are now managed by programs.*)
     amazon-q-cli
-    atuin
-    bat
+    # atuin  # managed by programs.atuin
+    # bat    # managed by programs.bat
     bottom
     broot
-    btop
+    # btop   # managed by programs.btop
     cargo-watch
     chezmoi
     choose
     clang-tools
     cmake
-    delta
+    # delta  # managed by programs.git.delta
     difftastic
     dust
     eva
-    eza
-    fastfetch
+    # eza    # managed by programs.eza
+    # fastfetch  # managed by programs.fastfetch
     fd
-    fish
+    # fish   # managed by programs.fish
     fselect
-    fzf
+    # fzf    # managed by programs.fzf
     gcc
-    git
+    # git    # managed by programs.git
     git-absorb
     gitoxide
     gitui
@@ -35,7 +49,7 @@
     hyperfine
     jujutsu
     just
-    lazygit
+    # lazygit  # managed by programs.lazygit
     lazyjj
     lemmeknow
     lsd
@@ -59,13 +73,12 @@
     sd
     silver-searcher
     skim
-    so # Ask questions on StackOverflow https://github.com/samtay/so
-    starship
+    so # Ask questions on StackOverflow
+    # starship  # managed by programs.starship
     television
     tere
-    # termscp
-    tealdeer # tldr tlrc
-    tmux
+    tealdeer # tldr
+    # tmux   # managed by programs.tmux
     tokei
     tre-command
     tree
@@ -75,10 +88,10 @@
     xcp
     xh
     xxh
-    yazi
-    zellij
+    # yazi   # managed by programs.yazi
+    # zellij # managed by programs.zellij
     zig
-    zoxide
+    # zoxide # managed by programs.zoxide
   ];
 
   home.stateVersion = "25.05";
