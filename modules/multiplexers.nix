@@ -161,7 +161,8 @@
 
   programs.zellij = {
     enable = true;
-    # Note: Zellij config will be managed as raw file since HM module is limited
+    # Note: Zellij config is in KDL format and very complex, better managed as file
+    # The HM module doesn't support all the advanced features in the config
   };
   
   # Scripts and additional configs that need to be files
