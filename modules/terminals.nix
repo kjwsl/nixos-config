@@ -44,8 +44,8 @@
     # Kitty color configuration (referenced by kitty.conf)
     ".config/kitty/color.ini".source = ~/.local/share/chezmoi/dot_config/kitty/color.ini;
     
-    # Alacritty themes directory
-    ".config/alacritty/themes".source = ~/.local/share/chezmoi/dot_config/alacritty/themes or pkgs.alacritty-theme;
+    # Alacritty themes directory (if it exists in chezmoi)
+    ".config/alacritty/themes".source = ~/.local/share/chezmoi/dot_config/alacritty/themes;
     
     # Ghostty - no good HM module yet
     ".config/ghostty".source = ~/.local/share/chezmoi/dot_config/ghostty;
