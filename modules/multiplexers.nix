@@ -385,12 +385,12 @@
   # Scripts and additional configs that need to be files
   home.file = {
     # Tmux scripts
-    ".config/tmux/scripts".source = ~/.local/share/chezmoi/dot_config/tmux/scripts;
+    ".config/tmux/scripts".source = ./dotfiles/tmux-scripts;
     
     # Additional tmux configs (nvim integration)
-    ".config/tmux/tmux.conf.nvim".source = ~/.local/share/chezmoi/dot_config/tmux/tmux.conf.nvim;
+    ".config/tmux/tmux.conf.nvim".source = ./dotfiles/tmux.conf.nvim;
     
     # Zellij configuration (no good HM module yet)
-    ".config/zellij".source = ~/.local/share/chezmoi/dot_config/zellij;
+    ".config/zellij".source = ./dotfiles/zellij;
   };
 }
