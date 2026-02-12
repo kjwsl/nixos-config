@@ -144,7 +144,6 @@
       package.symbol = " ";
       perl.symbol = " ";
       php.symbol = " ";
-      python.symbol = " ";
       ruby.symbol = " ";
       rust.symbol = " ";
       scala.symbol = " ";
