@@ -15,22 +15,9 @@
         autocrlf = "input";
         whitespace = "error";
         preloadindex = true;
-        pager = "delta";
+        # pager is handled by programs.delta module
       };
       
-      interactive = {
-        diffFilter = "delta --color-only";
-      };
-      
-      delta = {
-        navigate = true;
-        dark = true;
-      };
-      
-      diff = {
-        renames = "copies";
-        interHunkContext = 10;
-      };
       
       pull = {
         default = "current";
