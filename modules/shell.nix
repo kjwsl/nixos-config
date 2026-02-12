@@ -775,14 +775,14 @@ Directory: $dir" \
       # Trim whitespace
       --trim
       
-      # Colors (Catppuccin Mocha inspired)
-      --colors=line:fg:0xf9e2af
+      # Colors (Catppuccin Mocha)
+      --colors=line:fg:249,226,175
       --colors=line:style:bold
-      --colors=path:fg:0x89b4fa
+      --colors=path:fg:137,180,250
       --colors=path:style:bold
-      --colors=match:fg:0xf38ba8
+      --colors=match:fg:243,139,168
       --colors=match:style:bold
-      --colors=match:bg:0x313244
+      --colors=match:bg:49,50,68
     '';
   };
 }

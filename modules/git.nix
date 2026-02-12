@@ -7,7 +7,7 @@
     settings = {
       user = {
         name = "ray";
-        email = "kjwsl@fatherslab.com";
+        email = "kjwdev01@gmail.com";
       };
       
       core = {
