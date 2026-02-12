@@ -85,11 +85,6 @@
     '';
     
     interactiveShellInit = ''
-      # Plugin Manager (Fisher) - Automatic Installation
-      if not type -q fisher
-          curl -sL https://git.io/fisher | source && fisher update
-      end
-
       # Development tools initialization
       if type -q mise
           mise activate fish | source
@@ -230,22 +225,51 @@ Directory: $dir" \
     };
     
     plugins = [
-      # Core plugins that should be installed via Nix when available
+      # --- nixpkgs fishPlugins ---
+      { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
+      { name = "done"; src = pkgs.fishPlugins.done.src; }
+      { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
+      { name = "puffer"; src = pkgs.fishPlugins.puffer.src; }
+      { name = "bass"; src = pkgs.fishPlugins.bass.src; }
+      { name = "spark"; src = pkgs.fishPlugins.spark.src; }
+      { name = "plugin-git"; src = pkgs.fishPlugins.plugin-git.src; }
+
+      # --- fetchFromGitHub (not in nixpkgs) ---
       {
-        name = "fzf";
-        src = pkgs.fishPlugins.fzf-fish.src;
+        name = "nix-env.fish";
+        src = pkgs.fetchFromGitHub {
+          owner = "lilyball";
+          repo = "nix-env.fish";
+          rev = "7b65bd228429e852c8fdfa07601159130a818cfa";
+          hash = "sha256-RG/0rfhgq6aEKNZ0XwIqOaZ6K5S4+/Y5EEMnIdtfPhk=";
+        };
       }
       {
-        name = "done";
-        src = pkgs.fishPlugins.done.src;
+        name = "replay.fish";
+        src = pkgs.fetchFromGitHub {
+          owner = "jorgebucaran";
+          repo = "replay.fish";
+          rev = "d2ecacd3fe7126e822ce8918389f3ad93b14c86c";
+          hash = "sha256-TzQ97h9tBRUg+A7DSKeTBWLQuThicbu19DHMwkmUXdg=";
+        };
       }
       {
-        name = "sponge";
-        src = pkgs.fishPlugins.sponge.src;
+        name = "catppuccin";
+        src = pkgs.fetchFromGitHub {
+          owner = "catppuccin";
+          repo = "fish";
+          rev = "521560ce2075ca757473816aa31914215332bac9";
+          hash = "sha256-5CXdzym6Vp+FbKTVBtVdWoh3dODudADIzOLXIyIIxgQ=";
+        };
       }
       {
-        name = "puffer";
-        src = pkgs.fishPlugins.puffer.src;
+        name = "abbreviation-tips";
+        src = pkgs.fetchFromGitHub {
+          owner = "gazorby";
+          repo = "fish-abbreviation-tips";
+          rev = "8ed76a62bb044ba4ad8e3e6832640178880df485";
+          hash = "sha256-F1t81VliD+v6WEWqj1c1ehFBXzqLyumx5vV46s/FZRU=";
+        };
       }
     ];
   };
@@ -746,7 +770,7 @@ Directory: $dir" \
   home.file = {
     ".config/fish/alias.fish".source = ../dotfiles/alias.fish;
     ".config/fish/functions.fish".source = ../dotfiles/functions.fish;
-    ".config/fish/fish_plugins".source = ../dotfiles/fish_plugins;
+    # fish_plugins no longer needed — plugins managed by programs.fish.plugins
     
     # Ripgrep config for better searching
     ".config/ripgrep/ripgreprc".text = ''
