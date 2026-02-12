@@ -9,21 +9,12 @@
     
     settings = {
       format = lib.concatStrings [
+        # Line 1: left info ── fill ── right info
         "$hostname"
         "$directory"
-        "$line_break"
-        "$localip"
-        "$shlvl"
-        "$singularity"
         "$kubernetes"
-        "$vcsh"
-        "$hg_branch"
         "$docker_context"
         "$package"
-        "$custom"
-        "$line_break"
-        "$sudo"
-        "$line_break"
         "$fill"
         "$git_branch"
         "$git_status"
@@ -32,10 +23,7 @@
         "$jobs"
         "$battery"
         "$time"
-        "$status"
-        "$os"
-        "$container"
-        "$shell"
+        # Line 2: prompt character
         "$line_break"
         "$character"
       ];
