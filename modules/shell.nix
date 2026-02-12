@@ -385,7 +385,6 @@ Directory: $dir" \
     config = {
       theme = "Catppuccin-mocha";
       style = "numbers,changes,header-filename,header-filesize,grid";
-      pager = "less -FR";
       map-syntax = [
         ".ignore:Git Ignore"
         ".gitignore:Git Ignore"
