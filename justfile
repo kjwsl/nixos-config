@@ -13,13 +13,10 @@ conflict:
 
 
 linux:
-    nix run home-manager -- build --flake .#ray-linux
-    result/activate
+    nix run home-manager -- switch --flake .#ray-linux -b backup
 
 darwin:
-    nix run home-manager -- build --flake .#ray-darwin
-    result/activate
+    nix run home-manager -- switch --flake .#ray-darwin -b backup
 
 termux:
-    nix run home-manager -- build --flake .#ray-termux
-    result/activate
+    nix run home-manager -- switch --flake .#ray-termux -b backup
