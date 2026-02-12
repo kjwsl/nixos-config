@@ -4,10 +4,12 @@
   programs.git = {
     enable = true;
     
-    userName = "ray";
-    userEmail = "kjwsl@fatherslab.com";
-    
-    extraConfig = {
+    settings = {
+      user = {
+        name = "ray";
+        email = "kjwsl@fatherslab.com";
+      };
+      
       core = {
         compression = 9;
         autocrlf = "input";
@@ -51,13 +53,58 @@
       "includeIf \"gitdir:~/work/\"" = {
         path = "~/.config/git/config-work";
       };
+      
+      alias = {
+        # Submodule aliases
+        sm = "submodule";
+        spl = "submodule foreach git pull";
+        sinit = "submodule init";
+        sdeinit = "submodule deinit";
+        supdate = "submodule update --remote --rebase";
+        sadd = "submodule add";
+        
+        # Basic git aliases
+        cl = "clone";
+        co = "checkout";
+        br = "branch";
+        st = "status";
+        sw = "switch";
+        ss = "stash";
+        cm = "commit";
+        cmm = "commit -m";
+        pl = "pull";
+        plr = "pull --rebase";
+        ps = "push";
+        m = "merge";
+        ms = "merge --squash";
+        rb = "rebase";
+        t = "tag";
+        df = "diff";
+        dfh = "diff HEAD";
+        lg = "log --graph --decorate";
+        rs = "reset";
+        rss = "reset --soft";
+        rsh = "reset --hard";
+        
+        # Simplified conventional commit aliases (complex functions moved to separate script)
+        feat = "!f() { git commit -m \"feat: $*\"; }; f";
+        fix = "!f() { git commit -m \"fix: $*\"; }; f";
+        docs = "!f() { git commit -m \"docs: $*\"; }; f";
+        style = "!f() { git commit -m \"style: $*\"; }; f";
+        refactor = "!f() { git commit -m \"refactor: $*\"; }; f";
+        test = "!f() { git commit -m \"test: $*\"; }; f";
+        chore = "!f() { git commit -m \"chore: $*\"; }; f";
+        perf = "!f() { git commit -m \"perf: $*\"; }; f";
+        ci = "!f() { git commit -m \"ci: $*\"; }; f";
+        build = "!f() { git commit -m \"build: $*\"; }; f";
+        wip = "!f() { git commit -m \"wip: $*\"; }; f";
+        revert = "!f() { git commit -m \"revert: $*\"; }; f";
+      };
     } // lib.optionalAttrs (lib.hasAttr "gh" pkgs) {
       "credential \"https://github.com\"" = {
-        helper = "";
         helper = "!${pkgs.gh}/bin/gh auth git-credential";
       };
       "credential \"https://gist.github.com\"" = {
-        helper = "";
         helper = "!${pkgs.gh}/bin/gh auth git-credential";
       };
     } // lib.optionalAttrs (lib.hasAttr "git-lfs" pkgs) {
@@ -68,61 +115,15 @@
         required = true;
       };
     };
-    
-    aliases = {
-      # Submodule aliases
-      sm = "submodule";
-      spl = "submodule foreach git pull";
-      sinit = "submodule init";
-      sdeinit = "submodule deinit";
-      supdate = "submodule update --remote --rebase";
-      sadd = "submodule add";
-      
-      # Basic git aliases
-      cl = "clone";
-      co = "checkout";
-      br = "branch";
-      st = "status";
-      sw = "switch";
-      ss = "stash";
-      cm = "commit";
-      cmm = "commit -m";
-      pl = "pull";
-      plr = "pull --rebase";
-      ps = "push";
-      m = "merge";
-      ms = "merge --squash";
-      rb = "rebase";
-      t = "tag";
-      df = "diff";
-      dfh = "diff HEAD";
-      lg = "log --graph --decorate";
-      rs = "reset";
-      rss = "reset --soft";
-      rsh = "reset --hard";
-      
-      # Conventional commit aliases (complex functions)
-      build = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"build${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      chore = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"chore${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      ci = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"ci${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      docs = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"docs${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      feat = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"feat${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      fix = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"fix${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      perf = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"perf${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      refactor = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"refactor${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      rev = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"revert${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      style = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"style${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      test = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"test${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-      wip = "!a() { local _scope _attention _message; while [ $# -ne 0 ]; do case $1 in -s | --scope ) if [ -z $2 ]; then echo \"Missing scope!\"; return 1; fi; _scope=\"$2\"; shift 2;; -a | --attention ) _attention=\"!\"; shift 1;; * ) _message=\"${_message} $1\"; shift 1;; esac; done; git commit -m \"wip${_scope:+(${_scope})}${_attention}:${_message}\"; }; a";
-    };
-    
-    delta = {
-      enable = true;
-      options = {
-        navigate = true;
-        dark = true;
-        line-numbers = true;
-      };
+  };
+
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      navigate = true;
+      dark = true;
+      line-numbers = true;
     };
   };
 

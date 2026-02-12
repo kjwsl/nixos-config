@@ -142,7 +142,7 @@
     LESS = "-R";
     
     # Tool configurations
-    FZF_DEFAULT_OPTS = "--height=40% --layout=reverse --border --margin=1 --padding=1";
+    # FZF_DEFAULT_OPTS is handled by programs.fzf.defaultOptions
     RIPGREP_CONFIG_PATH = "$HOME/.config/ripgrep/ripgreprc";
     BAT_THEME = "Catppuccin-mocha";
     

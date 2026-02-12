@@ -170,14 +170,7 @@
           set -g @sessionist-bind-join-pane 'J'
         '';
       }
-      {
-        plugin = tmux-cowboy;
-        extraConfig = ''
-          # Kill unresponsive programs
-          set -g @cowboy-key 'k'
-          set -g @cowboy-kill-key 'K'
-        '';
-      }
+      # tmux-cowboy plugin not available in nixpkgs
       
       # Integration and workflow
       {
@@ -385,12 +378,12 @@
   # Scripts and additional configs that need to be files
   home.file = {
     # Tmux scripts
-    ".config/tmux/scripts".source = ./dotfiles/tmux-scripts;
+    ".config/tmux/scripts".source = ../dotfiles/tmux-scripts;
     
     # Additional tmux configs (nvim integration)
-    ".config/tmux/tmux.conf.nvim".source = ./dotfiles/tmux.conf.nvim;
+    ".config/tmux/tmux.conf.nvim".source = ../dotfiles/tmux.conf.nvim;
     
     # Zellij configuration (no good HM module yet)
-    ".config/zellij".source = ./dotfiles/zellij;
+    ".config/zellij".source = ../dotfiles/zellij;
   };
 }

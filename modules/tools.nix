@@ -94,42 +94,42 @@
   # File-based configurations for tools that need complex configs or don't have good HM modules
   home.file = {
     # Yazi theme (complex theme file)
-    ".config/yazi/theme.toml".source = ./dotfiles/yazi/theme.toml;
-    ".config/yazi/keymap.toml".source = ./dotfiles/yazi/keymap.toml;
+    ".config/yazi/theme.toml".source = ../dotfiles/yazi/theme.toml;
+    ".config/yazi/keymap.toml".source = ../dotfiles/yazi/keymap.toml;
     
     # Btop theme
-    ".config/btop/themes".source = ./dotfiles/btop/themes;
+    ".config/btop/themes".source = ../dotfiles/btop/themes;
     
     # Fastfetch config
-    ".config/fastfetch".source = ./dotfiles/fastfetch;
+    ".config/fastfetch".source = ../dotfiles/fastfetch;
     
     # Development and shell tools with complex configs
-    ".config/nushell".source = ./dotfiles/nushell;
-    ".config/sheldon".source = ./dotfiles/sheldon;
-    ".config/omf".source = ./dotfiles/omf;
-    ".config/zsh".source = ./dotfiles/zsh;
+    ".config/nushell".source = ../dotfiles/nushell;
+    ".config/sheldon".source = ../dotfiles/sheldon;
+    ".config/omf".source = ../dotfiles/omf;
+    ".config/zsh".source = ../dotfiles/zsh;
     
     # Security and privacy tools
-    ".config/sops".source = ./dotfiles/sops;
-    ".config/syncthing".source = ./dotfiles/syncthing;
+    ".config/sops".source = ../dotfiles/sops;
+    ".config/syncthing".source = ../dotfiles/syncthing;
     
     # AI and language tools
-    ".config/ai".source = ./dotfiles/ai;
-    ".config/harper-ls".source = ./dotfiles/harper-ls;
-    ".config/goose".source = ./dotfiles/goose;
+    ".config/ai".source = ../dotfiles/ai;
+    ".config/harper-ls".source = ../dotfiles/harper-ls;
+    ".config/goose".source = ../dotfiles/goose;
     
     # Media and download tools
-    ".config/yt-dlp".source = ./dotfiles/yt-dlp;
-    ".config/pulse".source = ./dotfiles/pulse;
-    ".config/qBittorrent".source = ./dotfiles/qBittorrent;
+    ".config/yt-dlp".source = ../dotfiles/yt-dlp;
+    ".config/pulse".source = ../dotfiles/pulse;
+    ".config/qBittorrent".source = ../dotfiles/qBittorrent;
     
     # Version control and development
-    ".config/private_jj".source = ./dotfiles/private_jj;
+    ".config/private_jj".source = ../dotfiles/private_jj;
     
     # System info tools
-    ".config/neofetch".source = ./dotfiles/neofetch;
+    ".config/neofetch".source = ../dotfiles/neofetch;
     
     # Nix configuration
-    ".config/nix".source = ./dotfiles/nix;
+    ".config/nix".source = ../dotfiles/nix;
   };
 }

@@ -409,9 +409,9 @@ Directory: $dir" \
   
   programs.eza = {
     enable = true;
-    enableAliases = false;  # We define custom aliases above
+    # enableAliases is deprecated - using shell-specific integrations instead
     git = true;
-    icons = true;
+    icons = "auto";
     extraOptions = [
       "--group-directories-first"
       "--header"
@@ -777,9 +777,9 @@ Directory: $dir" \
   
   # Additional fish config files that need to be managed as raw files
   home.file = {
-    ".config/fish/alias.fish".source = ./dotfiles/alias.fish;
-    ".config/fish/functions.fish".source = ./dotfiles/functions.fish;
-    ".config/fish/fish_plugins".source = ./dotfiles/fish_plugins;
+    ".config/fish/alias.fish".source = ../dotfiles/alias.fish;
+    ".config/fish/functions.fish".source = ../dotfiles/functions.fish;
+    ".config/fish/fish_plugins".source = ../dotfiles/fish_plugins;
     
     # Ripgrep config for better searching
     ".config/ripgrep/ripgreprc".text = ''
