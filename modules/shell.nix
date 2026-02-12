@@ -4,6 +4,13 @@
   # Fish shell configuration
   programs.fish = {
     enable = true;
+    
+    shellAliases = {
+      # Editor shortcuts
+      v = "nvim";
+      vim = "nvim";
+    };
+    
     interactiveShellInit = ''
       # Disable fish greeting
       set fish_greeting

@@ -13,13 +13,13 @@ conflict:
 
 
 linux:
-    nix run home-manager -- build --flake .#linux
+    nix run home-manager -- build --impure --flake .#linux
     result/activate
 
 darwin:
-    nix run home-manager -- build --flake .#darwin
+    nix run home-manager -- build --impure --flake .#darwin
     result/activate
 
 termux:
-    nix run home-manager -- build --flake .#termux
+    nix run home-manager -- build --impure --flake .#termux
     result/activate

@@ -81,5 +81,8 @@
     zig
   ];
 
+  # Allow overwriting existing config files
+  xdg.configFile."zellij/config.kdl".force = true;
+
   home.stateVersion = "25.05";
 }

@@ -5,53 +5,28 @@
   programs.git = {
     enable = true;
 
-    # Delta - Enhanced diff viewer
-    delta = {
-      enable = true;
-      options = {
-        # Appearance
-        side-by-side = true;
-        line-numbers = true;
+    # Git configuration (renamed from extraConfig)
+    settings = {
+      # Git aliases (renamed from top-level aliases)
+      alias = {
+        # Short commands
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        ci = "commit";
 
-        # Syntax theme
-        syntax-theme = "Dracula";
+        # Log variants
+        lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+        lol = "log --graph --decorate --pretty=oneline --abbrev-commit";
+        lola = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
 
-        # Layout
-        navigate = true;
-
-        # Features
-        features = "decorations";
-
-        decorations = {
-          commit-decoration-style = "bold yellow box ul";
-          file-style = "bold yellow ul";
-          file-decoration-style = "none";
-        };
+        # Useful shortcuts
+        unstage = "reset HEAD --";
+        last = "log -1 HEAD";
+        visual = "log --graph --all --decorate --oneline";
+        amend = "commit --amend --no-edit";
       };
-    };
 
-    # Git aliases
-    aliases = {
-      # Short commands
-      st = "status";
-      co = "checkout";
-      br = "branch";
-      ci = "commit";
-
-      # Log variants
-      lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      lol = "log --graph --decorate --pretty=oneline --abbrev-commit";
-      lola = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
-
-      # Useful shortcuts
-      unstage = "reset HEAD --";
-      last = "log -1 HEAD";
-      visual = "log --graph --all --decorate --oneline";
-      amend = "commit --amend --no-edit";
-    };
-
-    # Git configuration
-    extraConfig = {
       # Core settings
       core = {
         editor = "nvim";
@@ -92,6 +67,32 @@
       # Rebase settings
       rebase = {
         autoStash = true;
+      };
+    };
+  };
+
+  # Delta - Enhanced diff viewer (moved from programs.git.delta)
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      # Appearance
+      side-by-side = true;
+      line-numbers = true;
+
+      # Syntax theme
+      syntax-theme = "Dracula";
+
+      # Layout
+      navigate = true;
+
+      # Features
+      features = "decorations";
+
+      decorations = {
+        commit-decoration-style = "bold yellow box ul";
+        file-style = "bold yellow ul";
+        file-decoration-style = "none";
       };
     };
   };
