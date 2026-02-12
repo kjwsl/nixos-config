@@ -95,21 +95,12 @@
           mise activate fish | source
       end
       
-      if type -q direnv
-          direnv hook fish | source
-      end
-
       # Theme - Explicitly use dark mode variant
       fish_config theme choose "Catppuccin Mocha" --color-theme=dark
 
       # Load Functions
       if test -f $__fish_config_dir/functions.fish
           source $__fish_config_dir/functions.fish
-      end
-
-      # Environment Loading
-      if test -f $HOME/.envrc
-          bass source $HOME/.envrc
       end
 
       if test -d $HOME/modules
@@ -748,29 +739,6 @@ Directory: $dir" \
       EDITOR = "nvim";
       PAGER = "less -FR";
       MANPAGER = "sh -c 'col -bx | bat -l man -p'";
-    };
-  };
-  
-  programs.direnv = {
-    enable = true;
-    enableFishIntegration = true;
-    enableBashIntegration = true;
-    enableZshIntegration = true;
-    nix-direnv.enable = true;
-    
-    config = {
-      global = {
-        hide_env_diff = true;
-        warn_timeout = "10s";
-        disable_stdin = false;
-      };
-      whitelist = {
-        prefix = [
-          "$HOME/repos"
-          "$HOME/projects"
-          "$HOME/work"
-        ];
-      };
     };
   };
   

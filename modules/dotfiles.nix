@@ -17,7 +17,6 @@
     # Development configurations
     ".clang-format".source = ../dotfiles/dot_clang-format;
     ".clang-tidy".source = ../dotfiles/dot_clang-tidy;
-    ".envrc".source = ../dotfiles/dot_envrc;
     ".justfile".source = ../dotfiles/dot_justfile;
     
     # Directories that need raw file management
