@@ -27,8 +27,6 @@
         onActivation.cleanup = "uninstall";
     };
 
-    programs.fish.enable = true; # Enable fish program for nix-darwin
-
     system.defaults.dock.autohide = true;
     system.defaults.finder.AppleShowAllExtensions = true;
 

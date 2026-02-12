@@ -15,7 +15,17 @@
 
   outputs = { self, nixpkgs, darwin, home-manager, ... }:
     let
-      username = "ray";
+      # Username Parameterization:
+      # Automatically derives username from the USER environment variable,
+      # falling back to "nixuser" if not set. This makes the configuration
+      # shareable and usable by any user without hardcoding names.
+      username =
+        let envUser = builtins.getEnv "USER";
+        in if envUser != "" then envUser else "nixuser";
+      # Helper function to create home-manager configurations.
+      # Takes system architecture, username, home directory path, and optional modules.
+      # This abstraction allows creating multiple platform-specific configurations
+      # while maintaining consistent parameterization.
       makeHome = system: username: homeDirectory: extraModules:
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
@@ -26,13 +36,14 @@
             {
               home.username = username;
               home.homeDirectory = homeDirectory;
-              # Pass system to modules for platform detection
-              _module.args.system = system;
             }
           ] ++ extraModules;
         };
     in
     {
+      # Darwin (macOS) Configuration:
+      # Uses the parameterized username to create a user-specific configuration.
+      # The configuration name dynamically matches the current user.
       darwinConfigurations.${username} = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         specialArgs = { inherit username; };
@@ -47,16 +58,21 @@
             home-manager.users.${username} = {
               imports = [ ./home.nix ];
               home.homeDirectory = "/Users/${username}";
-              # Pass system to modules for platform detection
-              _module.args.system = "aarch64-darwin";
             };
           }
         ];
       };
+
+      # Home Manager Configurations:
+      # Generic configuration names (linux, darwin, termux) instead of user-specific names.
+      # Each configuration uses the parameterized username and appropriate home directory path.
+      # This approach allows any user to build with commands like:
+      #   nix run home-manager -- build --flake .#linux
+      # without needing to modify the flake or know the configuration name.
       homeConfigurations = {
-        ray-linux = makeHome "x86_64-linux" "ray" "/home/ray" [];
-        ray-darwin = makeHome "aarch64-darwin" "ray" "/Users/ray" [];
-        ray-termux = makeHome "aarch64-linux" "ray" "/data/data/com.termux.nix/files/home" [];
+        linux = makeHome "x86_64-linux" username "/home/${username}" [];
+        darwin = makeHome "aarch64-darwin" username "/Users/${username}" [];
+        termux = makeHome "aarch64-linux" username "/data/data/com.termux.nix/files/home" [];
       };
 
     };

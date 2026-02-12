@@ -1,7 +1,7 @@
 # https://just.systems
 
-_default:
-    just -l
+default:
+    echo 'Hello, world!'
 
 conflict:
     #!/usr/bin/env bash
@@ -13,10 +13,13 @@ conflict:
 
 
 linux:
-    nix run home-manager -- switch --flake .#ray-linux -b backup
+    nix run home-manager -- build --flake .#linux
+    result/activate
 
 darwin:
-    nix run home-manager -- switch --flake .#ray-darwin -b backup
+    nix run home-manager -- build --flake .#darwin
+    result/activate
 
 termux:
-    nix run home-manager -- switch --flake .#ray-termux -b backup
+    nix run home-manager -- build --flake .#termux
+    result/activate

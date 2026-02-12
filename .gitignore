@@ -3,10 +3,7 @@ result
 # Auto Claude data directory
 .auto-claude/
 
-# Auto Claude generated files
+# Auto Claude framework files (should not be committed)
 .auto-claude-security.json
 .auto-claude-status
 .claude_settings.json
-.worktrees/
-.security-key
-logs/security/

@@ -1,56 +1,44 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
-  programs.helix = {
+  # Neovim configuration
+  programs.neovim = {
     enable = true;
-    
-    settings = {
-      theme = "catppuccin_mocha";
-      
-      editor = {
-        line-number = "relative";
-        auto-format = false;
-        auto-pairs = false;
-      };
-      
-      keys = {
-        normal = {
-          K = "hover";
-          space = {
-            "=" = ":format";
-            f = {
-              f = "file_picker";
-              F = "file_picker_in_current_directory";
-              s = "symbol_picker";
-              S = "workspace_symbol_picker";
-              "." = "last_picker";
-            };
-            s = {
-              h = "vsplit";
-              l = "vsplit";
-              j = "hsplit";
-              k = "hsplit";
-            };
-            w = {
-              d = "wclose";
-              w = ":w";
-              q = ":wq";
-              Q = ":wqa";
-            };
-            q = {
-              q = ":q";
-            };
-          };
-        };
-        insert = {
-          z = {
-            x = "normal_mode";
-          };
-        };
-      };
-    };
+
+    # Set as default editor
+    defaultEditor = true;
+
+    # Enable vi/vim aliases
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+
+    # Extra packages available to neovim
+    extraPackages = with pkgs; [
+      # Language servers and tools can be added here if needed
+    ];
+
+    # Configuration
+    extraConfig = ''
+      " Basic settings
+      set number
+      set relativenumber
+      set expandtab
+      set tabstop=2
+      set shiftwidth=2
+      set smartindent
+      set ignorecase
+      set smartcase
+      set hlsearch
+      set incsearch
+      set termguicolors
+
+      " Use system clipboard
+      set clipboard=unnamedplus
+
+      " Better split defaults
+      set splitbelow
+      set splitright
+    '';
   };
-  
-  # Note: Neovim config is managed by chezmoi external git repo
-  # Don't try to nixify it - let chezmoi handle the external repo
 }

@@ -1,0 +1,39 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/**)",
+      "Write(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/**)",
+      "Edit(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/**)",
+      "Glob(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/**)",
+      "Grep(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/**)",
+      "Read(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/.auto-claude/specs/007-consolidate-fish-plugin-management/**)",
+      "Write(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/.auto-claude/specs/007-consolidate-fish-plugin-management/**)",
+      "Edit(/Users/ray/repos/home-manager/.auto-claude/worktrees/tasks/007-consolidate-fish-plugin-management/.auto-claude/specs/007-consolidate-fish-plugin-management/**)",
+      "Read(/Users/ray/repos/home-manager/.auto-claude/**)",
+      "Write(/Users/ray/repos/home-manager/.auto-claude/**)",
+      "Edit(/Users/ray/repos/home-manager/.auto-claude/**)",
+      "Glob(/Users/ray/repos/home-manager/.auto-claude/**)",
+      "Grep(/Users/ray/repos/home-manager/.auto-claude/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}

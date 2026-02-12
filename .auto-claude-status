@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "007-consolidate-fish-plugin-management",
+  "state": "building",
+  "subtasks": {
+    "completed": 5,
+    "total": 7,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Migrate Fish Plugins to Home-Manager",
+    "id": null,
+    "total": 7
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 7,
+    "started_at": "2026-02-13T04:29:52.731311"
+  },
+  "last_update": "2026-02-13T04:42:23.208528"
+}
