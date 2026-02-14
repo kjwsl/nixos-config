@@ -1,55 +1,24 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
-  programs.alacritty = {
-    enable = true;
-    settings = {
-      import = [
-        "~/.config/alacritty/themes/themes/catppucin_frappe.toml"
-      ];
-      shell = {
-        program = "/bin/zsh";
-        args = ["-l"];
-      };
-      font = {
-        size = 13;
-        normal = {
-          family = "CaskaydiaCove Nerd Font Mono";
-        };
-      };
-      window = {
-        opacity = 0.9;
-        blur = true;
-      };
-    };
+  # WezTerm - GPU-accelerated terminal emulator
+  # Note: Installed via homebrew cask in darwin.nix as "wezterm@nightly"
+  # We just manage the config files here
+
+  home.file = {
+    # WezTerm config (Lua-based with modules)
+    ".config/wezterm/wezterm.lua".source = ../config/wezterm/wezterm.lua;
+    ".config/wezterm/utils.lua".source = ../config/wezterm/utils.lua;
+    ".config/wezterm/.stylua".source = ../config/wezterm/.stylua;
+    ".config/wezterm/bg.jpg".source = ../config/wezterm/bg.jpg;
+    ".config/wezterm/modules".source = ../config/wezterm/modules;
   };
 
-  programs.kitty = {
-    enable = true;
-    settings = {
-      enable_audio_bell = false;
-      font_family = "Cartograph CF Italic";
-      font_size = 13;
-      disable_ligatures = "never";
-      url_color = "#fff";
-      url_style = "curly";
-      
-      # Include color config (will be managed as separate file)
-      include = "color.ini";
-    };
-  };
-  
-  # Terminal configurations that don't have good HM modules yet
-  home.file = {
-    # Kitty color configuration (referenced by kitty.conf)
-    ".config/kitty/color.ini".source = ../dotfiles/kitty/color.ini;
-    
-    # Alacritty themes directory not needed - themes are referenced via import in config
-    
-    # Ghostty - no good HM module yet
-    ".config/ghostty".source = ../dotfiles/ghostty;
-    
-    # WezTerm - no good HM module yet  
-    ".config/wezterm".source = ../dotfiles/wezterm;
-  };
+  # Alacritty - Alternative terminal (if you use it)
+  # programs.alacritty = {
+  #   enable = true;
+  #   settings = {
+  #     # Configuration here
+  #   };
+  # };
 }

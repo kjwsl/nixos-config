@@ -32,7 +32,6 @@
             inherit system;
           };
           modules = [
-            ./home.nix
             {
               home.username = username;
               home.homeDirectory = homeDirectory;
@@ -63,16 +62,35 @@
         ];
       };
 
-      # Home Manager Configurations:
-      # Generic configuration names (linux, darwin, termux) instead of user-specific names.
-      # Each configuration uses the parameterized username and appropriate home directory path.
-      # This approach allows any user to build with commands like:
-      #   nix run home-manager -- build --flake .#linux
-      # without needing to modify the flake or know the configuration name.
+      # Home Manager Configurations with Profile Support:
+      # Multiple profiles available for different use cases:
+      #   minimal     - Just shell and basic tools
+      #   development - Full dev environment (default)
+      #   work        - Development + work-specific tools
+      #   personal    - Development + personal tools
+      #
+      # Usage:
+      #   home-manager switch --flake .#darwin-development (or just .#darwin for default)
+      #   home-manager switch --flake .#darwin-minimal
+      #   home-manager switch --flake .#darwin-work
       homeConfigurations = {
-        linux = makeHome "x86_64-linux" username "/home/${username}" [];
-        darwin = makeHome "aarch64-darwin" username "/Users/${username}" [];
-        termux = makeHome "aarch64-linux" username "/data/data/com.termux.nix/files/home" [];
+        # macOS configurations
+        darwin = makeHome "aarch64-darwin" username "/Users/${username}" [ ./profiles/development.nix ];
+        darwin-minimal = makeHome "aarch64-darwin" username "/Users/${username}" [ ./profiles/minimal.nix ];
+        darwin-development = makeHome "aarch64-darwin" username "/Users/${username}" [ ./profiles/development.nix ];
+        darwin-work = makeHome "aarch64-darwin" username "/Users/${username}" [ ./profiles/work.nix ];
+        darwin-personal = makeHome "aarch64-darwin" username "/Users/${username}" [ ./profiles/personal.nix ];
+
+        # Linux configurations
+        linux = makeHome "x86_64-linux" username "/home/${username}" [ ./profiles/development.nix ];
+        linux-minimal = makeHome "x86_64-linux" username "/home/${username}" [ ./profiles/minimal.nix ];
+        linux-development = makeHome "x86_64-linux" username "/home/${username}" [ ./profiles/development.nix ];
+        linux-work = makeHome "x86_64-linux" username "/home/${username}" [ ./profiles/work.nix ];
+        linux-personal = makeHome "x86_64-linux" username "/home/${username}" [ ./profiles/personal.nix ];
+
+        # Termux configurations
+        termux = makeHome "aarch64-linux" username "/data/data/com.termux.nix/files/home" [ ./profiles/minimal.nix ];
+        termux-development = makeHome "aarch64-linux" username "/data/data/com.termux.nix/files/home" [ ./profiles/development.nix ];
       };
 
     };
