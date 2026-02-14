@@ -5,10 +5,14 @@
     ./modules/git.nix
     ./modules/editors.nix
     ./modules/multiplexers.nix
+    ./modules/terminals.nix
     ./modules/tools.nix
+    ./modules/privacy.nix
+    ./modules/himalaya.nix
+    # ./modules/dotfiles.nix  # Removed - configs migrated to proper modules
   ];
 
-  home.packages = with pkgs; [
+  home.packages = (with pkgs; [
     # Tools managed via native HM modules have been moved to:
     # - modules/shell.nix: fish, zoxide, fzf, atuin
     # - modules/starship.nix: starship
@@ -16,6 +20,10 @@
     # - modules/editors.nix: neovim
     # - modules/multiplexers.nix: tmux, zellij
     # - modules/tools.nix: bat, eza, yazi, btop, broot, nushell
+
+    # System essentials
+    bash  # Bash 5.x required for tmux-powerkit (macOS ships with 3.2)
+    nh    # Modern Nix helper - unified CLI for home-manager/darwin/nixos
 
     # frawk
     #loop
@@ -42,6 +50,7 @@
     httm
     hyperfine
     jujutsu
+    jj-starship  # Starship integration for Jujutsu
     just
     lazyjj
     lemmeknow
@@ -79,7 +88,10 @@
     xh
     xxh
     zig
-  ];
+  ]);
+
+  # Enable Himalaya email client with Fish shortcuts
+  programs.himalaya-custom.enable = true;
 
   # Allow overwriting existing config files
   xdg.configFile."zellij/config.kdl".force = true;
