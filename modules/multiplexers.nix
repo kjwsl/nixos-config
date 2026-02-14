@@ -47,64 +47,8 @@ in
     # Use vi keybindings
     keyMode = "vi";
 
-    # Custom prefix (Ctrl-s instead of Ctrl-b)
-    prefix = "C-s";
-
-    # Additional configuration
-    extraConfig = ''
-      # Fix: Override HM's auto-generated default-command to use fish
-      set -g default-command "${pkgs.fish}/bin/fish"
-
-      # Unbind default prefix to prevent conflicts
-      unbind C-b
-
-      # Send prefix with prefix + a (like screen)
-      bind a send-prefix
-
-      # Improve paste time detection (prevents garbled SSH input)
-      set -g assume-paste-time 1
-
-      # Status bar position
-      set-option -g status-position top
-
-      # Better colors
-      set -ag terminal-overrides ",xterm-256color:RGB"
-      set -ag terminal-overrides ",screen-256color:RGB"
-
-      # Reload config easily
-      unbind r
-      bind r source-file ~/.config/tmux/tmux.conf \; display-message "⚙️  Config reloaded"
-
-      # Monitor activity in windows
-      set -g monitor-activity on
-      set -g visual-activity off
-
-      # Better copy mode
-      bind-key -T copy-mode-vi 'v' send -X begin-selection
-      bind-key -T copy-mode-vi 'C-v' send -X rectangle-toggle
-      bind-key -T copy-mode-vi 'y' send -X copy-selection
-
-      # Lock mode (like zellij) - Ctrl-s + Enter
-      bind Enter \
-        set prefix None \;\
-        set key-table locked \;\
-        set -g status-style "bg=#e74c3c,fg=#ffffff,bold" \;\
-        set -g status-left "🔒 LOCKED " \;\
-        set -g status-right " Press Ctrl-g to unlock 🔒" \;\
-        set -g status-justify centre \;\
-        refresh-client -S \;\
-        display-message "🔒 LOCKED - Press Ctrl-g to unlock"
-
-      bind -T locked C-g \
-        set -u prefix \;\
-        set -u key-table \;\
-        set -ug status-style \;\
-        set -ug status-left \;\
-        set -ug status-right \;\
-        set -ug status-justify \;\
-        refresh-client -S \;\
-        display-message "🔓 UNLOCKED"
-    '';
+    # Custom prefix (Ctrl-a instead of Ctrl-b)
+    prefix = "C-a";
 
     # Plugins (Nix-managed, no TPM needed!)
     plugins = with pkgs.tmuxPlugins; [
@@ -120,18 +64,17 @@ in
         '';
       }
 
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-          set -g @continuum-save-interval '15'
-        '';
-      }
-
       # Navigation
       pain-control
       vim-tmux-navigator
       yank
+      tmux-thumbs
+
+      copycat
+      cpu
+      battery
+      prefix-highlight
+      sidebar
 
       # tmux-powerkit - The Ultimate Status Bar Framework
       # Includes 42 plugins, 37 themes with 61 variants, smart caching
