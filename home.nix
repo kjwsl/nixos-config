@@ -1,10 +1,12 @@
 { config, pkgs, ... }: {
   home.packages = with pkgs; [
     # frawk
+    # termscp
     #loop
     amazon-q-cli
     atuin
     bat
+    bitwarden-cli
     bottom
     broot
     btop
@@ -61,10 +63,9 @@
     skim
     so # Ask questions on StackOverflow https://github.com/samtay/so
     starship
+    tealdeer # tldr tlrc
     television
     tere
-    # termscp
-    tealdeer # tldr tlrc
     tmux
     tokei
     tre-command
