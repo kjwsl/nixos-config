@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    
+
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -11,49 +11,63 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    catppuccin.url = "github:catppuccin/nix";
+
+    wrappers.url = "github:BirdeeHub/nix-wrapper-modules";
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, ... }:
-    let
-      username = "ray";
-      makeHome = system: username: homeDirectory: extraModules:
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            inherit system;
-          };
-          modules = [
+  outputs = {
+    self,
+    nixpkgs,
+    darwin,
+    home-manager,
+    catppuccin,
+    wrappers,
+    ...
+  }: let
+    username = "ray";
+    makeHome = system: username: homeDirectory: extraModules: let
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+    in
+      home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules =
+          [
             ./home.nix
+            catppuccin.homeModules.catppuccin
             {
               home.username = username;
               home.homeDirectory = homeDirectory;
             }
-          ] ++ extraModules;
-        };
-    in
-    {
-      darwinConfigurations.${username} = darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = { inherit username; };
-        modules = [
-          ./darwin.nix
-          
-          home-manager.darwinModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "bak"; # Backup existing files
-            home-manager.users.${username} = {
-              imports = [ ./home.nix ];
-              home.homeDirectory = "/Users/${username}";
-            };
-          }
-        ];
+          ]
+          ++ extraModules;
       };
-      homeConfigurations = {
-        ray-linux = makeHome "x86_64-linux" "ray" "/home/ray" [];
-        ray-darwin = makeHome "aarch64-darwin" "ray" "/Users/ray" [];
-        ray-termux = makeHome "aarch64-linux" "ray" "/data/data/com.termux.nix/files/home" [];
-      };
+  in {
+    darwinConfigurations.${username} = darwin.lib.darwinSystem {
+      system = "aarch64-darwin";
+      specialArgs = {inherit username;};
+      modules = [
+        ./darwin.nix
 
+        home-manager.darwinModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "bak"; # Backup existing files
+          home-manager.users.${username} = {
+            imports = [./home.nix];
+            home.homeDirectory = "/Users/${username}";
+          };
+        }
+      ];
     };
+    homeConfigurations = {
+      ray-linux = makeHome "x86_64-linux" "ray" "/home/ray" [];
+      ray-darwin = makeHome "aarch64-darwin" "ray" "/Users/ray" [];
+      ray-termux = makeHome "aarch64-linux" "ray" "/data/data/com.termux.nix/files/home" [];
+    };
+  };
 }

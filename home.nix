@@ -1,16 +1,25 @@
-{ config, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  catppuccin,
+  ...
+}: let
+  isDarwin = lib.darwin.isDarwin;
+in {
   home.packages = with pkgs; [
     # frawk
     # termscp
     #loop
+    alejandra # Nix code formatter
     amazon-q-cli
     atuin
-    mprocs # Run multiple processes in parallel
     bat
     bitwarden-cli
     bottom
     broot
     btop
+    cachix
     cargo-watch
     chezmoi
     choose
@@ -44,9 +53,11 @@
     lsd
     mcfly
     mise
+    mprocs # Run multiple processes in parallel
     navi
     neovim
     nh
+    nil # Nix LSP
     ninja
     ouch
     procs
@@ -81,8 +92,6 @@
     zoxide
   ];
 
-  home.shell.enableNushellIntegration = true;
-
   programs = {
     direnv = {
       enable = true;
@@ -113,29 +122,49 @@
       enableZshIntegration = true;
       enableFishIntegration = true;
       enableNushellIntegration = true;
-
     };
-    nushell = { 
+
+    nushell = {
       enable = true;
+
+      extraConfig = ''
+        # Add nix profile to PATH
+                    $env.PATH ++= [ "~/.nix-profile/bin" ]
+      '';
+
       shellAliases = {
+        "v." = "nvim .";
         v = "nvim";
       };
+
       plugins = with pkgs.nushellPlugins; [
         formats
+        skim
+        semver
+        highlight
+        gstat
+        query
       ];
-   };  
+    };
 
-   carapace.enable = true;
-   carapace.enableNushellIntegration = true;
+    carapace = {
+      enable = true;
 
-   starship = { 
-     enable = true;
-       settings = {
-         add_newline = true;
-         character = { 
-         success_symbol = "[➜](bold green)";
-         error_symbol = "[➜](bold red)";
-         };
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+    };
+
+    # Custom Prompt
+    starship = {
+      enable = true;
+      settings = {
+        add_newline = true;
+        character = {
+          success_symbol = "[➜](bold green)";
+          error_symbol = "[➜](bold red)";
+        };
       };
 
       enableBashIntegration = true;
@@ -144,8 +173,53 @@
       enableNushellIntegration = true;
 
       enableTransience = true;
-
     };
+
+    #   vivid = {
+    #     enable = true;
+    #     themes = {
+    #       mocha = builtins.fetchurl {
+    #         url = "https://raw.githubusercontent.com/NearlyTRex/Vivid/refs/heads/master/themes/catppuccin-mocha.yml";
+    #         sha256 = "sha256:1hfwaf8lfq32w9vcdlbwrq5hwwz725i7icavg6qs66awpzqqb34k";
+    #       };
+    #     };
+    #
+    #     activeTheme = "mocha";
+    #
+    #     enableBashIntegration = true;
+    #     enableZshIntegration = true;
+    #     enableFishIntegration = true;
+    #     enableNushellIntegration = true;
+    #   };
+    # };
+  };
+
+  catppuccin = {
+    enable = true;
+    flavor = "mocha";
+
+    atuin.enable = true;
+    bat.enable = true;
+    bottom.enable = true;
+    broot.enable = true;
+    btop.enable = true;
+    delta.enable = true;
+    eza.enable = true;
+    fish.enable = true;
+    fzf.enable = true;
+    gemini-cli.enable = true;
+    ghostty.enable = true;
+    helix.enable = true;
+    nushell.enable = true;
+    skim.enable = true;
+    starship.enable = true;
+    lazygit.enable = true;
+    lsd.enable = true;
+    television.enable = true;
+    thunderbird.enable = true;
+    yazi.enable = true;
+    zed.enable = true;
+    zellij.enable = true;
   };
 
   home.stateVersion = "25.05";
