@@ -6,3 +6,6 @@ run = '''
 [tasks.build]
 depends = ["setup"]
 description = "Build the project"
+run = '''
+    nh home switch . -c ray-darwin -b $"backup-(date now | format date '%Y%m%d-%H%M%S')" -o result
+'''
