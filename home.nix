@@ -5,6 +5,7 @@
     #loop
     amazon-q-cli
     atuin
+    mprocs # Run multiple processes in parallel
     bat
     bitwarden-cli
     bottom
@@ -47,28 +48,25 @@
     neovim
     nh
     ninja
-    nushell
     ouch
     procs
-    repgrep
     ripgrep
-    rm-improved
-    rnr
-    runiq
+    ripgrep-all
+    rm-improved # Remove files with confirmation
+    rnr # Rename files with confirmation
+    runiq # Remove duplicate lines
     ruplacer
     rust-parallel
     rustup
-    scout
+    scout # URL fuzzy finder
     sd
-    silver-searcher
-    skim
+    silver-searcher # Fuzzy finder
+    skim # Fuzzy finder
     so # Ask questions on StackOverflow https://github.com/samtay/so
-    starship
     tealdeer # tldr tlrc
-    television
     tere
     tmux
-    tokei
+    tokei # Count your code with extra features like language support
     tre-command
     tree
     trippy
@@ -82,6 +80,73 @@
     zig
     zoxide
   ];
+
+  home.shell.enableNushellIntegration = true;
+
+  programs = {
+    direnv = {
+      enable = true;
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+
+      mise.enable = true;
+    };
+
+    television = {
+      enable = true;
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+    };
+
+    nix-search-tv.enableTelevisionIntegration = true;
+
+    zoxide = {
+      enable = true;
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+
+    };
+    nushell = { 
+      enable = true;
+      shellAliases = {
+        v = "nvim";
+      };
+      plugins = with pkgs.nushellPlugins; [
+        formats
+      ];
+   };  
+
+   carapace.enable = true;
+   carapace.enableNushellIntegration = true;
+
+   starship = { 
+     enable = true;
+       settings = {
+         add_newline = true;
+         character = { 
+         success_symbol = "[➜](bold green)";
+         error_symbol = "[➜](bold red)";
+         };
+      };
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+
+      enableTransience = true;
+
+    };
+  };
 
   home.stateVersion = "25.05";
 }

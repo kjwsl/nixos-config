@@ -17,8 +17,7 @@ linux:
     result/activate
 
 darwin:
-    nix run home-manager -- build --flake .#ray-darwin
-    result/activate
+    nix run home-manager -- switch --flake .#ray-darwin -b backup --force
 
 termux:
     nix run home-manager -- build --flake .#ray-termux

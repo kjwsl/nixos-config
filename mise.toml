@@ -1,0 +1,8 @@
+[tasks.setup]
+run = '''
+    nix shell nixpkgs#nh # stable
+'''
+
+[tasks.build]
+depends = ["setup"]
+description = "Build the project"
