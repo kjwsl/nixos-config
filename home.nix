@@ -45,6 +45,7 @@
     mise
     navi
     neovim
+    nh
     ninja
     nushell
     ouch
