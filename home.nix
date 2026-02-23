@@ -4,9 +4,11 @@
   pkgs,
   catppuccin,
   ...
-}: let
+}:
+let
   isDarwin = lib.darwin.isDarwin;
-in {
+in
+{
   home.packages = with pkgs; [
     # frawk
     # termscp
@@ -36,6 +38,7 @@ in {
     fselect
     fzf
     gcc
+    starship
     git
     git-absorb
     gitoxide
@@ -81,12 +84,20 @@ in {
     tre-command
     tree
     trippy
+
+    # Python Tool Suite
     uv
+
     vaultwarden
+
     xcp
     xh
     xxh
+
+    # File Explorer
     yazi
+
+    # Terminal Multiplexer
     zellij
     zig
     zoxide
@@ -157,23 +168,23 @@ in {
     };
 
     # Custom Prompt
-    starship = {
-      enable = true;
-      settings = {
-        add_newline = true;
-        character = {
-          success_symbol = "[➜](bold green)";
-          error_symbol = "[➜](bold red)";
-        };
-      };
+    # starship = {
+    #   enable = true;
+    #   settings = {
+    #     add_newline = true;
+    #     character = {
+    #       success_symbol = "[➜](bold green)";
+    #       error_symbol = "[➜](bold red)";
+    #     };
+    #   };
 
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
-      enableNushellIntegration = true;
-
-      enableTransience = true;
-    };
+    #   enableBashIntegration = true;
+    #   enableZshIntegration = true;
+    #   enableFishIntegration = true;
+    #   enableNushellIntegration = true;
+    #
+    #   enableTransience = true;
+    # };
 
     #   vivid = {
     #     enable = true;
@@ -191,6 +202,7 @@ in {
     #     enableFishIntegration = true;
     #     enableNushellIntegration = true;
     #   };
+    # };
     # };
   };
 
