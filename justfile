@@ -1,5 +1,7 @@
 # https://just.systems
 
+set shell := ["nu", "-c"]
+
 default:
     echo 'Hello, world!'
 
