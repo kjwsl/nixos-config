@@ -38,6 +38,7 @@ in
     fselect
     fzf
     gcc
+    gh
     starship
     git
     git-absorb

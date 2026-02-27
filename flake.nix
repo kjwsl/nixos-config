@@ -15,6 +15,11 @@
     catppuccin.url = "github:catppuccin/nix";
 
     wrappers.url = "github:BirdeeHub/nix-wrapper-modules";
+
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -25,7 +30,7 @@
     catppuccin,
     wrappers,
     ...
-  }: let
+  }@inputs: let
     username = "ray";
     makeHome = system: username: homeDirectory: extraModules: let
       pkgs = import nixpkgs {
@@ -36,7 +41,7 @@
         inherit pkgs;
         modules =
           [
-            ./home.nix
+            ./home/home.nix
             catppuccin.homeModules.catppuccin
             {
               home.username = username;
@@ -46,6 +51,11 @@
           ++ extraModules;
       };
   in {
+    nixosConfigurations.${username} = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
+      modules = [./nixos/configuration.nix];
+    };
+
     darwinConfigurations.${username} = darwin.lib.darwinSystem {
       system = "aarch64-darwin";
       specialArgs = {inherit username;};
@@ -58,7 +68,7 @@
           home-manager.useUserPackages = true;
           home-manager.backupFileExtension = "bak"; # Backup existing files
           home-manager.users.${username} = {
-            imports = [./home.nix];
+            imports = [./home/home.nix];
             home.homeDirectory = "/Users/${username}";
           };
         }
