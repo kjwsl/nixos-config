@@ -83,7 +83,8 @@
     description = "ray";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-    #  thunderbird
+      thunderbird
+      neovim
     ];
   };
 
@@ -102,9 +103,7 @@
     unzip
     less
 
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -125,6 +124,12 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+
+  nix = {
+    extraOptions = ''experimental-features = nix-command flakes'';
+  };
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
