@@ -67,8 +67,8 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -102,7 +102,11 @@
   users.users.ray = {
     isNormalUser = true;
     description = "ray";
-    extraGroups = ["networkmanager" "wheel"];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+    ];
     shell = pkgs.fish;
     packages = with pkgs; [
       thunderbird
@@ -112,10 +116,10 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-  
+
   # Enable fish shell
   programs.fish.enable = true;
-  
+
   # Enable nix-ld for dynamically linked binaries
   programs.nix-ld.enable = true;
 
@@ -131,12 +135,27 @@
     unzip
     less
 
+    # Build Tools
+    gnumake
+    cmake
+    ninja
+
     # Wezterm Terminal
     wezterm
 
     # Zen Twilight Browser
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight
   ];
+
+  virtualisation.docker = {
+    enable = true;
+
+    # Optional: start on boot
+    enableOnBoot = true;
+
+    # Use the faster overlay2 storage driver
+    storageDriver = "overlay2";
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
