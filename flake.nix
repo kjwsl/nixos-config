@@ -51,12 +51,28 @@
           ++ extraModules;
       };
   in {
-    nixosConfigurations.${username} = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
-      modules = [./nixos/configuration.nix];
+      modules = [
+        ./nixos/configuration.nix
+        
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "bak";
+          home-manager.users.${username} = {
+            imports = [
+              ./home/home.nix
+              catppuccin.homeModules.catppuccin
+            ];
+            home.homeDirectory = "/home/${username}";
+          };
+        }
+      ];
     };
 
-    darwinConfigurations.${username} = darwin.lib.darwinSystem {
+    darwinConfigurations.macbook = darwin.lib.darwinSystem {
       system = "aarch64-darwin";
       specialArgs = {inherit username;};
       modules = [
@@ -68,16 +84,20 @@
           home-manager.useUserPackages = true;
           home-manager.backupFileExtension = "bak"; # Backup existing files
           home-manager.users.${username} = {
-            imports = [./home/home.nix];
+            imports = [
+              ./home/home.nix
+              catppuccin.homeModules.catppuccin
+            ];
             home.homeDirectory = "/Users/${username}";
           };
         }
       ];
     };
+    
     homeConfigurations = {
-      ray-linux = makeHome "x86_64-linux" "ray" "/home/ray" [];
-      ray-darwin = makeHome "aarch64-darwin" "ray" "/Users/ray" [];
-      ray-termux = makeHome "aarch64-linux" "ray" "/data/data/com.termux.nix/files/home" [];
+      linux = makeHome "x86_64-linux" "ray" "/home/ray" [];
+      darwin = makeHome "aarch64-darwin" "ray" "/Users/ray" [];
+      termux = makeHome "aarch64-linux" "ray" "/data/data/com.termux.nix/files/home" [];
     };
   };
 }
