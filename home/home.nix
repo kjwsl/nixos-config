@@ -34,7 +34,6 @@ in
     eza
     fastfetch
     fd
-    fish
     fselect
     fzf
     gcc
