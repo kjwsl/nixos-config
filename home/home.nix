@@ -34,6 +34,7 @@ in
     eza
     fastfetch
     fd
+    fish
     fselect
     fzf
     gcc
@@ -104,8 +105,6 @@ in
   ];
 
   programs = {
-    fish.enable = true;
-
     uv = {
       enable = true;
       settings = {
