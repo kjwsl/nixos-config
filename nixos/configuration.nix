@@ -103,6 +103,7 @@
     isNormalUser = true;
     description = "ray";
     extraGroups = ["networkmanager" "wheel"];
+    shell = pkgs.fish;
     packages = with pkgs; [
       thunderbird
       neovim
@@ -111,6 +112,12 @@
 
   # Install firefox.
   programs.firefox.enable = true;
+  
+  # Enable fish shell
+  programs.fish.enable = true;
+  
+  # Enable nix-ld for dynamically linked binaries
+  programs.nix-ld.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

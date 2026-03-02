@@ -105,6 +105,15 @@ in
   ];
 
   programs = {
+    fish.enable = true;
+
+    uv = {
+      enable = true;
+      settings = {
+        python-preference = "managed";
+      };
+    };
+
     direnv = {
       enable = true;
 
