@@ -140,6 +140,9 @@
     cmake
     ninja
 
+    # Dev Runtime
+    nodejs
+
     # Wezterm Terminal
     wezterm
 
