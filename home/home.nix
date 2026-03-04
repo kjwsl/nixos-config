@@ -55,8 +55,7 @@ in
     lemmeknow
     lsd
     mcfly
-    mise
-    mprocs # Run multiple processes in parallel
+mprocs # Run multiple processes in parallel
     navi
     neovim
     nh
@@ -111,6 +110,11 @@ in
       };
     };
 
+    mise = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
+
     direnv = {
       enable = true;
 
@@ -147,7 +151,7 @@ in
 
       extraConfig = ''
         # Add nix profile to PATH
-                    $env.PATH ++= [ "~/.nix-profile/bin" ]
+        $env.PATH ++= [ "~/.nix-profile/bin" "/nix/var/nix/profiles/default/bin" ]
       '';
 
       shellAliases = {
