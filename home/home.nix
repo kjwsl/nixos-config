@@ -332,9 +332,15 @@ Directory: $dir" \
         set -gx VISUAL $EDITOR
         set -gx NTFY_TOPIC notify-3152210757
 
-        # Mise activation
+        # Mise activation (cached to avoid ~300ms penalty each start)
         if type -q mise
-          mise activate fish | source
+          set -l _mise_cache "$HOME/.cache/fish/mise_init.fish"
+          set -l _mise_bin (command -s mise)
+          if not test -f $_mise_cache; or test $_mise_bin -nt $_mise_cache
+            mkdir -p (dirname $_mise_cache)
+            mise activate fish >$_mise_cache
+          end
+          source $_mise_cache
         end
 
         # Paths
@@ -363,9 +369,15 @@ Directory: $dir" \
         fish_vi_key_bindings
         bind \cf zf
 
-        # Starship prompt
+        # Starship prompt (cached to avoid ~110ms penalty each start)
         if type -q starship
-          starship init fish | source
+          set -l _starship_cache "$HOME/.cache/fish/starship_init.fish"
+          set -l _starship_bin (command -s starship)
+          if not test -f $_starship_cache; or test $_starship_bin -nt $_starship_cache
+            mkdir -p (dirname $_starship_cache)
+            starship init fish >$_starship_cache
+          end
+          source $_starship_cache
         end
 
         # Neural Orchestrator context
@@ -379,7 +391,7 @@ Directory: $dir" \
 
       plugins = [
         { name = "bass"; src = pkgs.fishPlugins.bass; }
-        { name = "done"; src = pkgs.fishPlugins.done; }
+        # done plugin removed: redundant with __notify_on_long_command + slow WSL detection
         { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish; }
         { name = "plugin-git"; src = pkgs.fishPlugins.plugin-git; }
         { name = "puffer"; src = pkgs.fishPlugins.puffer; }
