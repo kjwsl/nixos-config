@@ -24,7 +24,7 @@
             "thunderbird"
             "wezterm@nightly"
         ];
-        onActivation.cleanup = "uninstall";
+        # onActivation.cleanup = "uninstall";
     };
 
     programs.fish.enable = true; # Enable fish program for nix-darwin

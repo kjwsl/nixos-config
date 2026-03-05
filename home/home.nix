@@ -4,11 +4,7 @@
   pkgs,
   catppuccin,
   ...
-}:
-let
-  isDarwin = lib.darwin.isDarwin;
-in
-{
+}: {
   home.packages = with pkgs; [
     # frawk
     # termscp
@@ -55,7 +51,7 @@ in
     lemmeknow
     lsd
     mcfly
-mprocs # Run multiple processes in parallel
+    mprocs # Run multiple processes in parallel
     navi
     neovim
     nh
@@ -224,40 +220,40 @@ mprocs # Run multiple processes in parallel
 
         notify = {
           body = ''
-            set -l msg (test (count $argv) -gt 0; and string join " " $argv; or echo "Task completed")
-            set -l dir (string replace $HOME "~" $PWD)
-            curl -s \
-                -H "Title: 🔔 $hostname: Manual notification" \
-                -d "$msg
+                        set -l msg (test (count $argv) -gt 0; and string join " " $argv; or echo "Task completed")
+                        set -l dir (string replace $HOME "~" $PWD)
+                        curl -s \
+                            -H "Title: 🔔 $hostname: Manual notification" \
+                            -d "$msg
 
-Directory: $dir" \
-                "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
+            Directory: $dir" \
+                            "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
           '';
         };
 
         __notify_on_long_command = {
           onEvent = "fish_postexec";
           body = ''
-            set -l command_name (string split -m 1 " " $argv[1])[1]
-            if contains $command_name nvim vi vim ssh hx btop
-              return
-            end
-            if test $CMD_DURATION -gt 30000
-              set -l secs (math "$CMD_DURATION / 1000")
-              set -l status_emoji (test $status -eq 0 && echo "✅" || echo "❌")
-              set -l status_text (test $status -eq 0 && echo "Success" || echo "Failed (exit $status)")
-              set -l cmd (string shorten -m 100 "$argv[1]")
-              set -l dir (string replace $HOME "~" $PWD)
-              set -l host $hostname
-              curl -s \
-                  -H "Title: $status_emoji $host: Command finished" \
-                  -d "$cmd
+                        set -l command_name (string split -m 1 " " $argv[1])[1]
+                        if contains $command_name nvim vi vim ssh hx btop
+                          return
+                        end
+                        if test $CMD_DURATION -gt 30000
+                          set -l secs (math "$CMD_DURATION / 1000")
+                          set -l status_emoji (test $status -eq 0 && echo "✅" || echo "❌")
+                          set -l status_text (test $status -eq 0 && echo "Success" || echo "Failed (exit $status)")
+                          set -l cmd (string shorten -m 100 "$argv[1]")
+                          set -l dir (string replace $HOME "~" $PWD)
+                          set -l host $hostname
+                          curl -s \
+                              -H "Title: $status_emoji $host: Command finished" \
+                              -d "$cmd
 
-Status: $status_text
-Duration: $secs seconds
-Directory: $dir" \
-                  "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
-            end
+            Status: $status_text
+            Duration: $secs seconds
+            Directory: $dir" \
+                              "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
+                        end
           '';
         };
 
@@ -393,36 +389,57 @@ Directory: $dir" \
         end
       '';
 
-      plugins = [
-        { name = "bass"; src = pkgs.fishPlugins.bass; }
-        # done plugin removed: redundant with __notify_on_long_command + slow WSL detection
-        { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish; }
-        { name = "plugin-git"; src = pkgs.fishPlugins.plugin-git; }
-        { name = "puffer"; src = pkgs.fishPlugins.puffer; }
-        { name = "sponge"; src = pkgs.fishPlugins.sponge; }
-        { name = "spark"; src = pkgs.fishPlugins.spark; }
-        {
-          name = "nix-env.fish";
-          src = builtins.fetchTarball {
-            url = "https://github.com/lilyball/nix-env.fish/archive/refs/heads/master.tar.gz";
-            sha256 = "069ybzdj29s320wzdyxqjhmpm9ir5815yx6n522adav0z2nz8vs4";
-          };
-        }
-        {
-          name = "replay.fish";
-          src = builtins.fetchTarball {
-            url = "https://github.com/jorgebucaran/replay.fish/archive/refs/heads/main.tar.gz";
-            sha256 = "1n2xji4w5k1iyjsvnwb272wx0qh5jfklihqfz0h1a1bd3zp3sd2g";
-          };
-        }
-        {
-          name = "fish-abbreviation-tips";
-          src = builtins.fetchTarball {
-            url = "https://github.com/gazorby/fish-abbreviation-tips/archive/refs/heads/master.tar.gz";
-            sha256 = "05b5qp7yly7mwsqykjlb79gl24bs6mbqzaj5b3xfn3v2b7apqnqp";
-          };
-        }
-      ];
+      plugins =
+        [
+          {
+            name = "bass";
+            src = pkgs.fishPlugins.bass;
+          }
+          # done plugin removed: redundant with __notify_on_long_command + slow WSL detection
+          {
+            name = "plugin-git";
+            src = pkgs.fishPlugins.plugin-git;
+          }
+          {
+            name = "puffer";
+            src = pkgs.fishPlugins.puffer;
+          }
+          {
+            name = "sponge";
+            src = pkgs.fishPlugins.sponge;
+          }
+          {
+            name = "spark";
+            src = pkgs.fishPlugins.spark;
+          }
+          {
+            name = "nix-env.fish";
+            src = builtins.fetchTarball {
+              url = "https://github.com/lilyball/nix-env.fish/archive/refs/heads/master.tar.gz";
+              sha256 = "069ybzdj29s320wzdyxqjhmpm9ir5815yx6n522adav0z2nz8vs4";
+            };
+          }
+          {
+            name = "replay.fish";
+            src = builtins.fetchTarball {
+              url = "https://github.com/jorgebucaran/replay.fish/archive/refs/heads/main.tar.gz";
+              sha256 = "1n2xji4w5k1iyjsvnwb272wx0qh5jfklihqfz0h1a1bd3zp3sd2g";
+            };
+          }
+          {
+            name = "fish-abbreviation-tips";
+            src = builtins.fetchTarball {
+              url = "https://github.com/gazorby/fish-abbreviation-tips/archive/refs/heads/master.tar.gz";
+              sha256 = "05b5qp7yly7mwsqykjlb79gl24bs6mbqzaj5b3xfn3v2b7apqnqp";
+            };
+          }
+        ]
+        ++ pkgs.lib.optionals (!pkgs.stdenv.isDarwin) [
+          {
+            name = "fzf-fish";
+            src = pkgs.fishPlugins.fzf-fish;
+          }
+        ];
     };
 
     # Custom Prompt
