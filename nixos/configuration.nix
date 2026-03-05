@@ -111,6 +111,7 @@
     packages = with pkgs; [
       thunderbird
       neovim
+      telegram-desktop
     ];
   };
 
