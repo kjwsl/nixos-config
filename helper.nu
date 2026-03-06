@@ -1,30 +1,57 @@
 #!/usr/bin/env nu
 
+def get_os_string []: [ nothing -> string, nothing -> nothing ] {
+  let os_str = (sys host | get name?)
+
+  if $os_str != null {
+    $os_str | str downcase
+  } else {
+    null
+  }
+}
+
 # Build and switch system configuration (NixOS/Darwin with integrated home-manager)
 def "main system" [
   action: string = "switch"  # switch, build, or test
+  os?: string # nixos, darwin, or auto-detect
+  --hostname (-H): string = "ray" # hostname
 ] {
-  let os = (sys host | get name | str downcase)
-  
-  if $os == "nixos" {
-    print $"🔧 Running nh os ($action)..."
-    nh os $action .
-  } else if $os =~ "darwin" {
-    print $"🍎 Running darwin-rebuild ($action)..." 
-    darwin-rebuild $action --flake .
-  } else {
+  let os_str = if $os != null { $os } else { get_os_string }
+  if $os_str == null {
+    print "❌ Unable to detect OS"
+    exit 1
+  }
+
+  let command = match $os_str {
+    "nixos" => "os"
+    "darwin" => "darwin"
+    _ => "unknown"
+  }
+
+  if $command == "unknown" {
     print "❌ System rebuilds only work on NixOS or macOS"
     exit 1
   }
+
+  print $"🔨 Building system ($action) for ($os_str) for host ($hostname)..."
+
+  nh $command $action . -H $hostname
   print "✅ System configuration applied!"
 }
 
 # Build and switch home-manager configuration (standalone for non-NixOS systems)
 def "main home" [
-  system: string = "linux"  # linux, darwin, termux
+  system?: string  # linux, darwin, termux, or auto-detect (termux can't be detected)
 ] {
-  print $"🏠 Switching home-manager for ($system)..."
-  nix run nixpkgs#nh -- home switch . -c $system -o result -b backup -a
+
+  let os = if $system != null { $system } else { get_os_string }
+  if $os == null {
+    print "❌ Unable to detect OS"
+    exit 1
+  }
+
+  print $"🏠 Switching home-manager for ($os)..."
+  nix run nixpkgs#nh -- home switch . -c $os -o result -b backup -a
   print "✅ Home configuration applied!"
 }
 
@@ -41,15 +68,15 @@ def "main build" [system] {
 
 # Show current system info and available commands
 def "main info" [] {
-  let os = (sys host | get name)
+  let os = get_os_string
   let user = $env.USER
-  
+
   print $"📊 Current system: ($os)"
   print $"👤 Current user: ($user)"
   print ""
   print "Available commands:"
   print "  nu helper.nu system [switch|build|test]  # Full system (NixOS/macOS)"
-  print "  nu helper.nu home [linux|darwin|termux]  # Home-manager only" 
+  print "  nu helper.nu home [linux|darwin|termux]  # Home-manager only"
   print "  nu helper.nu info                        # Show this info"
 }
 
