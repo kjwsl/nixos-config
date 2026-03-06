@@ -1,0 +1,5 @@
+* Ray's NixOS System Configurations
+
+  It's currently in construction.
+
+  I have to fix a lot of bugs and implement new features.
