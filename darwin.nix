@@ -1,41 +1,55 @@
-{ pkgs, username, ... }: 
 {
-    users.users.${username} = {
-        name = username;
-        home = "/Users/${username}";
-        shell = pkgs.fish;
-    };
+  pkgs,
+  username,
+  inputs,
+  ...
+}: {
+  users.users.${username} = {
+    name = username;
+    home = "/Users/${username}";
+    shell = pkgs.fish;
+  };
 
-    homebrew = {
-        enable = true;
 
-        taps = [];
-        brews = [
-            "mas"
-        ];
-        
-        casks = [
-            "aldente"
-            "alfred"
-            "brave-browser"
-            "font-jetbrains-mono-nerd-font"
-            "steam"
-            "telegram"
-            "thunderbird"
-            "wezterm@nightly"
-        ];
-        # onActivation.cleanup = "uninstall";
-    };
+  homebrew = {
+    enable = true;
 
-    programs.fish.enable = true; # Enable fish program for nix-darwin
+    taps = [
+        "BarutSRB/tap" # OmniWM
+    ];
 
-    system.defaults.dock.autohide = true;
-    system.defaults.finder.AppleShowAllExtensions = true;
+    casks = [
+      "battery" # or aldente
+      "sol"
+      "discord"
+      "floorp"
+      "font-jetbrains-mono-nerd-font"
+      "steam"
+      "telegram-desktop"
+      "thunderbird"
+      "wezterm@nightly"
+      "barutsrb/tap/omniwm"
+    ];
+    # onActivation.cleanup = "uninstall";
+  };
 
-    
+  programs.fish.enable = true; # Enable fish program for nix-darwin
 
-    nix.settings.experimental-features = "nix-command flakes";
-    nix.enable = false;
-    system.stateVersion = 4;
-    system.primaryUser = username;
+  system.defaults.dock.autohide = true;
+  system.defaults.finder.AppleShowAllExtensions = true;
+
+  system.activationScripts.postActivation.text = ''
+  # Prevent startup when opening the lid or connecting to power
+  # %00 = Both, %01 = Lid Only, %02 = Power Only
+  sudo nvram BootPreference=%00
+'';
+
+  nix.settings.experimental-features = "nix-command flakes";
+
+# Use Determinate Nix 
+  nix.enable = false;
+  determinateNix.enable = true;
+
+  system.stateVersion = 4;
+  system.primaryUser = username;
 }

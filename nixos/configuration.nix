@@ -5,6 +5,7 @@
   config,
   pkgs,
   inputs,
+  catppuccin,
   ...
 }: {
   imports = [
@@ -211,6 +212,15 @@
 
   nix = {
     extraOptions = ''experimental-features = nix-command flakes'';
+  };
+
+  catppuccin = {
+    enable = true;
+    flavor = "mocha";
+    fcitx5 = {
+      enable = true;
+      enableRounded = true;
+    };
   };
 
   # This value determines the NixOS release from which the default
