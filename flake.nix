@@ -11,6 +11,8 @@
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,7 +28,11 @@
     };
   };
 
-  outputs = inputs @ {flake-parts, ...}:
+  outputs = inputs @ {flake-parts, ...}: let
+    overlays = [
+      inputs.neovim-nightly-overlay.overlays.default
+    ];
+  in
     flake-parts.lib.mkFlake {inherit inputs;} {
       flake = {
         homeModules.ray = {
@@ -35,6 +41,9 @@
           ...
         }: {
           imports = [
+            {
+              nixpkgs.overlays = overlays;
+            }
             ./home/home.nix
             inputs.catppuccin.homeModules.catppuccin
           ];
