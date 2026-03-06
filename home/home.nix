@@ -14,7 +14,6 @@
     atuin
     bat
     bitwarden-cli
-    bottom
     broot
     btop
     cachix
@@ -57,6 +56,7 @@
     nh
     nil # Nix LSP
     ninja
+    openssh
     ouch
     procs
     ripgrep
@@ -66,6 +66,9 @@
     runiq # Remove duplicate lines
     ruplacer
     rust-parallel
+
+    rust-script
+
     rustup
     scout # URL fuzzy finder
     sd
@@ -108,7 +111,18 @@
 
     mise = {
       enable = true;
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
       enableNushellIntegration = true;
+    };
+
+    bottom = {
+      enable = true;
+
+      # See https://github.com/ClementTsang/bottom/blob/main/sample_configs/default_config.toml
+      # settings = { };
     };
 
     direnv = {
@@ -481,10 +495,12 @@
     # };
   };
 
+  # See https://nix.catppuccin.com/options/main/home/catppuccin/
   catppuccin = {
     enable = true;
     flavor = "mocha";
 
+    anki.enable = true;
     atuin.enable = true;
     bat.enable = true;
     bottom.enable = true;
