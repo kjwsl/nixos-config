@@ -41,9 +41,6 @@
           ...
         }: {
           imports = [
-            {
-              nixpkgs.overlays = overlays;
-            }
             ./home/home.nix
             inputs.catppuccin.homeModules.catppuccin
           ];
@@ -58,6 +55,7 @@
         nixosConfigurations.nixos = inputs.nixpkgs.lib.nixosSystem {
           specialArgs = {inherit inputs;};
           modules = [
+            {nixpkgs.overlays = overlays;}
             ./nixos/configuration.nix
             inputs.catppuccin.nixosModules.catppuccin
             inputs.home-manager.nixosModules.home-manager
@@ -75,6 +73,7 @@
           system = "aarch64-darwin";
           specialArgs = {username = "ray";};
           modules = [
+            {nixpkgs.overlays = overlays;}
             ./darwin.nix
             inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
@@ -89,15 +88,15 @@
 
         homeConfigurations = {
           linux = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = import inputs.nixpkgs {system = "x86_64-linux";};
+            pkgs = import inputs.nixpkgs {system = "x86_64-linux"; overlays = overlays;};
             modules = [inputs.self.homeModules.ray];
           };
           darwin = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = import inputs.nixpkgs {system = "aarch64-darwin";};
+            pkgs = import inputs.nixpkgs {system = "aarch64-darwin"; overlays = overlays;};
             modules = [inputs.self.homeModules.ray];
           };
           termux = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = import inputs.nixpkgs {system = "aarch64-linux";};
+            pkgs = import inputs.nixpkgs {system = "aarch64-linux"; overlays = overlays;};
             modules = [
               inputs.self.homeModules.ray
               {home.homeDirectory = "/data/data/com.termux.nix/files/home";}
