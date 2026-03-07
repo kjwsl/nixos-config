@@ -1,4 +1,5 @@
-#!/usr/bin/env nu
+#! /usr/bin/env nix
+#! nix shell nixpkgs#nushell nixpkgs#nh --command nu
 
 def get_os_string []: [ nothing -> string, nothing -> nothing ] {
   let os_str = (sys host | get name?)
@@ -35,12 +36,13 @@ def "main system" [
 
   print $"🔨 Building system ($action) for ($os_str) for host ($hostname)..."
 
-  nh $command $action . -H $hostname
+  nh $command $action . -H $hostname -a
   print "✅ System configuration applied!"
 }
 
 # Build and switch home-manager configuration (standalone for non-NixOS systems)
 def "main home" [
+  action: string = "switch" # build, switch, or test
   system?: string  # linux, darwin, termux, or auto-detect (termux can't be detected)
 ] {
 
@@ -51,19 +53,8 @@ def "main home" [
   }
 
   print $"🏠 Switching home-manager for ($os)..."
-  nix run nixpkgs#nh -- home switch . -c $os -o result -b backup -a
+  nh home $action . -c $os -o result -b backup -a
   print "✅ Home configuration applied!"
-}
-
-# Legacy commands for backward compatibility
-def "main switch" [system] {
-  main home $system
-}
-
-def "main build" [system] {
-  print $"🔨 Building home-manager for ($system)..."
-  nix run nixpkgs#nh -- home build . -c $system -o result -b backup -a
-  print "✅ Build complete!"
 }
 
 # Show current system info and available commands

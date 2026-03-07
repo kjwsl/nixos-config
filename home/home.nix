@@ -174,11 +174,6 @@
         };
       };
 
-      extraConfig = ''
-        # Add nix profile to PATH
-        $env.PATH ++= [ "~/.nix-profile/bin" "/nix/var/nix/profiles/default/bin" ]
-      '';
-
       plugins = with pkgs.nushellPlugins; [
         formats
         skim

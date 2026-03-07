@@ -7,7 +7,7 @@
   users.users.${username} = {
     name = username;
     home = "/Users/${username}";
-    shell = pkgs.nushell;
+    shell = pkgs.bash;
   };
 
   homebrew = {
@@ -53,6 +53,12 @@
     };
   };
   nix.settings.experimental-features = "nix-command flakes";
+
+  programs.bash.interactiveShellInit = ''
+    if ! [ "$TERM" = "dumb" ] && [ -z "$BASH_EXECUTION_STRING" ]; then
+      exec nu
+    fi
+  '';
 
   # Use Determinate Nix
   determinateNix.enable = true;
