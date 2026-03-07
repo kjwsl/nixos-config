@@ -3,8 +3,11 @@
   lib,
   pkgs,
   catppuccin,
+  email,
   ...
-}: {
+}: let
+  username = config.home.username;
+in {
   home.shell.enableFishIntegration = true;
   home.shell.enableNushellIntegration = true;
   home.shell.enableShellIntegration = true;
@@ -191,6 +194,43 @@
       enableZshIntegration = true;
       enableFishIntegration = true;
       enableNushellIntegration = true;
+    };
+
+    jujutsu = {
+      enable = true;
+      settings = {
+        user = {
+          name = "${username}";
+          email = "${email}";
+        };
+
+        ui = {
+          diff-formatter = ":git";
+          pager = "delta";
+          editor = "nvim";
+          default-command = "log";
+        };
+
+        diff = {
+          tool.difftastic.command = [
+            "difft"
+            "--color=always"
+          ];
+        };
+
+        revset-aliases = {
+          "HEAD" = "@-";
+        };
+
+        aliases = {
+          lg = ["log"];
+          lga = ["log-all"];
+          log-all = ["log" "-r" "all()"];
+          df = ["diff"];
+          b = ["bookmark"];
+          n = ["new"];
+        };
+      };
     };
 
     fish = {

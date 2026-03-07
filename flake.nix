@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "Ray's personal NixOS flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -44,6 +44,9 @@
             ./home/home.nix
             inputs.catppuccin.homeModules.catppuccin
           ];
+          _module.args = {
+            email = "kjwdev01@gmail.com";
+          };
           home.username = "ray";
           home.homeDirectory = lib.mkDefault (
             if pkgs.stdenv.isDarwin
@@ -57,6 +60,7 @@
           modules = [
             {nixpkgs.overlays = overlays;}
             ./nixos/configuration.nix
+            inputs.determinate.nixosModules.default
             inputs.catppuccin.nixosModules.catppuccin
             inputs.home-manager.nixosModules.home-manager
             {
