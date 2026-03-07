@@ -71,7 +71,7 @@ def "main info" [] {
   print "  nu helper.nu info                        # Show this info"
 }
 
-# Show help when no command provided
+# Helper script written in Nushell to build and switch system configurations
 def main [] {
   main info
 }

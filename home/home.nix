@@ -102,9 +102,6 @@ in {
     xh
     xxh
 
-    # File Explorer
-    yazi
-
     # Terminal Multiplexer
     zellij
     zig
@@ -119,9 +116,36 @@ in {
       };
     };
 
+    atuin = {
+      enable = true;
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+    };
+
+    yazi = {
+      enable = true;
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+    };
+
     mise = {
       enable = true;
 
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+    };
+
+    starship = {
+      enable = true;
+      
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableFishIntegration = true;
