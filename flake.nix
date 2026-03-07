@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "NixOS + Home Manager flake-parts configuration";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -28,48 +28,76 @@
     };
   };
 
-  outputs = inputs @ {flake-parts, ...}: let
-    overlays = [
-      inputs.neovim-nightly-overlay.overlays.default
-    ];
-  in
+  outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
+      # ── Per-system outputs (devShells, packages, checks, etc.) ─────────────────
+      systems = ["aarch64-darwin" "x86_64-linux" "aarch64-linux"];
+
+      # ── System-independent (flake-level) outputs ───────────────────────────────
       flake = {
-        homeModules.ray = {
-          pkgs,
-          lib,
-          ...
-        }: {
-          imports = [
-            {
-              nixpkgs.overlays = overlays;
-            }
-            ./home/home.nix
-            inputs.catppuccin.homeModules.catppuccin
-          ];
-          home.username = "ray";
-          home.homeDirectory = lib.mkDefault (
-            if pkgs.stdenv.isDarwin
-            then "/Users/ray"
-            else "/home/ray"
-          );
+        # ── Home Manager modules ──────────────────────────────────────────────────
+        homeModules = {
+          # New modular user — primary home config
+          aileron = ./home/aileron;
+
+          # Legacy user module (kept for backwards compatibility)
+          ray = {
+            pkgs,
+            lib,
+            ...
+          }: {
+            imports = [
+              {nixpkgs.overlays = [inputs.neovim-nightly-overlay.overlays.default];}
+              ./home/home.nix
+              inputs.catppuccin.homeModules.catppuccin
+            ];
+            home.username = "ray";
+            home.homeDirectory = lib.mkDefault (
+              if pkgs.stdenv.isDarwin
+              then "/Users/ray"
+              else "/home/ray"
+            );
+          };
         };
 
-        nixosConfigurations.nixos = inputs.nixpkgs.lib.nixosSystem {
-          specialArgs = {inherit inputs;};
-          modules = [
-            ./nixos/configuration.nix
-            inputs.catppuccin.nixosModules.catppuccin
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "bak";
-              home-manager.users = {inherit (inputs.self.homeModules) ray;};
-            }
-          ];
+        # ── NixOS configurations ──────────────────────────────────────────────────
+        nixosConfigurations = {
+          # New modular laptop configuration (flake-parts + modules/ + configurations/)
+          laptop = inputs.nixpkgs.lib.nixosSystem {
+            specialArgs = {inherit inputs;};
+            modules = [
+              ./configurations/laptop
+              ./overlays
+              inputs.catppuccin.nixosModules.catppuccin
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.backupFileExtension = "bak";
+                home-manager.extraSpecialArgs = {inherit inputs;};
+                home-manager.users.aileron = ./home/aileron;
+              }
+            ];
+          };
+
+          # Legacy single-file configuration (kept for reference / migration)
+          nixos = inputs.nixpkgs.lib.nixosSystem {
+            specialArgs = {inherit inputs;};
+            modules = [
+              ./nixos/configuration.nix
+              inputs.catppuccin.nixosModules.catppuccin
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.backupFileExtension = "bak";
+                home-manager.users = {inherit (inputs.self.homeModules) ray;};
+              }
+            ];
+          };
         };
 
+        # ── Darwin configurations ─────────────────────────────────────────────────
         darwinConfigurations.macbook = inputs.darwin.lib.darwinSystem {
           inherit inputs;
           system = "aarch64-darwin";
@@ -87,7 +115,16 @@
           ];
         };
 
+        # ── Standalone Home Manager configurations ────────────────────────────────
         homeConfigurations = {
+          # New user (aileron) — standalone configs
+          "aileron@linux" = inputs.home-manager.lib.homeManagerConfiguration {
+            pkgs = import inputs.nixpkgs {system = "x86_64-linux";};
+            extraSpecialArgs = {inherit inputs;};
+            modules = [inputs.self.homeModules.aileron];
+          };
+
+          # Legacy ray configs
           linux = inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import inputs.nixpkgs {system = "x86_64-linux";};
             modules = [inputs.self.homeModules.ray];
@@ -105,7 +142,5 @@
           };
         };
       };
-
-      systems = ["aarch64-darwin" "x86_64-linux" "aarch64-linux"];
     };
 }
