@@ -5,6 +5,13 @@
   catppuccin,
   ...
 }: {
+  home.shell.enableFishIntegration = true;
+  home.shell.enableNushellIntegration = true;
+  home.shell.enableShellIntegration = true;
+  home.shellAliases = {
+    v = "nvim";
+    "v." = "nvim .";
+  };
   home.packages = with pkgs; [
     # frawk
     # termscp
@@ -159,15 +166,18 @@
     nushell = {
       enable = true;
 
+      settings = {
+        show_banner = false;
+        completions.external = {
+          enable = true;
+          max_results = 200;
+        };
+      };
+
       extraConfig = ''
         # Add nix profile to PATH
         $env.PATH ++= [ "~/.nix-profile/bin" "/nix/var/nix/profiles/default/bin" ]
       '';
-
-      shellAliases = {
-        "v." = "nvim .";
-        v = "nvim";
-      };
 
       plugins = with pkgs.nushellPlugins; [
         formats

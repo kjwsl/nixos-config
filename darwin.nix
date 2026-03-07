@@ -7,7 +7,7 @@
   users.users.${username} = {
     name = username;
     home = "/Users/${username}";
-    shell = pkgs.fish;
+    shell = pkgs.nushell;
   };
 
   homebrew = {
@@ -32,8 +32,6 @@
     # onActivation.cleanup = "uninstall";
   };
 
-  programs.fish.enable = true; # Enable fish program for nix-darwin
-
   system.defaults.dock.autohide = true;
   system.defaults.finder.AppleShowAllExtensions = true;
 
@@ -46,8 +44,7 @@
   launchd.daemons = {
     # Disable automount so that weird `opendirectoryd` consuming high CPU won't happen
     automountd = {
-      enable = false;
-      config = {
+      serviceConfig = {
         Disabled = true;
         Label = "com.apple.automountd";
         ProgramArguments = ["/usr/sbin/automountd"]; # optional, but matches original
@@ -58,7 +55,6 @@
   nix.settings.experimental-features = "nix-command flakes";
 
   # Use Determinate Nix
-  nix.enable = false;
   determinateNix.enable = true;
 
   system.stateVersion = 4;

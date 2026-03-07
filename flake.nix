@@ -62,7 +62,6 @@
             inputs.catppuccin.nixosModules.catppuccin
             inputs.home-manager.nixosModules.home-manager
             {
-              home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "bak";
               home-manager.users = {inherit (inputs.self.homeModules) ray;};
@@ -79,7 +78,6 @@
             inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
             {
-              home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "bak";
               home-manager.users = {inherit (inputs.self.homeModules) ray;};
