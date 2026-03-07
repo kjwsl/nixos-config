@@ -10,12 +10,11 @@
     shell = pkgs.fish;
   };
 
-
   homebrew = {
     enable = true;
 
     taps = [
-        "BarutSRB/tap" # OmniWM
+      "BarutSRB/tap" # OmniWM
     ];
 
     casks = [
@@ -39,14 +38,26 @@
   system.defaults.finder.AppleShowAllExtensions = true;
 
   system.activationScripts.postActivation.text = ''
-  # Prevent startup when opening the lid or connecting to power
-  # %00 = Both, %01 = Lid Only, %02 = Power Only
-  sudo nvram BootPreference=%00
-'';
+    # Prevent startup when opening the lid or connecting to power
+    # %00 = Both, %01 = Lid Only, %02 = Power Only
+    sudo nvram BootPreference=%00
+  '';
 
+  launchd.daemons = {
+    # Disable automount so that weird `opendirectoryd` consuming high CPU won't happen
+    automountd = {
+      enable = false;
+      config = {
+        Disabled = true;
+        Label = "com.apple.automountd";
+        ProgramArguments = ["/usr/sbin/automountd"]; # optional, but matches original
+        # No need for more; disabling prevents launchd from starting it
+      };
+    };
+  };
   nix.settings.experimental-features = "nix-command flakes";
 
-# Use Determinate Nix 
+  # Use Determinate Nix
   nix.enable = false;
   determinateNix.enable = true;
 
