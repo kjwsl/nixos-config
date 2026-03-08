@@ -1,0 +1,35 @@
+# Base Home Manager identity: username, homeDirectory, stateVersion,
+# shell aliases, and nixpkgs overlays/config.
+# Contributes to flake.modules.homeManager.base (all platforms).
+{
+  inputs,
+  lib,
+  ...
+}: {
+  flake.modules.homeManager.base = {
+    pkgs,
+    lib,
+    ...
+  }: {
+    imports = [
+      inputs.catppuccin.homeModules.catppuccin
+    ];
+
+    nixpkgs.overlays = [inputs.neovim-nightly-overlay.overlays.default];
+    nixpkgs.config.allowUnfree = true;
+
+    home.username = lib.mkDefault "ray";
+    home.homeDirectory = lib.mkDefault (
+      if pkgs.stdenv.isDarwin
+      then "/Users/ray"
+      else "/home/ray"
+    );
+
+    home.shellAliases = {
+      v = "nvim";
+      "v." = "nvim .";
+    };
+
+    home.stateVersion = "25.05";
+  };
+}
