@@ -46,6 +46,8 @@ nu helper.nu <command>
 | ~gc [-d 30d]~ | Garbage collect old generations |
 | ~check~ | Run ~nix flake check --no-build~ |
 | ~fmt~ | Format all ~.nix~ files with alejandra |
+| ~hooks~ | Install repo-local git hooks |
+| ~hooks --status~ | Show global + repo-local hook status |
 | ~info~ | Show current system info |
 
 ** Common workflows
@@ -135,6 +137,33 @@ nixos-config/
 #+end_src
 
 See [[file:ARCHITECTURE.org][ARCHITECTURE.org]] for the full deep-dive.
+
+* Safeguards
+
+** Global pre-push hook (all repos)
+
+Managed by ~modules/tools/git.nix~. After ~home-manager switch~, every new
+~git clone~ or ~git init~ automatically gets a ~.git/hooks/pre-push~ that:
+
+1. *Scans for secrets* — AWS keys, GitHub PATs, OpenAI keys, private key
+   headers, literal passwords
+2. *Checks nix flakes* — runs ~nix flake check --no-build~ if a ~flake.nix~
+   is present in the repo root
+3. *Chains to repo-local hooks* — runs ~.githooks/pre-push~ if present,
+   so repos can add their own checks
+
+For existing repos, run ~git init~ (safe, non-destructive) to pick up
+the template hook.
+
+Bypass: ~GIT_PUSH_NO_SECRET_SCAN=1 jj git push~
+
+** Repo-local hook (nixos-config only)
+
+~.githooks/pre-push~ evaluates the system-specific flake attribute
+(~darwinConfigurations.macbook~, ~nixosConfigurations.nixos~, etc.)
+to catch errors that generic ~flake check~ might miss.
+
+Installed via: ~nu helper.nu hooks~
 
 * Links
 

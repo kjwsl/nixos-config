@@ -94,11 +94,33 @@ def "main check" [] {
 }
 
 # Install git hooks from .githooks/ into this repo
-def "main hooks" [] {
-  print "🪝 Installing git hooks..."
-  git config core.hooksPath .githooks
-  ls .githooks | get name | each { |f| chmod +x $f }
-  print "✅ Hooks installed! (.githooks/pre-push active)"
+def "main hooks" [
+  --status (-s)  # show hook status instead of installing
+] {
+  if $status {
+    print "🪝 Hook status:"
+    let global = ($"($env.HOME)/.config/git/templates/hooks/pre-push" | path exists)
+    let repo = (".githooks/pre-push" | path exists)
+    let local_hook = (".git/hooks/pre-push" | path exists)
+    let td_raw = (do { git config --global init.templateDir } | complete | get stdout | str trim)
+    let template_dir = if ($td_raw | is-empty) { "not set" } else { $td_raw }
+    print $"  Global template dir: ($template_dir)"
+    print $"  Global pre-push:     (if $global { '✅ installed' } else { '❌ missing (run home-manager switch)' })"
+    print $"  .git/hooks/pre-push: (if $local_hook { '✅ installed (chains to .githooks/)' } else { '❌ run: git init' })"
+    print $"  Repo-local pre-push: (if $repo { '✅ .githooks/pre-push' } else { '—  none' })"
+    return
+  }
+  print "🪝 Seeding hooks from template..."
+  # Re-init copies template hooks into .git/hooks/ (safe, non-destructive)
+  git init out+err>| ignore
+  # Ensure repo-local hooks are executable
+  if (".githooks" | path exists) {
+    ls .githooks | get name | each { |f| chmod +x $f }
+  }
+  print "✅ Hooks installed!"
+  print "   .git/hooks/pre-push (global: secret scan + flake check)"
+  print "   .githooks/pre-push  (repo-local: system attr eval)"
+  print "   Global hooks are managed via home-manager (modules/tools/git.nix)"
 }
 
 # Format all nix files
@@ -125,7 +147,8 @@ def "main info" [] {
   print "  nu helper.nu gc [-d 7d]                     # Garbage collection"
   print "  nu helper.nu check                          # Check flake"
   print "  nu helper.nu fmt                            # Format nix files"
-  print "  nu helper.nu hooks                          # Install git hooks"
+  print "  nu helper.nu hooks                          # Install repo-local git hooks"
+  print "  nu helper.nu hooks --status                  # Show hook status"
   print "  nu helper.nu info                           # Show this info"
 }
 

@@ -149,11 +149,21 @@ main() {
   # Step 2: Clone config
   clone_config
 
-  # Step 3: Install git hooks
-  info "Installing git hooks..."
-  git -C "$CONFIG_DIR" config core.hooksPath .githooks
-  chmod +x "$CONFIG_DIR"/.githooks/*
-  ok "Git hooks installed (.githooks/pre-push)"
+  # Step 3: Seed git hooks from template (if init.templateDir is set after first HM switch)
+  # On first bootstrap, the global hook template won't exist yet — that's fine,
+  # it'll be installed after home-manager applies modules/tools/git.nix.
+  # For subsequent bootstraps, git init re-copies template hooks.
+  info "Seeding git hooks..."
+  if [ -d "$HOME/.config/git/templates" ]; then
+    git -C "$CONFIG_DIR" init 2>/dev/null || true
+    ok "Git hooks seeded from template"
+  else
+    warn "Global hook template not yet installed (will be after home-manager switch)"
+  fi
+  # Ensure repo-local hooks are executable
+  if [ -d "$CONFIG_DIR/.githooks" ]; then
+    chmod +x "$CONFIG_DIR"/.githooks/* 2>/dev/null || true
+  fi
 
   # Step 4: Apply config based on OS
   case "$os" in

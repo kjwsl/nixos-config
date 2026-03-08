@@ -61,6 +61,7 @@ nixos-config/
     │   ├── atuin.nix            Shell history sync
     │   ├── bottom.nix           System monitor
     │   ├── direnv.nix           Per-directory environments
+    │   ├── git.nix              Global pre-push hooks (secret scan, flake check)
     │   ├── jujutsu.nix          Jujutsu VCS config
     │   ├── mise.nix             Runtime version manager
     │   ├── opencode.nix         OpenCode AI config
@@ -267,6 +268,39 @@ contribute to ~flake.modules.homeManager.base~ as a ~deferredModule~:
 #+end_src
 
 ~import-tree~ will pick it up automatically — no manual registration needed.
+
+* Safeguards
+
+** Global pre-push hook (~modules/tools/git.nix~)
+
+Rather than relying on per-repo hook setup, this module installs a
+*global* pre-push hook template via ~git init.templateDir~:
+
+- ~home.file~ places the hook script at
+  ~~/.config/git/templates/hooks/pre-push~
+- ~home.activation~ sets ~git config --global init.templateDir~ so that
+  ~git init~ / ~git clone~ automatically copies the hook into
+  ~.git/hooks/pre-push~
+
+The hook runs three phases:
+
+1. **Secret scan** — pattern-matches diffs for AWS keys, GitHub PATs,
+   OpenAI keys, private key headers, and literal passwords.
+2. **Nix flake check** — if ~flake.nix~ is present, runs
+   ~nix flake check --no-build --keep-going~ (filtering cross-platform
+   build failures that can't be checked locally).
+3. **Chain to repo-local hooks** — executes ~.githooks/pre-push~ or
+   ~.git/hooks/pre-push.local~ if either is executable, passing through
+   all arguments.
+
+** Repo-local hook (~.githooks/pre-push~)
+
+This repo's local hook adds nixos-config-specific checks on top of
+the global hook: it evaluates the system-specific flake attribute
+(~darwinConfigurations.macbook~, ~nixosConfigurations.nixos~, etc.)
+to catch errors that the generic ~flake check~ might miss.
+
+Install via: ~nu helper.nu hooks~ (sets ~core.hooksPath = .githooks~).
 
 * Flake outputs
 

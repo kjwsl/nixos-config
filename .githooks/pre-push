@@ -1,109 +1,43 @@
 #!/usr/bin/env bash
+# Repo-local pre-push hook for nixos-config.
+# Chained from the global pre-push hook (~/.config/git/templates/hooks/pre-push).
+# Only contains checks specific to THIS repo (system-specific flake attr eval).
 set -euo pipefail
 
 RED='\033[0;31m'
-YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-warn() { echo -e "${YELLOW}${BOLD}[WARN]${NC}   $*" >&2; }
 ok()   { echo -e "${GREEN}${BOLD}[OK]${NC}     $*"; }
 
-echo -e "${BOLD}Running pre-push checks...${NC}"
-
-# ── 1. Secret scan ────────────────────────────────────────────────────────────
-echo "→ Scanning for secrets..."
-
-git diff HEAD~1..HEAD 2>/dev/null \
-  | grep -E "^\+" \
-  | grep -v "^+++" \
-  > /tmp/nixcfg-diff || true
-
-check_pattern() {
-  local label="$1"
-  local pattern="$2"
-  local hits
-  hits=$(grep -E "$pattern" /tmp/nixcfg-diff 2>/dev/null || true)
-  if [ -n "$hits" ]; then
-    warn "Possible secret — $label"
-    echo "$hits" | head -3 | sed 's/^/    /' >&2
-    return 1
-  fi
-  return 0
-}
-
-FOUND_SECRETS=0
-check_pattern "AWS access key"      'AKIA[0-9A-Z]{16}'                             || FOUND_SECRETS=1
-check_pattern "Google API key"      'AIza[0-9A-Za-z_-]{35}'                        || FOUND_SECRETS=1
-check_pattern "OpenAI key"          'sk-[a-zA-Z0-9]{32}'                           || FOUND_SECRETS=1
-check_pattern "GitHub PAT classic"  'ghp_[a-zA-Z0-9]{36}'                          || FOUND_SECRETS=1
-check_pattern "GitHub PAT fine"     'github_pat_[a-zA-Z0-9_]{20}'                  || FOUND_SECRETS=1
-check_pattern "Slack token"         'xox[bp]-[0-9A-Za-z-]+'                        || FOUND_SECRETS=1
-check_pattern "Private key"         'BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY'       || FOUND_SECRETS=1
-check_pattern "password ="          'password[[:space:]]*=[[:space:]]*"[^"]'       || FOUND_SECRETS=1
-
-rm -f /tmp/nixcfg-diff
-
-if [ "$FOUND_SECRETS" -eq 1 ]; then
-  echo >&2
-  echo -e "${RED}${BOLD}Secret scan failed.${NC} Review the matches above." >&2
-  echo "  False positive? Bypass: GIT_PUSH_NO_SECRET_SCAN=1 jj git push" >&2
-  if [ "${GIT_PUSH_NO_SECRET_SCAN:-0}" != "1" ]; then
-    exit 1
-  else
-    warn "Secret scan bypassed via GIT_PUSH_NO_SECRET_SCAN=1"
-  fi
-else
-  ok "No secrets found"
-fi
-
-# ── 2. Nix flake evaluation check ─────────────────────────────────────────────
-echo "→ Checking flake evaluates..."
+# ── System-specific flake attr evaluation ──────────────────────────────────────
+# The global hook already runs `nix flake check --no-build`.
+# This additionally evaluates the specific config attr for the current platform,
+# catching errors that `flake check` might miss (e.g. lazy eval).
 
 if ! command -v nix &>/dev/null; then
-  warn "nix not found, skipping flake check"
-else
-  SYSTEM=$(nix eval --impure --raw --expr 'builtins.currentSystem' 2>/dev/null || echo "unknown")
-
-  case "$SYSTEM" in
-    aarch64-darwin) CHECK_ATTR=".#darwinConfigurations.macbook.system" ;;
-    x86_64-linux)   CHECK_ATTR=".#nixosConfigurations.nixos.config.system.build.toplevel" ;;
-    aarch64-linux)  CHECK_ATTR=".#homeConfigurations.termux.activationPackage" ;;
-    *)              CHECK_ATTR="" ;;
-  esac
-
-  EVAL_OK=1
-
-  if [ -n "$CHECK_ATTR" ]; then
-    if ! nix eval "$CHECK_ATTR" --apply 'x: "ok"' 2>/tmp/nix-eval-err; then
-      echo -e "${RED}${BOLD}Flake eval failed ($CHECK_ATTR):${NC}" >&2
-      cat /tmp/nix-eval-err >&2
-      EVAL_OK=0
-    fi
-  fi
-
-  if ! nix flake check --no-build --keep-going 2>/tmp/nix-check-err; then
-    NIX_ERRS=$(grep "^error:" /tmp/nix-check-err \
-      | grep -v "Cannot build\|platform mismatch\|Build failed\|some errors were encountered\|^error:$" \
-      || true)
-    if [ -n "$NIX_ERRS" ]; then
-      echo -e "${RED}${BOLD}Flake check found eval errors:${NC}" >&2
-      echo "$NIX_ERRS" >&2
-      EVAL_OK=0
-    fi
-  fi
-
-  rm -f /tmp/nix-eval-err /tmp/nix-check-err
-
-  if [ "$EVAL_OK" -eq 0 ]; then
-    echo >&2
-    echo "  Fix the errors above before pushing." >&2
-    echo "  To bypass: git push --no-verify" >&2
-    exit 1
-  fi
-
-  ok "Flake check passed (system: $SYSTEM)"
+  exit 0
 fi
 
-echo -e "${GREEN}${BOLD}All checks passed.${NC} Pushing..."
+SYSTEM=$(nix eval --impure --raw --expr 'builtins.currentSystem' 2>/dev/null || echo "unknown")
+
+case "$SYSTEM" in
+  aarch64-darwin) CHECK_ATTR=".#darwinConfigurations.macbook.system" ;;
+  x86_64-linux)   CHECK_ATTR=".#nixosConfigurations.nixos.config.system.build.toplevel" ;;
+  aarch64-linux)  CHECK_ATTR=".#homeConfigurations.termux.activationPackage" ;;
+  *)              CHECK_ATTR="" ;;
+esac
+
+if [ -n "$CHECK_ATTR" ]; then
+  echo "-> Evaluating $CHECK_ATTR..."
+  if ! nix eval "$CHECK_ATTR" --apply 'x: "ok"' 2>/tmp/nix-eval-err; then
+    echo -e "${RED}${BOLD}Flake eval failed ($CHECK_ATTR):${NC}" >&2
+    cat /tmp/nix-eval-err >&2
+    rm -f /tmp/nix-eval-err
+    echo "  Fix the errors above before pushing." >&2
+    exit 1
+  fi
+  rm -f /tmp/nix-eval-err
+  ok "System attr eval passed ($SYSTEM)"
+fi
