@@ -6,8 +6,6 @@
       enable = true;
       shellAliases = {
         tree = "tree -C";
-        v = "nvim";
-        "v." = "nvim .";
         g = "git";
         fish-bench = "time fish -i -c exit";
         fish_reload = "source $__fish_config_dir/config.fish";
@@ -152,7 +150,13 @@
 
         # Paths
         fish_add_path "$HOME/.local/bin"
-        fish_add_path "$HOME/.rustup/toolchains/stable-aarch64-apple-darwin/bin/"
+        # Rustup toolchain — detect target triple dynamically
+        if type -q rustup
+          set -l _rust_default (rustup show active-toolchain 2>/dev/null | string split ' ' -f1)
+          if test -n "$_rust_default"
+            fish_add_path "$HOME/.rustup/toolchains/$_rust_default/bin/"
+          end
+        end
         fish_add_path "$HOME/.cargo/bin/"
         set -gx PKG_CONFIG_PATH "$HOME/.luarocks/share/lua/5.1:$HOME/.nix-profile/bin:$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH"
 
