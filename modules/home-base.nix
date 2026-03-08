@@ -15,9 +15,6 @@
       inputs.catppuccin.homeModules.catppuccin
     ];
 
-    nixpkgs.overlays = [inputs.neovim-nightly-overlay.overlays.default];
-    nixpkgs.config.allowUnfree = true;
-
     home.username = lib.mkDefault "ray";
     home.homeDirectory = lib.mkDefault (
       if pkgs.stdenv.isDarwin
