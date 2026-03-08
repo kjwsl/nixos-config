@@ -1,7 +1,7 @@
 # OpenCode AI coding agent.
 # Contributes to flake.modules.homeManager.base.
 {...}: {
-  flake.modules.homeManager.base = {...}: {
+  flake.modules.homeManager.base = {config, ...}: {
     programs.opencode = {
       enable = true;
 
@@ -65,7 +65,7 @@
             type = "local";
             # Uses project-from-cwd so it auto-detects the active repo.
             command = [
-              "/Users/ray/.local/share/uv/tools/serena-agent/bin/serena"
+              "${config.home.homeDirectory}/.local/share/uv/tools/serena-agent/bin/serena"
               "start-mcp-server"
               "--project-from-cwd"
               "--context"
@@ -73,17 +73,16 @@
             ];
           };
           context7 = {
-            type = "npm";
-            package = "@context7/mcp";
+            type = "local";
+            command = [ "npx" "-y" "@context7/mcp" ];
           };
           playwright = {
-            type = "npm";
-            package = "@playwright/mcp";
+            type = "local";
+            command = [ "npx" "-y" "@playwright/mcp" ];
           };
           filesystem = {
-            type = "npm";
-            package = "@modelcontextprotocol/server-filesystem";
-            args = [ "/Users/ray" ];
+            type = "local";
+            command = [ "npx" "-y" "@modelcontextprotocol/server-filesystem" config.home.homeDirectory ];
           };
         };
 
