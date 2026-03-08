@@ -37,10 +37,6 @@
       flake = {
         # ── Home Manager modules ──────────────────────────────────────────────────
         homeModules = {
-          # New modular user — primary home config
-          aileron = ./home/aileron;
-
-          # Legacy user module (kept for backwards compatibility)
           ray = {
             pkgs,
             lib,
@@ -62,25 +58,6 @@
 
         # ── NixOS configurations ──────────────────────────────────────────────────
         nixosConfigurations = {
-          # New modular laptop configuration (flake-parts + modules/ + configurations/)
-          laptop = inputs.nixpkgs.lib.nixosSystem {
-            specialArgs = {inherit inputs;};
-            modules = [
-              ./configurations/laptop
-              ./overlays
-              inputs.catppuccin.nixosModules.catppuccin
-              inputs.home-manager.nixosModules.home-manager
-              {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.backupFileExtension = "bak";
-                home-manager.extraSpecialArgs = {inherit inputs;};
-                home-manager.users.aileron = ./home/aileron;
-              }
-            ];
-          };
-
-          # Legacy single-file configuration (kept for reference / migration)
           nixos = inputs.nixpkgs.lib.nixosSystem {
             specialArgs = {inherit inputs;};
             modules = [
@@ -118,14 +95,6 @@
 
         # ── Standalone Home Manager configurations ────────────────────────────────
         homeConfigurations = {
-          # New user (aileron) — standalone configs
-          "aileron@linux" = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = import inputs.nixpkgs {system = "x86_64-linux";};
-            extraSpecialArgs = {inherit inputs;};
-            modules = [inputs.self.homeModules.aileron];
-          };
-
-          # Legacy ray configs
           linux = inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import inputs.nixpkgs {system = "x86_64-linux"; overlays = overlays; config.allowUnfree = true;};
             modules = [inputs.self.homeModules.ray];

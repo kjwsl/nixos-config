@@ -1,9 +1,9 @@
 # Core user definitions.
-# Defines the primary system user "aileron" and enables the fish shell system-wide.
+# Defines the primary system user "ray" and enables the fish shell system-wide.
 {pkgs, ...}: {
-  users.users.aileron = {
+  users.users.ray = {
     isNormalUser = true;
-    description = "aileron";
+    description = "ray";
     extraGroups = [
       "networkmanager"
       "wheel"
