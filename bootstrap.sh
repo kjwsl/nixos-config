@@ -2,7 +2,7 @@
 # bootstrap.sh — Take a bare system from nothing to a fully configured Nix setup.
 #
 # Usage:
-#   curl -sSfL https://raw.githubusercontent.com/<user>/nixos-config/main/bootstrap.sh | bash
+#   curl -sSfL https://raw.githubusercontent.com/kjwsl/nixos-config/main/bootstrap.sh | bash
 #   # or locally:
 #   ./bootstrap.sh
 #
@@ -25,7 +25,7 @@ err()   { echo -e "${RED}${BOLD}[ERR]${NC}   $*" >&2; }
 die()   { err "$@"; exit 1; }
 
 # ── Config ──────────────────────────────────────────────────────────────────
-REPO_URL="https://github.com/kjwdev01/nixos-config.git"  # TODO: update with your actual repo URL
+REPO_URL="https://github.com/kjwsl/nixos-config.git"
 CONFIG_DIR="$HOME/.config/nix-config"
 
 # ── Detect OS ───────────────────────────────────────────────────────────────
