@@ -5,7 +5,6 @@
     home.packages = with pkgs; [
       alejandra
       amazon-q-cli
-      atuin
       bat
       bitwarden-cli
       broot
@@ -27,7 +26,6 @@
       fzf
       gcc
       gh
-      starship
       git
       git-absorb
       gitoxide
@@ -37,7 +35,6 @@
       hexyl
       httm
       hyperfine
-      jujutsu
       just
       lazygit
       lazyjj
@@ -73,7 +70,6 @@
       tre-command
       tree
       trippy
-      uv
       vaultwarden
       xcp
       xh
@@ -82,7 +78,6 @@
       zig
       _7zz-rar
       ouch
-      zoxide
     ];
   };
 }
