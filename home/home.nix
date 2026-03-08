@@ -67,7 +67,6 @@ in {
     nil # Nix LSP
     ninja
     openssh
-    ouch
     procs
     ripgrep
     ripgrep-all
@@ -87,7 +86,10 @@ in {
     so # Ask questions on StackOverflow https://github.com/samtay/so
     tealdeer # tldr tlrc
     tere
+
+    # Terminal Multiplexer
     tmux
+
     tokei # Count your code with extra features like language support
     tre-command
     tree
@@ -104,7 +106,17 @@ in {
 
     # Terminal Multiplexer
     zellij
+
+    # Programming Languages
     zig
+
+    # Extractor/Archiver
+    _7zz-rar
+
+    # Unified Archiver
+    ouch
+
+    # Misc
     zoxide
   ];
 
@@ -145,7 +157,7 @@ in {
 
     starship = {
       enable = true;
-      
+
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableFishIntegration = true;
