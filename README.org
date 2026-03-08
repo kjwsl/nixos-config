@@ -1,5 +1,145 @@
-* Ray's NixOS System Configurations
+#+TITLE: Ray's NixOS Config
+#+AUTHOR: ray
+#+OPTIONS: toc:2
 
-  It's currently in construction.
+Manages all of Ray's system configurations using the *Dendritic pattern* —
+a thin ~flake.nix~ that hands everything off to ~import-tree~, with each
+~.nix~ file under ~modules/~ being an independent flake-parts module.
 
-  I have to fix a lot of bugs and implement new features.
+Supports: macOS (nix-darwin), NixOS desktops, and standalone Linux via
+Home Manager.
+
+* Fresh install (from nothing)
+
+** macOS / NixOS / Linux
+
+#+begin_src bash
+curl -sSfL https://raw.githubusercontent.com/kjwsl/nixos-config/main/bootstrap.sh | bash
+#+end_src
+
+The script will:
+1. Install Nix via [[https://determinate.systems][Determinate Systems]] installer
+2. Clone this repo to ~~/.config/nix-config~
+3. Apply the right configuration for your OS automatically
+
+** What gets applied per OS
+
+| OS | Configuration applied |
+|----+-----------------------|
+| macOS | ~darwinConfigurations.macbook~ via nix-darwin |
+| NixOS | ~nixosConfigurations.<hostname>~ via nixos-rebuild |
+| Linux | ~homeConfigurations.linux~ via home-manager |
+
+* Day-to-day usage
+
+All common operations go through ~helper.nu~:
+
+#+begin_src bash
+nu helper.nu <command>
+#+end_src
+
+| Command | What it does |
+|---------+--------------|
+| ~system [switch\|build\|test]~ | Rebuild full system (NixOS or macOS) |
+| ~home [linux\|darwin\|termux]~ | Rebuild home-manager only |
+| ~update [input]~ | Update flake inputs (all, or a specific one) |
+| ~gc [-d 30d]~ | Garbage collect old generations |
+| ~check~ | Run ~nix flake check --no-build~ |
+| ~fmt~ | Format all ~.nix~ files with alejandra |
+| ~info~ | Show current system info |
+
+** Common workflows
+
+#+begin_src bash
+# After editing any .nix file — rebuild macOS system
+nu helper.nu system
+
+# Rebuild just home-manager (faster, no sudo)
+nu helper.nu home
+
+# Update all flake inputs then rebuild
+nu helper.nu update
+nu helper.nu system
+
+# Update a single input
+nu helper.nu update nixpkgs
+
+# Garbage collect anything older than 30 days
+nu helper.nu gc -d 30d
+
+# Check the flake evaluates without errors
+nu helper.nu check
+#+end_src
+
+* Hosts
+
+| Hostname | OS | Architecture | Config |
+|----------+----+--------------+--------|
+| ~macbook~ | macOS | aarch64-darwin | ~darwinConfigurations.macbook~ |
+| ~nixos~ | NixOS | x86_64-linux | ~nixosConfigurations.nixos~ |
+| ~laptop~ | NixOS | x86_64-linux | ~nixosConfigurations.laptop~ |
+
+* Adding things
+
+** New Home Manager program/tool
+
+Drop a ~.nix~ file under ~modules/tools/~ or ~modules/shell/~:
+
+#+begin_src nix
+{ ... }: {
+  flake.modules.homeManager.base = { pkgs, ... }: {
+    programs.mytool = {
+      enable = true;
+    };
+  };
+}
+#+end_src
+
+~import-tree~ picks it up automatically — no registration needed.
+
+** New NixOS host
+
+1. Create ~modules/hosts/<name>.nix~
+2. Create ~modules/_hardware/<name>.nix~ (run ~nixos-generate-config~ on target)
+3. Set ~configurations.nixos.<name>.module~ in the host file
+4. Wire up home-manager: ~home-manager.users.ray = config.flake.modules.homeManager.base~
+
+** Enable a stack on a NixOS host
+
+In the host file:
+
+#+begin_src nix
+my.stacks.gaming.enable = true;
+my.stacks.ai.enable     = true;
+my.stacks.music.enable  = true;
+#+end_src
+
+* Repository layout
+
+#+begin_src
+nixos-config/
+├── flake.nix                thin entry point
+├── helper.nu                day-to-day helper (system, home, update, gc, check, fmt)
+├── bootstrap.sh             bare-metal → Nix → config installer
+└── modules/
+    ├── meta.nix             shared options: username, email
+    ├── systems.nix          supported systems + formatter
+    ├── hosts/               one file per machine
+    ├── shell/               fish, nushell, starship, carapace
+    ├── tools/               atuin, jujutsu, zoxide, yazi, …
+    ├── packages/base.nix    base package set
+    ├── theming/             catppuccin
+    ├── audio/               pipewire (NixOS)
+    ├── _nixos/              NixOS system modules (skipped by import-tree)
+    └── _hardware/           per-machine hardware configs
+#+end_src
+
+See [[file:ARCHITECTURE.org][ARCHITECTURE.org]] for the full deep-dive.
+
+* Links
+
+- [[https://github.com/kjwsl/nixos-config][GitHub]]
+- [[https://flake.parts][flake-parts]]
+- [[https://github.com/vic/import-tree][import-tree]]
+- [[https://nix-community.github.io/home-manager/][Home Manager]]
+- [[https://github.com/catppuccin/nix][Catppuccin for Nix]]
