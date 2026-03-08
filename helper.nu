@@ -93,6 +93,14 @@ def "main check" [] {
   print "✅ Flake check passed!"
 }
 
+# Install git hooks from .githooks/ into this repo
+def "main hooks" [] {
+  print "🪝 Installing git hooks..."
+  git config core.hooksPath .githooks
+  ls .githooks | get name | each { |f| chmod +x $f }
+  print "✅ Hooks installed! (.githooks/pre-push active)"
+}
+
 # Format all nix files
 def "main fmt" [] {
   print "🎨 Formatting nix files..."
@@ -117,6 +125,7 @@ def "main info" [] {
   print "  nu helper.nu gc [-d 7d]                     # Garbage collection"
   print "  nu helper.nu check                          # Check flake"
   print "  nu helper.nu fmt                            # Format nix files"
+  print "  nu helper.nu hooks                          # Install git hooks"
   print "  nu helper.nu info                           # Show this info"
 }
 

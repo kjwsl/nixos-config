@@ -149,7 +149,13 @@ main() {
   # Step 2: Clone config
   clone_config
 
-  # Step 3: Apply config based on OS
+  # Step 3: Install git hooks
+  info "Installing git hooks..."
+  git -C "$CONFIG_DIR" config core.hooksPath .githooks
+  chmod +x "$CONFIG_DIR"/.githooks/*
+  ok "Git hooks installed (.githooks/pre-push)"
+
+  # Step 4: Apply config based on OS
   case "$os" in
     darwin)
       apply_darwin "macbook"
