@@ -18,6 +18,7 @@
       cmake
       delta
       difftastic
+      duf # Disk Usage/Free Utility
       dust
       eva
       eza
@@ -54,16 +55,13 @@
       ripgrep-all
       rm-improved
       rnr
-      runiq
-      ruplacer
+      runiq # Efficient way to filter duplicate lines from input, à la uniq
+      ruplacer # Find and replace text in source files
       rust-parallel
       rust-script
       rustup
       scout
-      sd
-      silver-searcher
-      skim
-      so
+      sd # Intuitive find & replace CLI (sed alternative)
       tealdeer
       tere
       tmux
