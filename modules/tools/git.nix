@@ -109,8 +109,10 @@
     };
 
     # Point git at the template dir so new repos get the hook automatically.
-    home.activation.setGitTemplateDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    # Also set the default branch to 'main'.
+    home.activation.setGitGlobalConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       run ${pkgs.git}/bin/git config --global init.templateDir "$HOME/.config/git/templates" 2>/dev/null || true
+      run ${pkgs.git}/bin/git config --global init.defaultBranch "main" 2>/dev/null || true
     '';
   };
 }

@@ -15,6 +15,7 @@
           editor = "nvim";
           default-command = "log";
         };
+        git.default-branch = "main";
         diff.tool.difftastic.command = ["difft" "--color=always"];
         revset-aliases."HEAD" = "@-";
         aliases = {
