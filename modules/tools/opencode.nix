@@ -56,6 +56,7 @@
         autoupdate = false;
         plugin = [
           "opencode-antigravity-auth@latest"
+          "opencode-gemini-auth@latest"
           "oh-my-opencode"
         ];
 
@@ -74,15 +75,15 @@
           };
           context7 = {
             type = "local";
-            command = [ "npx" "-y" "@context7/mcp" ];
+            command = ["npx" "-y" "@context7/mcp"];
           };
           playwright = {
             type = "local";
-            command = [ "npx" "-y" "@playwright/mcp" ];
+            command = ["npx" "-y" "@playwright/mcp"];
           };
           filesystem = {
             type = "local";
-            command = [ "npx" "-y" "@modelcontextprotocol/server-filesystem" config.home.homeDirectory ];
+            command = ["npx" "-y" "@modelcontextprotocol/server-filesystem" config.home.homeDirectory];
           };
         };
 
@@ -104,76 +105,142 @@
             models = {
               "antigravity-gemini-3-pro" = {
                 name = "Gemini 3 Pro (Antigravity)";
-                limit = { context = 1048576; output = 65535; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65535;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
                 variants = {
-                  low = { thinkingLevel = "low"; };
-                  high = { thinkingLevel = "high"; };
+                  low = {thinkingLevel = "low";};
+                  high = {thinkingLevel = "high";};
                 };
               };
               "antigravity-gemini-3.1-pro" = {
                 name = "Gemini 3.1 Pro (Antigravity)";
-                limit = { context = 1048576; output = 65535; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65535;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
                 variants = {
-                  low = { thinkingLevel = "low"; };
-                  high = { thinkingLevel = "high"; };
+                  low = {thinkingLevel = "low";};
+                  high = {thinkingLevel = "high";};
                 };
               };
               "antigravity-gemini-3-flash" = {
                 name = "Gemini 3 Flash (Antigravity)";
-                limit = { context = 1048576; output = 65536; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65536;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
                 variants = {
-                  minimal = { thinkingLevel = "minimal"; };
-                  low = { thinkingLevel = "low"; };
-                  medium = { thinkingLevel = "medium"; };
-                  high = { thinkingLevel = "high"; };
+                  minimal = {thinkingLevel = "minimal";};
+                  low = {thinkingLevel = "low";};
+                  medium = {thinkingLevel = "medium";};
+                  high = {thinkingLevel = "high";};
                 };
               };
               "antigravity-claude-sonnet-4-6" = {
                 name = "Claude Sonnet 4.6 (Antigravity)";
-                limit = { context = 200000; output = 64000; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 200000;
+                  output = 64000;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
               };
               "antigravity-claude-opus-4-6-thinking" = {
                 name = "Claude Opus 4.6 Thinking (Antigravity)";
-                limit = { context = 200000; output = 64000; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 200000;
+                  output = 64000;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
                 variants = {
-                  low = { thinkingConfig = { thinkingBudget = 8192; }; };
-                  max = { thinkingConfig = { thinkingBudget = 32768; }; };
+                  low = {thinkingConfig = {thinkingBudget = 8192;};};
+                  max = {thinkingConfig = {thinkingBudget = 32768;};};
                 };
               };
               "gemini-2.5-flash" = {
                 name = "Gemini 2.5 Flash (Gemini CLI)";
-                limit = { context = 1048576; output = 65536; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65536;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
               };
               "gemini-2.5-pro" = {
                 name = "Gemini 2.5 Pro (Gemini CLI)";
-                limit = { context = 1048576; output = 65536; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65536;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
               };
               "gemini-3-flash-preview" = {
                 name = "Gemini 3 Flash Preview (Gemini CLI)";
-                limit = { context = 1048576; output = 65536; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65536;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
               };
               "gemini-3-pro-preview" = {
                 name = "Gemini 3 Pro Preview (Gemini CLI)";
-                limit = { context = 1048576; output = 65535; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65535;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
               };
               "gemini-3.1-pro-preview" = {
                 name = "Gemini 3.1 Pro Preview (Gemini CLI)";
-                limit = { context = 1048576; output = 65535; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65535;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
               };
               "gemini-3.1-pro-preview-customtools" = {
                 name = "Gemini 3.1 Pro Preview Custom Tools (Gemini CLI)";
-                limit = { context = 1048576; output = 65535; };
-                modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+                limit = {
+                  context = 1048576;
+                  output = 65535;
+                };
+                modalities = {
+                  input = ["text" "image" "pdf"];
+                  output = ["text"];
+                };
               };
             };
           };
