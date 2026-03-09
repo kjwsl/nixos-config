@@ -4,6 +4,7 @@
   flake.modules.homeManager.base = {pkgs, ...}: {
     home.packages = with pkgs; [
       alejandra
+      ast-grep
       amazon-q-cli
       bat
       bitwarden-cli
