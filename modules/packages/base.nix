@@ -3,16 +3,17 @@
 {...}: {
   flake.modules.homeManager.base = {pkgs, ...}: {
     home.packages = with pkgs; [
+      _7zz-rar
       alejandra
-      ast-grep
       amazon-q-cli
+      ast-grep
       bat
       bitwarden-cli
       broot
       btop
       cachix
+      cargo-binstall
       cargo-watch
-      chezmoi
       choose
       clang-tools
       cmake
@@ -50,6 +51,7 @@
       nil
       ninja
       openssh
+      ouch
       procs
       ripgrep
       ripgrep-all
@@ -70,13 +72,12 @@
       tree
       trippy
       vaultwarden
+      wakatime-cli
       xcp
       xh
       xxh
       zellij
       zig
-      _7zz-rar
-      ouch
     ];
   };
 }

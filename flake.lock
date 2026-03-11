@@ -420,6 +420,22 @@
         "type": "github"
       }
     },
+    "nvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773089164,
+        "narHash": "sha256-48cHCZ7mjmG+AT3HIHeH/I3F9aJfx3xE9R0zs0CG9cc=",
+        "owner": "larpios",
+        "repo": "nvim-config",
+        "rev": "823c8946f5515f4194e9d7368bc8327ae599e3d6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "larpios",
+        "repo": "nvim-config",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "catppuccin": "catppuccin",
@@ -430,6 +446,7 @@
         "import-tree": "import-tree",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixpkgs": "nixpkgs_5",
+        "nvim-config": "nvim-config",
         "zen-browser": "zen-browser"
       }
     },

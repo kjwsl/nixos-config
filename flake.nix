@@ -18,6 +18,9 @@
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
+    nvim-config.url = "github:larpios/nvim-config";
+    nvim-config.flake = false;
+
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
 
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
