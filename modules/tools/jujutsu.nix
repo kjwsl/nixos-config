@@ -16,10 +16,6 @@
           editor = "nvim";
           default-command = "log";
         };
-        template-aliases = {
-          "format_short_change_id(id)" = "change_id.short(8)";
-          "format_short_commit_id(id)" = "commit_id.short(8)";
-        };
         fsmonitor = {
           backend = "watchman";
         };
