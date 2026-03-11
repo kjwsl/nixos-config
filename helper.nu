@@ -126,7 +126,7 @@ def "main hooks" [
 # Format all nix files
 def "main fmt" [] {
   print "🎨 Formatting nix files..."
-  nix fmt
+  nix fmt .
   print "✅ Formatting complete!"
 }
 
