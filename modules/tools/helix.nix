@@ -11,11 +11,19 @@
         editor = {
           evil = true; # evil-helix option
           line-number = "relative";
-          lsp.display-messages = true;
+          lsp = {
+            display-messages = true;
+            display-progress-messages = true;
+            display-inlay-hints = true;
+          };
           auto-pairs = false;
           indent-guides.render = true;
+          whitespace.render = "all";
         };
         keys.normal = {
+          space.W = ":w";
+          space.Q = ":q";
+          z.x = "normal_mode"; # `zx` to escape
           # space.f.f = "file_picker";
           # space.c.a = "code_action";
           # space.f.b = "buffer_picker";
