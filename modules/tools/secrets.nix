@@ -1,17 +1,15 @@
 # Secret management using sops-nix and Bitwarden.
 # Contributes to flake.modules.homeManager.base.
 {
-  config,
-  pkgs,
-  lib,
+  inputs,
   ...
 }: {
   flake.modules.homeManager.base = {
     config,
-    pkgs,
     ...
   }: {
-    # Import sops-nix is already done in modules/home.nix for all home-manager configs
+    _file = ./secrets.nix;
+    imports = [inputs.sops-nix.homeManagerModules.sops];
 
     sops = {
       defaultSopsFile = ../../secrets/secrets.yaml;
@@ -20,5 +18,9 @@
 
     # Define secrets here as we sync them
     sops.secrets."context7-api-key" = {};
+
+    home.sessionVariables = {
+      CONTEXT7_API_KEY_FILE = config.sops.secrets."context7-api-key".path;
+    };
   };
 }
