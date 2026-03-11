@@ -12,7 +12,10 @@
       inputs.home-manager.darwinModules.home-manager
     ];
 
-    nixpkgs.overlays = [inputs.neovim-nightly-overlay.overlays.default];
+    nixpkgs.overlays = [
+      inputs.neovim-nightly-overlay.overlays.default
+      inputs.nur.overlays.default
+    ];
     nixpkgs.config.allowUnfree = true;
 
     users.users.ray = {

@@ -25,7 +25,10 @@
     ];
 
     networking.hostName = "laptop";
-    nixpkgs.overlays = [inputs.neovim-nightly-overlay.overlays.default];
+    nixpkgs.overlays = [
+      inputs.neovim-nightly-overlay.overlays.default
+      inputs.nur.overlays.default
+    ];
     nixpkgs.config.allowUnfree = true;
 
     # Bootloader
@@ -40,18 +43,20 @@
     services.printing.enable = true;
 
     # Base packages
-    environment.systemPackages = with pkgs; [
-      vim
-      wget
-      zip
-      unzip
-      less
-      wezterm
-      wl-clipboard-rs
-      nodejs
-    ] ++ [
-      inputs.zen-browser.packages.x86_64-linux.twilight
-    ];
+    environment.systemPackages = with pkgs;
+      [
+        vim
+        wget
+        zip
+        unzip
+        less
+        wezterm
+        wl-clipboard-rs
+        nodejs
+      ]
+      ++ [
+        inputs.zen-browser.packages.x86_64-linux.twilight
+      ];
 
     # Docker
     virtualisation.docker = {
