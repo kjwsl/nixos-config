@@ -16,6 +16,9 @@
 
     catppuccin.url = "github:catppuccin/nix";
 
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";

@@ -76,6 +76,9 @@
           context7 = {
             type = "local";
             command = ["npx" "-y" "@context7/mcp"];
+            env = {
+              CONTEXT7_API_KEY = config.sops.secrets."context7-api-key".path;
+            };
           };
           playwright = {
             type = "local";

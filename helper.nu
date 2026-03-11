@@ -143,6 +143,7 @@ def "main info" [] {
   print "Available commands:"
   print "  nu helper.nu system [switch|build|test]    # Full system (NixOS/macOS)"
   print "  nu helper.nu home [linux|darwin|termux]     # Home-manager only"
+  print "  nu helper.nu secrets sync                   # Sync secrets from Bitwarden to sops"
   print "  nu helper.nu update [input]                 # Update flake inputs"
   print "  nu helper.nu gc [-d 7d]                     # Garbage collection"
   print "  nu helper.nu check                          # Check flake"
@@ -150,6 +151,65 @@ def "main info" [] {
   print "  nu helper.nu hooks                          # Install repo-local git hooks"
   print "  nu helper.nu hooks --status                  # Show hook status"
   print "  nu helper.nu info                           # Show this info"
+}
+
+# Sync secrets from Bitwarden to encrypted sops file
+def "main secrets sync" [] {
+  if (which bw | is-empty) {
+    print "❌ bitwarden-cli (bw) not found"
+    return
+  }
+  
+  if (which sops | is-empty) {
+    print "❌ sops not found"
+    return
+  }
+
+  print "🔐 Syncing secrets from Bitwarden..."
+  
+  # Ensure secrets and sops directories exist
+  mkdir secrets
+  mkdir $"($env.HOME)/.config/sops/age"
+
+  # Fetch SSH key for decryption
+  print "  - Fetching Default SSH Key Pair..."
+  let ssh_item = (bw get item 3859a223-3757-4676-bdca-b40a00cb7488 | from json)
+  let private_key = $ssh_item.sshKey.privateKey
+  
+  if ($private_key | is-empty) {
+    print "❌ SSH Private Key not found in Bitwarden"
+  } else {
+    # Prepare temporary file for ssh-to-age conversion
+    let temp_ssh = (mktemp --suffix .ssh)
+    $private_key | save -f $temp_ssh
+    chmod 600 $temp_ssh
+    
+    # Convert and save as age key
+    (ssh-to-age -private-key -i $temp_ssh) | save -f $"($env.HOME)/.config/sops/age/keys.txt"
+    rm $temp_ssh
+    print "  - Age key derived from SSH and saved to ~/.config/sops/age/keys.txt"
+  }
+
+  # Fetch context7 API key
+  print "  - Fetching Context7 API Key..."
+  let ctx7_item = (bw list items --search context7 | from json | first)
+  let ctx7_key = ($ctx7_item.fields | where name == "API Key" | get value | first)
+  
+  if ($ctx7_key | is-empty) {
+    print "❌ Context7 API Key not found in Bitwarden"
+    return
+  }
+
+  # Prepare temporary cleartext yaml
+  let temp_yaml = (mktemp --suffix .yaml)
+  $"context7-api-key: ($ctx7_key)" | save -f $temp_yaml
+
+  # Encrypt with sops
+  print "  - Encrypting to secrets/secrets.yaml..."
+  sops --encrypt --config .sops.yaml --output secrets/secrets.yaml $temp_yaml
+  
+  rm $temp_yaml
+  print "✅ Secrets synced and encrypted!"
 }
 
 # Helper script written in Nushell to build and switch system configurations

@@ -30,7 +30,10 @@
         overlays = [inputs.neovim-nightly-overlay.overlays.default];
       };
       modules =
-        [cfg.module]
+        [
+          cfg.module
+          inputs.sops-nix.homeManagerModules.sops
+        ]
         ++ lib.optional (cfg.homeDirectory != null) {
           home.homeDirectory = lib.mkForce cfg.homeDirectory;
         };

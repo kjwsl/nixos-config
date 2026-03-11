@@ -4,6 +4,7 @@
   flake.modules.homeManager.base = {pkgs, ...}: {
     home.packages = with pkgs; [
       _7zz-rar
+      age
       alejandra
       amazon-q-cli
       ast-grep
@@ -65,6 +66,8 @@
       rustup
       scout
       sd # Intuitive find & replace CLI (sed alternative)
+      sops
+      ssh-to-age
       tealdeer
       tere
       tmux
