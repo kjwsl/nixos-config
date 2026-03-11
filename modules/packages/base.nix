@@ -80,8 +80,8 @@
       xcp
       xh
       xxh
-      zellij
       zig
+      zmate # Instant terminal sharing using Zellij
     ];
   };
 }
