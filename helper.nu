@@ -1,6 +1,16 @@
 #! /usr/bin/env nix
 #! nix shell nixpkgs#nushell nixpkgs#nh --command nu
 
+def ensure_nvim_dev_path [nvim_path: string]: [ nothing -> string ] {
+  let p = if $nvim_path == "" { ($env.HOME | path join "repos" "nvim-config") } else { $nvim_path }
+  if not ($p | path exists) {
+    print $"📥 ($p) not found, cloning via jj..."
+    jj git clone https://github.com/larpios/nvim-config $p
+    print $"✅ Cloned to ($p)"
+  }
+  $p
+}
+
 def get_os_string []: [ nothing -> string, nothing -> nothing ] {
   let os_str = (sys host | get name?)
 
@@ -20,6 +30,8 @@ def "main system" [
   action: string = "switch"  # switch, build, or test
   os?: string # nixos, darwin, or auto-detect
   --hostname (-H): string = "" # hostname (auto-detected if omitted)
+  --nvim-dev (-n)              # use local nvim-config instead of GitHub
+  --nvim-path: string = ""     # path to local nvim-config (default: ~/repos/nvim-config)
 ] {
   let os_str = if $os != null { $os } else { get_os_string }
   if $os_str == null {
@@ -42,7 +54,12 @@ def "main system" [
 
   print $"🔨 Building system ($action) for ($os_str) on host ($host)..."
 
-  nh $command $action . -H $host -a
+  let override = if $nvim_dev {
+    let p = (ensure_nvim_dev_path $nvim_path)
+    ["--" "--override-input" $"nvim-config path:($p)"]
+  } else { [] }
+
+  nh $command $action . -H $host -a ...$override
   print "✅ System configuration applied!"
 }
 
@@ -50,6 +67,8 @@ def "main system" [
 def "main home" [
   action: string = "switch" # build, switch, or test
   system?: string  # linux, darwin, termux, or auto-detect (termux can't be detected)
+  --nvim-dev (-n)              # use local nvim-config instead of GitHub
+  --nvim-path: string = ""     # path to local nvim-config (default: ~/repos/nvim-config)
 ] {
 
   let os = if $system != null { $system } else { get_os_string }
@@ -59,7 +78,13 @@ def "main home" [
   }
 
   print $"🏠 Switching home-manager for ($os)..."
-  nh home $action . -c $os -o result -b backup -a
+
+  let override = if $nvim_dev {
+    let p = (ensure_nvim_dev_path $nvim_path)
+    ["--" "--override-input" $"nvim-config path:($p)"]
+  } else { [] }
+
+  nh home $action . -c $os -o result -b backup -a ...$override
   print "✅ Home configuration applied!"
 }
 
@@ -141,8 +166,10 @@ def "main info" [] {
   print $"🖥️  Hostname: ($host)"
   print ""
   print "Available commands:"
-  print "  nu helper.nu system [switch|build|test]    # Full system (NixOS/macOS)"
-  print "  nu helper.nu home [linux|darwin|termux]     # Home-manager only"
+  print "  nu helper.nu system [switch|build|test]              # Full system (NixOS/macOS)"
+  print "  nu helper.nu system --nvim-dev                       # System switch with local nvim config"
+  print "  nu helper.nu home [linux|darwin|termux]              # Home-manager only"
+  print "  nu helper.nu home --nvim-dev [--nvim-path <path>]    # Home switch with local nvim config"
   print "  nu helper.nu update [input]                 # Update flake inputs"
   print "  nu helper.nu gc [-d 7d]                     # Garbage collection"
   print "  nu helper.nu check                          # Check flake"
