@@ -1,29 +1,22 @@
 # Nushell configuration.
 # Contributes to flake.modules.homeManager.base.
-{...}: {
-  flake.modules.homeManager.base = {pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
+  flake.modules.homeManager.base = {
+    pkgs,
+    config,
+    ...
+  }: {
     programs.nushell = {
       enable = true;
       extraEnv = ''
-        # Source home-manager session variables
-        let hm_vars = ("~/.nix-profile/etc/profile.d/hm-session-vars.sh" | path expand)
-        if ($hm_vars | path exists) {
-          # Capture variables from sh after sourcing
-          let vars = (sh -c $"source ($hm_vars) && env" | lines)
-          
-          # Iterate and load-env
-          for var in $vars {
-            let parts = ($var | split row "=")
-            if ($parts | length) >= 2 {
-              let name = $parts.0
-              let value = ($parts | slice 1.. | str join "=")
-              
-              # Skip protected/redundant variables
-              if not ($name in ["_" "PATH" "PWD" "PROMPT_COMMAND" "PROMPT_INDICATOR" "PROMPT_INDICATOR_VI_INSERT" "PROMPT_INDICATOR_VI_NORMAL" "PROMPT_MULTILINE_INDICATOR" "SHLVL" "TERM" "LS_COLORS"]) {
-                load-env { ($name): $value }
-              }
-            }
-          }
+        # Directly export secret values if the decrypted file exists
+        let ctx7_path = ("${config.sops.secrets."context7-api-key".path}" | path expand)
+        if ($ctx7_path | path exists) {
+          $env.CONTEXT7_API_KEY = (open $ctx7_path | str trim)
         }
       '';
       settings = {

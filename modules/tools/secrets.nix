@@ -18,9 +18,5 @@
 
     # Define secrets here as we sync them
     sops.secrets."context7-api-key" = {};
-
-    home.sessionVariables = {
-      CONTEXT7_API_KEY_FILE = config.sops.secrets."context7-api-key".path;
-    };
   };
 }
