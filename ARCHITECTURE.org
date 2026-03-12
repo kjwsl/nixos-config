@@ -35,7 +35,7 @@ logic lives in a file under ~./modules/~, and each of those files is a
 nixos-config/
 ├── flake.nix                    Thin entry point — inputs + import-tree
 ├── flake.lock
-├── helper.nu                   Nushell helper script (system, home, update, gc, check, fmt)
+├── setup.nu                   Nushell helper script (system, home, update, gc, check, fmt)
 ├── bootstrap.sh                 Bare-metal → Nix → config installer
 └── modules/                     Everything is a flake-parts module here
     ├── meta.nix                 Declares shared options: username, email
@@ -300,7 +300,7 @@ the global hook: it evaluates the system-specific flake attribute
 (~darwinConfigurations.macbook~, ~nixosConfigurations.nixos~, etc.)
 to catch errors that the generic ~flake check~ might miss.
 
-Install via: ~nu helper.nu hooks~ (sets ~core.hooksPath = .githooks~).
+Install via: ~nu setup.nu hooks~ (sets ~core.hooksPath = .githooks~).
 
 * Flake outputs
 

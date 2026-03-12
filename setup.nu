@@ -1,13 +1,72 @@
-#! /usr/bin/env nix
-#! nix shell nixpkgs#nushell nixpkgs#nh --command nu
+#!/usr/bin/env nu
 
-def get_os_string []: [ nothing -> string, nothing -> nothing ] {
+def "from conf" [] : string -> record {
+  $in | lines | where not (str starts-with '#') | split row '=' | rename key value
+}
+
+def "to conf" [] : record -> string {
+  $in | items { |k, v| $"($k) = ($v | str join ' ')" } | str join '\n'
+}
+
+# Enable nix-command and flake experimental features
+def setup-nix-config []: nothing -> nothing {
+  print "🛠️  Configuring nix..."
+
+  const default_nix_conf = {
+    experimental-features: [ 'nix-command' 'flakes' ]
+  }
+
+  if not ('~/.config/nix/nix.conf' | path exists) {
+    print "`nix.conf` not found, creating..."
+
+    mkdir ~/.config/nix
+    $default_nix_conf | to conf | save -f ~/.config/nix/nix.conf
+
+    print "🛠️  Created ~/.config/nix/nix.conf"
+
+    return
+  }
+
+  mut conf = try { open ~/.config/nix/nix.conf | from conf | get '' } catch { $default_nix_conf }
+
+  mut experimental_features = try { $conf.experimental-features | split row ' '} catch { [] }
+  print $"🛠️  Current experimental features: ($experimental_features)"
+
+
+  mut changed = false
+  if ('nix-command' not-in $experimental_features) {
+    print "🛠️  Enabling nix-command experimental feature..."
+    $experimental_features ++= [ 'nix-command' ]
+    $changed = true
+  } 
+  if ('flakes' not-in $experimental_features) {
+    print "🛠️  Enabling flake experimental feature..."
+    $experimental_features ++= [ 'flakes' ]
+    $changed = true
+  }
+
+  if $changed {
+    print "🛠️  Saving nix.conf..."
+    $conf.experimental-features = $experimental_features
+    $conf | to conf | save -f ~/.config/nix/nix.conf
+  } else {
+    print "🛠️  nix.conf already configured"
+  }
+}
+
+# Get current OS
+def get-os-str []:  nothing -> string {
+  # nix-on-droid (Android) sets ANDROID_ROOT; check before sys host
+  if ($env.ANDROID_ROOT? | is-not-empty) {
+    return "android"
+  }
+
   let os_str = (sys host | get name?)
 
   if $os_str != null {
     $os_str | str downcase
   } else {
-    null
+    ""
   }
 }
 
@@ -21,13 +80,29 @@ def "main system" [
   os?: string # nixos, darwin, or auto-detect
   --hostname (-H): string = "" # hostname (auto-detected if omitted)
 ] {
-  let os_str = if $os != null { $os } else { get_os_string }
+  print "🔨 Setting up system..."
+
+  try {
+  setup-nix-config
+  } catch {
+    print "❌ Failed to configure nix"
+    exit 1
+  }
+
+  let os_str = if $os != null { $os } else { get-os-str }
   if $os_str == null {
     print "❌ Unable to detect OS"
     exit 1
   }
 
   let host = if $hostname == "" { get_hostname } else { $hostname }
+
+  if $os_str == "android" {
+    print $"🤖 Switching nix-on-droid configuration for host ($host)..."
+    nix-on-droid switch --flake $".#($host)"
+    print "✅ nix-on-droid configuration applied!"
+    return
+  }
 
   let command = match $os_str {
     "nixos" => "os"
@@ -51,8 +126,14 @@ def "main home" [
   action: string = "switch" # build, switch, or test
   system?: string  # linux, darwin, termux, or auto-detect (termux can't be detected)
 ] {
+  try {
+  setup-nix-config
+  } catch {
+    print "❌ Failed to configure nix"
+    exit 1
+  }
 
-  let os = if $system != null { $system } else { get_os_string }
+  let os = if $system != null { $system } else { get-os-str }
   if $os == null {
     print "❌ Unable to detect OS"
     exit 1
@@ -89,7 +170,15 @@ def "main gc" [
 # Check flake for errors
 def "main check" [] {
   print "🔍 Checking flake..."
-  nix flake check --no-build
+  let os = get-os-str
+  if $os == "darwin" {
+    # nix flake check evaluates all nixosConfigurations even on Darwin,
+    # which fails for Linux-only derivations — check only Darwin outputs instead
+    nix eval .#darwinConfigurations --apply builtins.attrNames | ignore
+    nix eval .#homeConfigurations --apply builtins.attrNames | ignore
+  } else {
+    nix flake check --no-build
+  }
   print "✅ Flake check passed!"
 }
 
@@ -132,7 +221,7 @@ def "main fmt" [] {
 
 # Show current system info and available commands
 def "main info" [] {
-  let os = get_os_string
+  let os = get-os-str
   let user = $env.USER
   let host = get_hostname
 
@@ -141,16 +230,16 @@ def "main info" [] {
   print $"🖥️  Hostname: ($host)"
   print ""
   print "Available commands:"
-  print "  nu helper.nu system [switch|build|test]    # Full system (NixOS/macOS)"
-  print "  nu helper.nu home [linux|darwin|termux]     # Home-manager only"
-  print "  nu helper.nu secrets sync                   # Sync secrets from Bitwarden to sops"
-  print "  nu helper.nu update [input]                 # Update flake inputs"
-  print "  nu helper.nu gc [-d 7d]                     # Garbage collection"
-  print "  nu helper.nu check                          # Check flake"
-  print "  nu helper.nu fmt                            # Format nix files"
-  print "  nu helper.nu hooks                          # Install repo-local git hooks"
-  print "  nu helper.nu hooks --status                  # Show hook status"
-  print "  nu helper.nu info                           # Show this info"
+  print "  nu setup.nu system [switch|build|test]    # Full system (NixOS/macOS)"
+  print "  nu setup.nu home [linux|darwin|android]    # Home-manager only (android = nix-on-droid)"
+  print "  nu setup.nu secrets sync                   # Sync secrets from Bitwarden to sops"
+  print "  nu setup.nu update [input]                 # Update flake inputs"
+  print "  nu setup.nu gc [-d 7d]                     # Garbage collection"
+  print "  nu setup.nu check                          # Check flake"
+  print "  nu setup.nu fmt                            # Format nix files"
+  print "  nu setup.nu hooks                          # Install repo-local git hooks"
+  print "  nu setup.nu hooks --status                  # Show hook status"
+  print "  nu setup.nu info                           # Show this info"
 }
 
 # Sync secrets from Bitwarden to encrypted sops file
