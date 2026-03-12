@@ -48,6 +48,7 @@
       mcfly
       mprocs
       navi
+      nb # local web note‑taking, bookmarking, archiving, and knowledge base
       neovim
       nh
       nil
