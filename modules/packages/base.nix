@@ -53,6 +53,7 @@
       nh
       nil
       ninja
+      nufmt # Nushell Formatter
       openssh
       ouch
       procs
