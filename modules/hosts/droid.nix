@@ -18,16 +18,23 @@
     ];
 
     home-manager = {
-      config = config.flake.modules.homeManager.base;
+      config = {
+        imports = [config.flake.modules.homeManager.base];
+        home.homeDirectory = pkgs.lib.mkForce "/data/data/com.termux.nix/files/home";
+      };
       backupFileExtension = "bak";
       useGlobalPkgs = true;
-      extraSpecialArgs = {inherit inputs;};
+      extraSpecialArgs = {
+        inherit inputs;
+        isAndroid = true;
+      };
     };
 
-    # Override homeDirectory for nix-on-droid's path
-    home-manager.config = {
-      home.homeDirectory = pkgs.lib.mkForce "/data/data/com.termux.nix/files/home";
-    };
+    nix.extraOptions = ''
+      experimental-features = nix-command flakes
+      sandbox = false
+      use-pty = false
+    '';
 
     system.stateVersion = "24.05";
   };

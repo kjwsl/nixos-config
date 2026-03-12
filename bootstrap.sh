@@ -231,9 +231,9 @@ main() {
   info "Config location: $CONFIG_DIR"
   info "Next steps:"
   echo "  • Edit config:    cd $CONFIG_DIR && nvim"
-  echo "  • Rebuild system: nu $CONFIG_DIR/helper.nu system"
-  echo "  • Rebuild home:   nu $CONFIG_DIR/helper.nu home"
-  echo "  • Update inputs:  nu $CONFIG_DIR/helper.nu update"
+  echo "  • Rebuild system: nu $CONFIG_DIR/setup.nu system"
+  echo "  • Rebuild home:   nu $CONFIG_DIR/setup.nu home"
+  echo "  • Update inputs:  nu $CONFIG_DIR/setup.nu update"
   echo ""
 }
 

@@ -30,7 +30,7 @@
         formats
         skim
         semver
-        highlight
+        # highlight
         gstat
         query
       ];

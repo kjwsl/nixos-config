@@ -32,10 +32,10 @@ The script will:
 
 * Day-to-day usage
 
-All common operations go through ~helper.nu~:
+All common operations go through ~setup.nu~:
 
 #+begin_src bash
-nu helper.nu <command>
+nu setup.nu <command>
 #+end_src
 
 | Command | What it does |
@@ -54,23 +54,23 @@ nu helper.nu <command>
 
 #+begin_src bash
 # After editing any .nix file — rebuild macOS system
-nu helper.nu system
+nu setup.nu system
 
 # Rebuild just home-manager (faster, no sudo)
-nu helper.nu home
+nu setup.nu home
 
 # Update all flake inputs then rebuild
-nu helper.nu update
-nu helper.nu system
+nu setup.nu update
+nu setup.nu system
 
 # Update a single input
-nu helper.nu update nixpkgs
+nu setup.nu update nixpkgs
 
 # Garbage collect anything older than 30 days
-nu helper.nu gc -d 30d
+nu setup.nu gc -d 30d
 
 # Check the flake evaluates without errors
-nu helper.nu check
+nu setup.nu check
 #+end_src
 
 * Hosts
@@ -121,7 +121,7 @@ my.stacks.music.enable  = true;
 #+begin_src
 nixos-config/
 ├── flake.nix                thin entry point
-├── helper.nu                day-to-day helper (system, home, update, gc, check, fmt)
+├── setup.nu                day-to-day helper (system, home, update, gc, check, fmt)
 ├── bootstrap.sh             bare-metal → Nix → config installer
 └── modules/
     ├── meta.nix             shared options: username, email
@@ -163,7 +163,7 @@ Bypass: ~GIT_PUSH_NO_SECRET_SCAN=1 jj git push~
 (~darwinConfigurations.macbook~, ~nixosConfigurations.nixos~, etc.)
 to catch errors that generic ~flake check~ might miss.
 
-Installed via: ~nu helper.nu hooks~
+Installed via: ~nu setup.nu hooks~
 
 * Links
 
