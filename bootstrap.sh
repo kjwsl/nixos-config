@@ -35,6 +35,11 @@ detect_os() {
     Linux)
       if [ -f /etc/NIXOS ]; then
         echo "nixos"
+      elif [ -f /system/build.prop ] \
+        || [ -n "${ANDROID_ROOT:-}" ] \
+        || grep -qi android /proc/version 2>/dev/null \
+        || echo "${HOME:-}" | grep -q "com\.termux\.nix\|com\.nix_on_droid"; then
+        echo "android"
       else
         echo "linux"
       fi
@@ -55,6 +60,11 @@ detect_arch() {
 # ── Check if Nix is installed ──────────────────────────────────────────────
 has_nix() {
   command -v nix &>/dev/null
+}
+
+# ── Check if running inside nix-on-droid ───────────────────────────────────
+has_nix_on_droid() {
+  command -v nix-on-droid &>/dev/null
 }
 
 # ── Install Nix via Determinate Systems installer ──────────────────────────
@@ -78,6 +88,25 @@ install_nix() {
 
   has_nix || die "Nix installation completed but 'nix' not found in PATH. Please restart your shell and re-run this script."
   ok "Nix installed: $(nix --version)"
+}
+
+# ── Apply nix-on-droid configuration ──────────────────────────────────────
+apply_nix_on_droid() {
+  local profile="${1:-phone}"
+  info "Applying nix-on-droid configuration (profile: $profile)..."
+
+  # nix-on-droid ships nix itself — skip the normal nix install step.
+  # The nix-on-droid CLI may not exist on first run if the initial channel
+  # setup hasn't been done yet; fall back to running it via nix.
+  if has_nix_on_droid; then
+    nix-on-droid switch --flake "$CONFIG_DIR#$profile"
+  elif has_nix; then
+    nix run github:nix-community/nix-on-droid -- switch --flake "$CONFIG_DIR#$profile"
+  else
+    die "Neither 'nix-on-droid' nor 'nix' found. Open the nix-on-droid app once to bootstrap nix, then re-run this script."
+  fi
+
+  ok "nix-on-droid configuration applied!"
 }
 
 # ── Clone config repo ──────────────────────────────────────────────────────
@@ -143,8 +172,16 @@ main() {
   arch="$(detect_arch)"
   info "Detected: os=$os arch=$arch"
 
-  # Step 1: Install Nix
-  install_nix
+  # Step 1: Install Nix (skipped on nix-on-droid — the app provides nix)
+  if [ "$os" = "android" ]; then
+    if has_nix; then
+      ok "Nix is already available: $(nix --version)"
+    else
+      warn "Nix not found. Open the nix-on-droid app to bootstrap it, then re-run this script."
+    fi
+  else
+    install_nix
+  fi
 
   # Step 2: Clone config
   clone_config
@@ -179,6 +216,9 @@ main() {
         hostname="nixos"
       fi
       apply_nixos "$hostname"
+      ;;
+    android)
+      apply_nix_on_droid "phone"
       ;;
     linux)
       apply_home "linux"
