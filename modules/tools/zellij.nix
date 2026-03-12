@@ -1,13 +1,10 @@
 # Zellij Terminal Multiplexer
 # Contributes to flake.modules.homeManager.base.
-{
-  ...
-}:
-{
+{ ... }: {
   flake.modules.homeManager.base =
-    {
-      pkgs,
-      ...
+    { pkgs
+    , lib
+    , ...
     }:
     let
       zellijPlugins = {
@@ -18,6 +15,10 @@
         vimZellijNavigator = pkgs.fetchurl {
           url = "https://github.com/hiasr/vim-zellij-navigator/releases/download/0.3.0/vim-zellij-navigator.wasm";
           hash = "sha256-d+Wi9i98GmmMryV0ST1ddVh+D9h3z7o0xIyvcxwkxY0=";
+        };
+        harpoon = pkgs.fetchurl {
+          url = "https://github.com/Nacho114/harpoon/releases/download/v0.3.0/harpoon.wasm";
+          hash = "sha256-f4z1enHx27vRFTN6MWOHgNfhjpuHbe8cgclwGIyqMvI=";
         };
       };
     in
@@ -32,95 +33,117 @@
 
           show_startup_tips = false;
         };
-        extraConfig = ''
-          keybinds {
-              shared_except "locked" {
-                  bind "Ctrl y" = {
-                      LaunchOrFocusPlugin "${zellijPlugins.room}" = {
-                          floating true;
-                          ignore_case true;
-                          quick_jump true;
-                      };
-                  };
-                  bind "Ctrl h" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "move_focus_or_tab";
-                          payload "left";
+        extraConfig =
+          #kdl
+          ''
+            plugins {
+                room = {
+                    source = "${zellijPlugins.room}";
+                };
+                vimZellijNavigator = {
+                    source = "${zellijPlugins.vimZellijNavigator}";
+                };
+                harpoon = {
+                    source = "${zellijPlugins.harpoon}";
+                };
+            }
+            keybinds {
+                pane {
+                    bind "Ctrl h" {
+                        LaunchOrFocusPlugin "harpoon" {
+                            floating true; move_to_focused_tab true;
+                        }
+                    }
+                }
+                tab {
+                    bind "Ctrl l" = {
+                        LaunchOrFocusPlugin "room" = {
+                            floating true;
+                            ignore_case true;
+                            quick_jump true;
+                        };
+                    };
+                }
+                shared_except "locked" {
+                    bind "Ctrl h" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "move_focus_or_tab";
+                            payload "left";
 
-                          // Plugin Configuration
-                          move_mod "ctrl"; // Optional, should be added on every move command if changed.
-                          use_arrow_keys "false"; // Optional, uses arrow keys instead of hjkl. Should be added to every command where you want to use it.
-                      };
-                  }
+                            // Plugin Configuration
+                            move_mod "ctrl"; // Optional, should be added on every move command if changed.
+                            use_arrow_keys "false"; // Optional, uses arrow keys instead of hjkl. Should be added to every command where you want to use it.
+                        };
+                    }
 
-                  bind "Ctrl j" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "move_focus";
-                          payload "down";
+                    bind "Ctrl j" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "move_focus";
+                            payload "down";
 
-                          move_mod "ctrl";
-                          use_arrow_keys "false";
-                      };
-                  }
+                            move_mod "ctrl";
+                            use_arrow_keys "false";
+                        };
+                    }
 
-                  bind "Ctrl k" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "move_focus";
-                          payload "up";
+                    bind "Ctrl k" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "move_focus";
+                            payload "up";
 
-                          move_mod "ctrl";
-                          use_arrow_keys "false";
-                      };
-                  }
+                            move_mod "ctrl";
+                            use_arrow_keys "false";
+                        };
+                    }
 
-                  bind "Ctrl l" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "move_focus_or_tab";
-                          payload "right";
+                    bind "Ctrl l" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "move_focus_or_tab";
+                            payload "right";
 
-                          move_mod "ctrl"; // Optional, should be added on every command if you want to use it
-                          use_arrow_keys "false";
-                      };
-                  }
+                            move_mod "ctrl"; // Optional, should be added on every command if you want to use it
+                            use_arrow_keys "false";
+                        };
+                    }
 
-                  bind "Alt h" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "resize";
-                          payload "left";
+                    bind "Alt h" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "resize";
+                            payload "left";
 
-                          resize_mod "alt";
-                      };
-                  }
+                            resize_mod "alt";
+                        };
+                    }
 
-                  bind "Alt j" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "resize";
-                          payload "down";
+                    bind "Alt j" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "resize";
+                            payload "down";
 
-                          resize_mod "alt";
-                      };
-                  }
+                            resize_mod "alt";
+                        };
+                    }
 
-                  bind "Alt k" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "resize";
-                          payload "up";
+                    bind "Alt k" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "resize";
+                            payload "up";
 
-                          resize_mod "alt";
-                      };
-                  }
+                            resize_mod "alt";
+                        };
+                    }
 
-                  bind "Alt l" {
-                      MessagePlugin ${zellijPlugins.vimZellijNavigator} {
-                          name "resize";
-                          payload "right";
+                    bind "Alt l" {
+                        MessagePlugin "vimZellijNavigator" {
+                            name "resize";
+                            payload "right";
 
-                          resize_mod "alt";
-                      };
-                  }
-              }
-          }
-        '';
+                            resize_mod "alt";
+                        };
+                    }
+                }
+            }
+          '';
       };
     };
 }
