@@ -27,6 +27,7 @@
       eza
       fastfetch
       fd
+      fish-lsp
       fselect
       fzf
       gcc

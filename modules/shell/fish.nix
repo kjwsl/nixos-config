@@ -7,201 +7,70 @@
     {
       programs.fish = {
         enable = true;
-        shellAliases = {
-          tree = "tree -C";
-          g = "git";
-          fish-bench = "time fish -i -c exit";
-          fish_reload = "source $__fish_config_dir/config.fish";
-          zo = "z (dirname (fzf))";
-          ls = "eza --icons --group-directories-first -a";
-          ll = "eza --icons --group-directories-first -la";
-        };
+        interactiveShellInit =
+          # fish
+          ''
+            # Disable greeting message
+            set -g fish_greeting
+
+            # Enable trasient prompt
+            set -g fish_transient_prompt 1
+
+            # vi key bindings
+            fish_vi_key_bindings
+
+            # ntfy.sh notifications
+            set -gx NTFY_TOPIC notify-3152210757
+          '';
+
         functions = {
-          vf.body = "nvim (fzf -m --preview 'bat --style=numbers --color=always {}')";
-          zf.body = ''
-            set dir (find . -type d -print | fzf) || return
-            z $dir
-          '';
-          envsource.body = ''
-            for line in (cat $argv | grep -v '^#')
-              set item (string split -m 1 '=' $line)
-              set -gx $item[1] $item[2]
-            end
-          '';
-          pi.body = ''
-            if type -q pacman
-              sudo pacman -S --needed --noconfirm $argv
-            end
-          '';
-          notify.body = ''
-            set -l msg (test (count $argv) -gt 0; and string join " " $argv; or echo "Task completed")
-            set -l dir (string replace $HOME "~" $PWD)
-            curl -s \
-                -H "Title: 🔔 $hostname: Manual notification" \
-                -d "$msg
-
-            Directory: $dir" \
-                "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
-          '';
-          __notify_on_long_command = {
-            onEvent = "fish_postexec";
-            body = ''
-              set -l command_name (string split -m 1 " " $argv[1])[1]
-              if contains $command_name nvim vi vim ssh hx btop
-                return
-              end
-              if test $CMD_DURATION -gt 30000
-                set -l secs (math "$CMD_DURATION / 1000")
-                set -l status_emoji (test $status -eq 0 && echo "✅" || echo "❌")
-                set -l status_text (test $status -eq 0 && echo "Success" || echo "Failed (exit $status)")
-                set -l cmd (string shorten -m 100 "$argv[1]")
-                set -l dir (string replace $HOME "~" $PWD)
-                set -l host $hostname
-                curl -s \
-                    -H "Title: $status_emoji $host: Command finished" \
-                    -d "$cmd
-
-                Status: $status_text
-                Duration: $secs seconds
-                Directory: $dir" \
-                    "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
-              end
+          tere =
+            # fish
+            ''
+              set --local result (command tere $argv)
+              [ -n "$result" ] && cd -- "$result"
             '';
+          notify =
+            # fish
+            ''
+                  set -l msg (test (count $argv) -gt 0; and string join " " $argv; or echo "Task completed")
+                  set -l dir (string replace $HOME "~" $PWD)
+                  curl -s \
+                      -H "Title: 🔔 $hostname: Manual notification" \
+                      -d "$msg
+
+              Directory: $dir" \
+                      "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
+            '';
+          __notify_on_long_command = {
+            body =
+              # fish
+              ''
+                # Skip for interactive editors and common long-running interactive tools
+                set -l command_name (string split -m 1 " " $argv[1])[1]
+                if contains $command_name nvim vi vim ssh hx btop
+                    return
+                end
+                if test $CMD_DURATION -gt 30000
+                    set -l secs (math "$CMD_DURATION / 1000")
+                    set -l status_emoji (test $status -eq 0 && echo "✅" || echo "❌")
+                    set -l status_text (test $status -eq 0 && echo "Success" || echo "Failed (exit $status)")
+                    set -l cmd (string shorten -m 100 "$argv[1]")
+                    set -l dir (string replace $HOME "~" $PWD)
+                    set -l host $hostname
+                    curl -s \
+                        -H "Title: $status_emoji $host: Command finished" \
+                        -d "$cmd
+
+                      Status: $status_text
+                      Duration: $secs seconds
+                      Directory: $dir" \
+                        "ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 &
+                end
+              '';
+            onEvent = "fish_postexec";
           };
-          smartdd.body = ''
-            set -l source $argv[1]
-            set -l dest $argv[2]
-
-            if test -z "$source"; or test -z "$dest"
-              echo "Usage: smartdd <input_file_or_dev_zero> <destination_device>"
-              return 1
-            end
-            if not test -e "$dest"
-              echo "Error: Destination $dest does not exist."
-              return 1
-            end
-
-            set -l bs_size "4M"
-            set -l count_bytes 0
-            set -l mode ""
-
-            if test "$source" = "/dev/zero"
-              set mode "WIPE"
-              if type -q lsblk
-                set count_bytes (lsblk -b -n -o SIZE $dest | head -n 1)
-              else
-                set -l blocks (cat /proc/partitions | grep (basename $dest)\$ | awk '{print $3}')
-                if test -n "$blocks"
-                  set count_bytes (math "$blocks * 1024")
-                end
-              end
-            else
-              set mode "FLASH"
-              if not test -e "$source"
-                echo "Error: Source file $source not found."
-                return 1
-              end
-              if type -q stat
-                if stat --version > /dev/null 2>&1
-                  set count_bytes (stat -c %s "$source")
-                else
-                  set count_bytes (stat -f %z "$source")
-                end
-              else
-                echo "Error: 'stat' command missing. Cannot calculate file size."
-                return 1
-              end
-            end
-
-            if test "$count_bytes" -eq 0
-              echo "Error: Could not determine size. Aborting."
-              return 1
-            end
-
-            set -l size_human (math -s0 "$count_bytes / 1024 / 1024")
-            echo "---------------------------------------------------"
-            echo "Mode:      $mode"
-            echo "Source:    $source"
-            echo "Target:    $dest"
-            echo "Data Size: $count_bytes bytes (~$size_human MB)"
-            echo "---------------------------------------------------"
-            read -P "Press [Enter] to start or [Ctrl+C] to cancel..." confirm
-
-            dd if="$source" of="$dest" bs=$bs_size count=$count_bytes iflag=count_bytes status=progress
-            echo "Syncing cache..."
-            sync
-            echo "Done."
-          '';
         };
-        interactiveShellInit = ''
-          set -g fish_greeting
-          set -g fish_transient_prompt 1
-          set -gx EDITOR nvim
-          set -gx VISUAL $EDITOR
-          set -gx NTFY_TOPIC notify-3152210757
-
-          # Mise activation (cached to avoid ~300ms penalty each start)
-          if type -q mise
-            set -l _mise_cache "$HOME/.cache/fish/mise_init.fish"
-            set -l _mise_bin (command -s mise)
-            if not test -f $_mise_cache; or test $_mise_bin -nt $_mise_cache
-              mkdir -p (dirname $_mise_cache)
-              mise activate fish >$_mise_cache
-            end
-            source $_mise_cache
-          end
-
-          # Paths
-          fish_add_path "$HOME/.local/bin"
-          # Rustup toolchain — detect target triple dynamically
-          if type -q rustup
-            set -l _rust_default (rustup show active-toolchain 2>/dev/null | string split ' ' -f1)
-            if test -n "$_rust_default"
-              fish_add_path "$HOME/.rustup/toolchains/$_rust_default/bin/"
-            end
-          end
-          fish_add_path "$HOME/.cargo/bin/"
-          set -gx PKG_CONFIG_PATH "$HOME/.luarocks/share/lua/5.1:$HOME/.nix-profile/bin:$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH"
-
-          # Environment loading via bass
-          if test -f $HOME/.envrc
-            bass source $HOME/.envrc
-          end
-          if test -d $HOME/modules
-            for file in $HOME/modules/*.sh
-              bass source $file
-            end
-          end
-          if test -f $HOME/.secrets
-            bass source $HOME/.secrets
-          end
-          if test -f $HOME/work.fish
-            source $HOME/work.fish
-          end
-
-          # Vi key bindings + custom
-          fish_vi_key_bindings
-          bind \cf zf
-
-          # Starship prompt (cached to avoid ~110ms penalty each start)
-          if type -q starship
-            set -l _starship_cache "$HOME/.cache/fish/starship_init.fish"
-            set -l _starship_bin (command -s starship)
-            if not test -f $_starship_cache; or test $_starship_bin -nt $_starship_cache
-              mkdir -p (dirname $_starship_cache)
-              starship init fish >$_starship_cache
-            end
-            source $_starship_cache
-          end
-
-          # Neural Orchestrator context
-          if test -d $HOME/.context/integrations/fish
-            set -p fish_function_path $HOME/.context/integrations/fish
-            if test -f $HOME/.context/integrations/fish/gemini-profiles.fish
-              source $HOME/.context/integrations/fish/gemini-profiles.fish
-            end
-          end
-        '';
         plugins = [
           {
             name = "bass";

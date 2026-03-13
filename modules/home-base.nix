@@ -25,6 +25,7 @@
     home.shellAliases = {
       v = "nvim";
       "v." = "nvim .";
+      g = "git";
     };
 
     home.stateVersion = "25.05";
