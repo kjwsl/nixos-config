@@ -28,6 +28,12 @@
       g = "git";
     };
 
+    home.sessionVariables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+      PAGER = "less";
+    };
+
     home.stateVersion = "25.05";
   };
 }

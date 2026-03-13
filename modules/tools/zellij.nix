@@ -27,9 +27,10 @@
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableFishIntegration = true;
+      attachExistingSession = true;
       settings = {
         web_server = true;
-        scrollback_editor = "${lib.getExe config.programs.helix.package}";
+        # scrollback_editor = "${lib.getExe config.programs.helix.package}";
 
         show_startup_tips = false;
       };
