@@ -2,6 +2,7 @@
 # Contributes to flake.modules.homeManager.base.
 {...}: {
   flake.modules.homeManager.base = {
+    config,
     pkgs,
     lib,
     ...
@@ -28,6 +29,7 @@
       enableFishIntegration = true;
       settings = {
         web_server = true;
+        scrollback_editor = "${lib.getExe config.programs.helix.package}";
 
         show_startup_tips = false;
       };
@@ -124,6 +126,7 @@
                   }
               }
           }
+
         '';
     };
   };
