@@ -21,6 +21,7 @@
       cmake
       delta
       difftastic
+      dotter # dotfile manager
       duf # Disk Usage/Free Utility
       dust
       eva
