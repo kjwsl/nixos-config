@@ -39,6 +39,8 @@
       GITHUB_SSH = "git@github:${config.github_username}";
     };
 
+    fonts.fontconfig.enable = true;
+
     home.stateVersion = "25.05";
   };
 }

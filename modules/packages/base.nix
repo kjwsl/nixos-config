@@ -89,6 +89,9 @@
       zig
       zmate # Instant terminal sharing using Zellij
 
+      # Fonts
+      nerd-fonts.jetbrains-mono
+
       # LLM Agents
       inputs.llm-agents.packages.${hostSystem}.claude-code
       inputs.llm-agents.packages.${hostSystem}.gemini-cli
