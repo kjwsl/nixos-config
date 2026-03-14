@@ -25,8 +25,8 @@
       nixpkgs.config.allowUnfree = true;
 
       users.users.ray = {
-        name = "ray";
-        home = "/Users/ray";
+        name = "${config.username}";
+        home = "/Users/${config.username}";
         shell = defaultShell;
       };
 
@@ -62,7 +62,11 @@
         };
       };
 
-      nix.settings.experimental-features = "nix-command flakes";
+      nix.settings = {
+        experimental-features = "nix-command flakes";
+        extra-substituters = ["https://cache.numtide.com"];
+        extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
+      };
 
       programs = {
         bash.interactiveShellInit =
@@ -92,6 +96,6 @@
       home-manager.users.ray = config.flake.modules.homeManager.base;
 
       system.stateVersion = 4;
-      system.primaryUser = "ray";
+      system.primaryUser = "${config.username}";
     };
 }

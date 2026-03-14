@@ -1,7 +1,9 @@
 # Base package set for all platforms.
 # Contributes to flake.modules.homeManager.base.
-{...}: {
-  flake.modules.homeManager.base = {pkgs, ...}: {
+{inputs, ...}: {
+  flake.modules.homeManager.base = {pkgs, ...}: let
+    hostSystem = pkgs.stdenv.hostPlatform.system;
+  in {
     home.packages = with pkgs; [
       _7zz-rar
       age
@@ -10,7 +12,7 @@
       ast-grep
       bat
       bitwarden-cli
-      broot
+      # broot
       btop
       cachix
       cargo-binstall
@@ -85,6 +87,29 @@
       xxh
       zig
       zmate # Instant terminal sharing using Zellij
+
+      # LLM Agents
+      inputs.llm-agents.packages.${hostSystem}.claude-code
+      inputs.llm-agents.packages.${hostSystem}.gemini-cli
+      inputs.llm-agents.packages.${hostSystem}.opencode
+      inputs.llm-agents.packages.${hostSystem}.crush
+      inputs.llm-agents.packages.${hostSystem}.pi
+      inputs.llm-agents.packages.${hostSystem}.ck
+      inputs.llm-agents.packages.${hostSystem}.gno
+      inputs.llm-agents.packages.${hostSystem}.beads-rust
+      inputs.llm-agents.packages.${hostSystem}.beads-viewer
+      inputs.llm-agents.packages.${hostSystem}.tuicr
+      inputs.llm-agents.packages.${hostSystem}.rtk
+      inputs.llm-agents.packages.${hostSystem}.ccusage
+      inputs.llm-agents.packages.${hostSystem}.ccusage-opencode
+      inputs.llm-agents.packages.${hostSystem}.mcporter
+      inputs.llm-agents.packages.${hostSystem}.happy-coder
+      inputs.llm-agents.packages.${hostSystem}.openskills
+      inputs.llm-agents.packages.${hostSystem}.qmd
+      inputs.llm-agents.packages.${hostSystem}.handy
+      inputs.llm-agents.packages.${hostSystem}.entire
+      inputs.llm-agents.packages.${hostSystem}.agent-browser
+      inputs.llm-agents.packages.${hostSystem}.jules
     ];
   };
 }

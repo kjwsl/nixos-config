@@ -2,6 +2,7 @@
 # shell aliases, and nixpkgs overlays/config.
 # Contributes to flake.modules.homeManager.base (all platforms).
 {
+  config,
   inputs,
   lib,
   ...
@@ -15,11 +16,11 @@
       inputs.catppuccin.homeModules.catppuccin
     ];
 
-    home.username = lib.mkDefault "ray";
+    home.username = lib.mkDefault config.username;
     home.homeDirectory = lib.mkDefault (
       if pkgs.stdenv.isDarwin
-      then "/Users/ray"
-      else "/home/ray"
+      then "/Users/${config.username}"
+      else "/home/${config.username}"
     );
 
     home.shellAliases = {
@@ -32,6 +33,10 @@
       EDITOR = "nvim";
       VISUAL = "nvim";
       PAGER = "less";
+
+      GITHUB_USERNAME = lib.mkDefault config.github_username;
+      GITHUB_HTTPS = "https://github.com/${config.github_username}";
+      GITHUB_SSH = "git@github:${config.github_username}";
     };
 
     home.stateVersion = "25.05";
