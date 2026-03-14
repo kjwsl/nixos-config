@@ -8,7 +8,10 @@
 }:
 {
   configurations.darwin.macbook.module =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      defaultShell = pkgs.fish;
+    in
     {
       imports = [
         inputs.determinate.darwinModules.default
@@ -24,7 +27,7 @@
       users.users.ray = {
         name = "ray";
         home = "/Users/ray";
-        shell = pkgs.zsh;
+        shell = defaultShell;
       };
 
       homebrew = {
@@ -61,17 +64,24 @@
 
       nix.settings.experimental-features = "nix-command flakes";
 
-      programs.bash.interactiveShellInit = ''
-        if ! [ "$TERM" = "dumb" ] && [ -z "$BASH_EXECUTION_STRING" ]; then
-          exec fish
-        fi
-      '';
+      programs = {
+        bash.interactiveShellInit =
+          # zsh
+          ''
+            if ! [ "$TERM" = "dumb" ] && [ -z "$BASH_EXECUTION_STRING" ]; then
+              exec "${lib.getExe defaultShell}"
+            fi
+          '';
 
-      programs.zsh.interactiveShellInit = ''
-        if ! [ "$TERM" = "dumb" ] && [ -z "$ZSH_EXECUTION_STRING" ]; then
-          exec fish
-        fi
-      '';
+        zsh.interactiveShellInit =
+          # zsh
+          ''
+            if ! [ "$TERM" = "dumb" ] && [ -z "$ZSH_EXECUTION_STRING" ]; then
+              exec "${lib.getExe defaultShell}"
+            fi
+          '';
+        fish.enable = true;
+      };
 
       determinateNix.enable = true;
 

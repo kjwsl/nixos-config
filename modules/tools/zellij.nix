@@ -20,6 +20,10 @@
         url = "https://github.com/Nacho114/harpoon/releases/download/v0.3.0/harpoon.wasm";
         hash = "sha256-f4z1enHx27vRFTN6MWOHgNfhjpuHbe8cgclwGIyqMvI=";
       };
+      datetime = pkgs.fetchurl {
+        url = "https://github.com/h1romas4/zellij-datetime/releases/latest/download/zellij-datetime.wasm";
+        hash = "sha256-oVMh3LlFe4hcY9XmcEHz8pmodyf1aMvgDH31QEusEEE=";
+      };
     };
   in {
     programs.zellij = {
@@ -38,9 +42,21 @@
         # kdl
         ''
           plugins {
-              room location="file://${zellijPlugins.room}"
-              vimZellijNavigator location="file://${zellijPlugins.vimZellijNavigator}"
-              harpoon location="file://${zellijPlugins.harpoon}"
+              room location="file:${zellijPlugins.room}"
+              vimZellijNavigator location="file:${zellijPlugins.vimZellijNavigator}"
+              harpoon location="file:${zellijPlugins.harpoon}"
+          }
+          layout {
+              pane size=1 borderless=true {
+                  plugin location="file:${zellijPlugins.datetime}"
+              }
+              pane size=1 borderless=true {
+                  plugin location="zellij:tab-bar"
+              }
+              pane
+              pane size=1 borderless=true {
+                  plugin location="zellij:status-bar"
+              }
           }
           keybinds {
               pane {
@@ -127,7 +143,6 @@
                   }
               }
           }
-
         '';
     };
   };

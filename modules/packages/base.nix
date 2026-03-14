@@ -25,7 +25,6 @@
       duf # Disk Usage/Free Utility
       dust
       eva
-      eza
       fastfetch
       fd
       fish-lsp
