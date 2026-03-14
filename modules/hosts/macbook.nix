@@ -64,8 +64,8 @@
 
       nix.settings = {
         experimental-features = "nix-command flakes";
-        extra-substituters = ["https://cache.numtide.com"];
-        extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
+        extra-substituters = [ "https://cache.numtide.com" ];
+        extra-trusted-public-keys = [ "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" ];
       };
 
       programs = {
@@ -87,13 +87,20 @@
         fish.enable = true;
       };
 
-      determinateNix.enable = true;
+      determinateNix = {
+        enable = true;
+        determinateNixd = {
+          garbageCollector.strategy = "automatic";
+        };
+      };
 
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = false;
       home-manager.backupFileExtension = "bak";
       home-manager.extraSpecialArgs = { inherit inputs; };
       home-manager.users.ray = config.flake.modules.homeManager.base;
+
+      nix.settings.auto-optimise-store = true;
 
       system.stateVersion = 4;
       system.primaryUser = "${config.username}";
