@@ -92,6 +92,7 @@
       # LLM Agents
       inputs.llm-agents.packages.${hostSystem}.claude-code
       inputs.llm-agents.packages.${hostSystem}.gemini-cli
+      inputs.llm-agents.packages.${hostSystem}.code
       inputs.llm-agents.packages.${hostSystem}.opencode
       inputs.llm-agents.packages.${hostSystem}.crush
       inputs.llm-agents.packages.${hostSystem}.pi
