@@ -30,6 +30,7 @@
       fastfetch
       fd
       fish-lsp
+      mkcert # Simple tool to make locally trusted development certificates
       fselect
       fzf
       gcc
@@ -105,7 +106,6 @@
       inputs.llm-agents.packages.${hostSystem}.mcporter
       inputs.llm-agents.packages.${hostSystem}.happy-coder
       inputs.llm-agents.packages.${hostSystem}.openskills
-      inputs.llm-agents.packages.${hostSystem}.qmd
       inputs.llm-agents.packages.${hostSystem}.handy
       inputs.llm-agents.packages.${hostSystem}.entire
       inputs.llm-agents.packages.${hostSystem}.agent-browser

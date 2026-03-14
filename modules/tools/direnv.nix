@@ -3,6 +3,9 @@
 {...}: {
   flake.modules.homeManager.base = {...}: {
     programs.direnv = {
+      nix-direnv = {
+        enable = true;
+      };
       enable = true;
       enableBashIntegration = true;
       enableZshIntegration = true;

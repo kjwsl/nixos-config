@@ -34,9 +34,16 @@
       attachExistingSession = true;
       settings = {
         web_server = true;
+        web_server_ip = "0.0.0.0";
+        web_server_port = 8088;
         # scrollback_editor = "${lib.getExe config.programs.helix.package}";
 
         show_startup_tips = false;
+        web_server_cert = "${config.home.homeDirectory}/.certs/zellij.pem";
+        web_server_key = "${config.home.homeDirectory}/.certs/zellij-key.pem";
+        web_client = {
+            font = "JetBrains Mono";
+        };
       };
       extraConfig =
         # kdl
@@ -143,6 +150,7 @@
                   }
               }
           }
+
         '';
     };
   };
