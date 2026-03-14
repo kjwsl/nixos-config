@@ -1,16 +1,24 @@
 # Jujutsu VCS configuration.
 # Contributes to flake.modules.homeManager.base.
-{ ... }:
+{ config, ... }:
+let
+  email = config.email;
+in
 {
   flake.modules.homeManager.base =
-    { config, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     {
       programs.jujutsu = {
         enable = true;
         settings = {
           user = {
             name = config.home.username;
-            email = "kjwdev01@gmail.com";
+            inherit email;
           };
           ui = {
             diff-formatter = ":git";
@@ -31,19 +39,41 @@
           };
           merge-tools = {
             nvim = {
-              merge-args = [
+              # diff-args: Opens a vertical split comparing the two states.
+              diff-args = [
                 "-d"
                 "$left"
                 "$right"
+              ];
+
+              # edit-args: Opens a vertical split where you can modify the $right file.
+              edit-args = [
+                "-d"
+                "$left"
+                "$right"
+              ];
+
+              # merge-args: Opens a 3-way split (Local, Output, Remote). You resolve conflicts in $output.
+              merge-args = [
+                "-d"
+                "$left"
                 "$output"
+                "$right"
               ];
             };
-            codediff = {
-              command = [ "nvim" ];
-              merge-args = [
-                "$output"
+            nvim-ext = {
+              program = "nvim";
+              edit-args = [
                 "-c"
-                "CodeDiff merge \"$output\""
+                "DiffEditor $left $right $output"
+              ];
+              diff-args = [
+                "-c"
+                "DiffEditor $left $right $output"
+              ];
+              merge-args = [
+                "-c"
+                "DiffEditor $left $right $output"
               ];
             };
           };
