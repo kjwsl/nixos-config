@@ -21,6 +21,7 @@ in
             inherit email;
           };
           ui = {
+            diff-editor = "nvim-ext";
             diff-formatter = ":git";
             pager = "delta";
             color = "always";
