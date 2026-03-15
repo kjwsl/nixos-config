@@ -75,6 +75,9 @@ def "main system" [
   action: string = "switch"  # switch, build, or repl
   os?: string                # nixos, darwin, or auto-detect
   --hostname (-H): string = "" # hostname (auto-detected if omitted)
+  --update (-u) = false
+  --ask (-a) = false
+
 ] {
   print "🔨 Setting up system..."
 
@@ -94,8 +97,11 @@ def "main system" [
     _ => { error make { msg: $"❌ System rebuilds only work on NixOS or macOS (detected: ($os_str))" } }
   }
 
+  let ask = if $ask { "--ask" } else { "" }
+  let update = if $update { "--update" } else { "" }
+
   print $"🔨 Building system ($action) for ($os_str) on host ($host)..."
-  nh $command $action . -H $host -a
+  nh $command $action . -H $host $ask $update
   print "✅ System configuration applied!"
 }
 

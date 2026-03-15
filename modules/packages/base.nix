@@ -101,7 +101,7 @@
       inputs.llm-agents.packages.${hostSystem}.pi
       inputs.llm-agents.packages.${hostSystem}.ck
       inputs.llm-agents.packages.${hostSystem}.gno
-      inputs.llm-agents.packages.${hostSystem}.beads-rust
+      inputs.llm-agents.packages.${hostSystem}.beads
       inputs.llm-agents.packages.${hostSystem}.beads-viewer
       inputs.llm-agents.packages.${hostSystem}.tuicr
       inputs.llm-agents.packages.${hostSystem}.rtk
