@@ -2,7 +2,7 @@
 { ... }: {
   perSystem = { pkgs, ... }: {
     devShells.default = pkgs.mkShell {
-      buildInputs = with pkgs; [ nushell nh ];
+      buildInputs = with pkgs; [ git nushell nh ];
     };
   };
 }
