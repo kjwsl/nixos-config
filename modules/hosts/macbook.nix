@@ -8,7 +8,11 @@
 }:
 {
   configurations.darwin.macbook.module =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      ...
+    }:
     let
       defaultShell = pkgs.fish;
     in
@@ -31,11 +35,10 @@
       };
 
       homebrew = {
-        enable = true;
+        enable = true; # this does not install homebrew
         taps = [ "BarutSRB/tap" ];
         casks = [
           "battery"
-          "sol"
           "discord"
           "floorp"
           "font-jetbrains-mono-nerd-font"
@@ -44,7 +47,18 @@
           "thunderbird"
           "wezterm@nightly"
           "barutsrb/tap/omniwm"
+          "raycast"
         ];
+        global = {
+          brewfile = true; # Generates a Brewfile to `$HOMEBREW_BUNDLE_FILE`
+        };
+        onActivation = {
+          # cleanup = "uninstall";
+        };
+        enableBashIntegration = true;
+        enableZshIntegration = true;
+        enableFishIntegration = true;
+
       };
 
       system.defaults.dock.autohide = true;
@@ -101,6 +115,14 @@
       home-manager.users.ray = config.flake.modules.homeManager.base;
 
       nix.settings.auto-optimise-store = true;
+
+      system.defaults.controlcenter.BatteryShowPercentage = true;
+
+      system.keyboard.enableKeyMapping = true;
+      system.keyboard.remapCapsLockToEscape = true;
+
+      system.defaults.NSGlobalDomain.KeyRepeat = 2;
+      system.defaults.NSGlobalDomain.InitialKeyRepeat = 15;
 
       system.stateVersion = 4;
       system.primaryUser = "${config.username}";
