@@ -13,7 +13,10 @@
     termux = {
       system = "aarch64-linux";
       homeDirectory = "/data/data/com.termux.nix/files/home";
-      module = config.flake.modules.homeManager.base;
+      module = {
+        imports = [config.flake.modules.homeManager.base];
+        home.username = "nix-on-droid";
+      };
     };
   };
 }
