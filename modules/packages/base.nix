@@ -34,6 +34,7 @@
       fselect
       fzf
       gcc
+      ripdrag # Drag and drop files into the terminal
       gh
       git
       git-absorb
@@ -95,6 +96,7 @@
       # LLM Agents
       inputs.llm-agents.packages.${hostSystem}.claude-code
       inputs.llm-agents.packages.${hostSystem}.gemini-cli
+      inputs.llm-agents.packages.${hostSystem}.goose-cli
       inputs.llm-agents.packages.${hostSystem}.code
       inputs.llm-agents.packages.${hostSystem}.opencode
       inputs.llm-agents.packages.${hostSystem}.crush
