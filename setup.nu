@@ -1,145 +1,119 @@
 #!/usr/bin/env nu
 
 def "from conf" [] : string -> record {
-  $in | lines | where not (str starts-with '#') | split row '=' | rename key value
+  $in 
+  | lines 
+  | parse "{key} = {value}"
+  | group-by key
+  | items { |k, v| { key: $k, value: ($v.value | str join " ") } }
+  | transpose -rd
 }
 
 def "to conf" [] : record -> string {
-  $in | items { |k, v| $"($k) = ($v | str join ' ')" } | str join '\n'
+  $in 
+  | items { |k, v| 
+      let val = if ($v | describe) == "list<any>" { $v | str join " " } else { $v }
+      $"($k) = ($val)" 
+    } 
+  | str join "\n"
 }
 
-# Enable nix-command and flake experimental features
+# Ensure nix-command and flake experimental features are enabled
 def setup-nix-config []: nothing -> nothing {
-  print "🛠️  Configuring nix..."
+  let nix_conf_path = ($env.HOME | path join ".config" "nix" "nix.conf")
+  let default_config = { "experimental-features": ["nix-command", "flakes"] }
 
-  const default_nix_conf = {
-    experimental-features: [ 'nix-command' 'flakes' ]
-  }
-
-  if not ('~/.config/nix/nix.conf' | path exists) {
-    print "`nix.conf` not found, creating..."
-
-    mkdir ~/.config/nix
-    $default_nix_conf | to conf | save -f ~/.config/nix/nix.conf
-
-    print "🛠️  Created ~/.config/nix/nix.conf"
-
+  if not ($nix_conf_path | path exists) {
+    print "🛠️  Creating ~/.config/nix/nix.conf..."
+    mkdir ($nix_conf_path | path dirname)
+    $default_config | to conf | save -f $nix_conf_path
     return
   }
 
-  mut conf = try { open ~/.config/nix/nix.conf | from conf | get '' } catch { $default_nix_conf }
+  mut conf = try { open $nix_conf_path | from conf } catch { {} }
+  let current_features = ($conf | get -o "experimental-features" | default "" | split row " " | where { $in != "" })
+  
+  let missing = (["nix-command", "flakes"] | where { $in not-in $current_features })
 
-  mut experimental_features = try { $conf.experimental-features | split row ' '} catch { [] }
-  print $"🛠️  Current experimental features: ($experimental_features)"
-
-
-  mut changed = false
-  if ('nix-command' not-in $experimental_features) {
-    print "🛠️  Enabling nix-command experimental feature..."
-    $experimental_features ++= [ 'nix-command' ]
-    $changed = true
-  } 
-  if ('flakes' not-in $experimental_features) {
-    print "🛠️  Enabling flake experimental feature..."
-    $experimental_features ++= [ 'flakes' ]
-    $changed = true
-  }
-
-  if $changed {
-    print "🛠️  Saving nix.conf..."
-    $conf.experimental-features = $experimental_features
-    $conf | to conf | save -f ~/.config/nix/nix.conf
+  if ($missing | is-not-empty) {
+    print $"🛠️  Enabling missing features: ($missing | str join ', ')..."
+    let new_features = ($current_features | append $missing | uniq)
+    $conf = ($conf | upsert "experimental-features" ($new_features | str join " "))
+    $conf | to conf | save -f $nix_conf_path
   } else {
-    print "🛠️  nix.conf already configured"
+    print "✅ nix.conf already configured with flakes and nix-command."
   }
 }
 
 # Get current OS
-def get-os-str []:  nothing -> string {
-  # nix-on-droid (Android) sets ANDROID_ROOT; check before sys host
-  if ($env.ANDROID_ROOT? | is-not-empty) {
-    return "android"
-  }
-
-  let os_str = (sys host | get name?)
-
-  if $os_str != null {
-    $os_str | str downcase
-  } else {
-    ""
-  }
+def get-os-str []: nothing -> string {
+  if ($env.ANDROID_ROOT? | is-not-empty) { return "android" }
+  let name = (sys host | get name | str downcase)
+  if ($name | str contains "nixos") { return "nixos" }
+  $name
 }
 
-def get_hostname []: [ nothing -> string ] {
-  (hostname | str trim)
+def get-hostname []: nothing -> string {
+  hostname | str trim
+}
+
+# Common pre-setup tasks
+def run-pre-setup []: nothing -> string {
+  try { setup-nix-config } catch { 
+    error make { msg: "❌ Failed to configure nix" } 
+  }
+  
+  let os = get-os-str
+  if ($os | is-empty) {
+    error make { msg: "❌ Unable to detect OS" }
+  }
+  $os
 }
 
 # Build and switch system configuration (NixOS/Darwin with integrated home-manager)
 def "main system" [
-  action: string = "switch"  # switch, build, or test
-  os?: string # nixos, darwin, or auto-detect
+  action: string = "switch"  # switch, build, or repl
+  os?: string                # nixos, darwin, or auto-detect
   --hostname (-H): string = "" # hostname (auto-detected if omitted)
 ] {
   print "🔨 Setting up system..."
 
-  try {
-  setup-nix-config
-  } catch {
-    print "❌ Failed to configure nix"
-    exit 1
-  }
-
-  let os_str = if $os != null { $os } else { get-os-str }
-  if $os_str == null {
-    print "❌ Unable to detect OS"
-    exit 1
-  }
-
-  let host = if $hostname == "" { get_hostname } else { $hostname }
+  let os_detected = run-pre-setup
+  let os_str = if $os != null { $os } else { $os_detected }
+  let host = if $hostname == "" { get-hostname } else { $hostname }
 
   if $os_str == "android" {
     print $"🤖 Switching nix-on-droid configuration for host ($host)..."
     nix-on-droid switch --flake $".#($host)"
-    print "✅ nix-on-droid configuration applied!"
     return
   }
 
   let command = match $os_str {
-    "nixos" => "os"
-    "darwin" => "darwin"
-    _ => "unknown"
-  }
-
-  if $command == "unknown" {
-    print "❌ System rebuilds only work on NixOS or macOS"
-    exit 1
+    "nixos" => "os",
+    "darwin" | "macos" => "darwin",
+    _ => { error make { msg: $"❌ System rebuilds only work on NixOS or macOS (detected: ($os_str))" } }
   }
 
   print $"🔨 Building system ($action) for ($os_str) on host ($host)..."
-
   nh $command $action . -H $host -a
   print "✅ System configuration applied!"
 }
 
 # Build and switch home-manager configuration (standalone for non-NixOS systems)
 def "main home" [
-  action: string = "switch" # build, switch, or test
-  system?: string  # linux, darwin, termux, or auto-detect (termux can't be detected)
+  action: string = "switch" # build, switch, or repl
+  system?: string           # linux, darwin, termux, or auto-detect
 ] {
-  try {
-  setup-nix-config
-  } catch {
-    print "❌ Failed to configure nix"
-    exit 1
-  }
+  print "🔨 Setting up home-manager..."
 
-  let os = if $system != null { $system } else { get-os-str }
-  if $os == null {
-    print "❌ Unable to detect OS"
-    exit 1
-  }
+  let os_detected = run-pre-setup
+  mut os = if $system != null { $system } else { $os_detected }
+  
+  # Map android/nixos to their home-manager standalone names
+  if $os == "android" { $os = "termux" }
+  if $os == "nixos" { $os = "linux" }
 
-  print $"🏠 Switching home-manager for ($os)..."
+  print $"🏠 ($action)ing home configuration for ($os)..."
   nh home $action . -c $os -o result -b backup -a
   print "✅ Home configuration applied!"
 }
@@ -171,9 +145,7 @@ def "main gc" [
 def "main check" [] {
   print "🔍 Checking flake..."
   let os = get-os-str
-  if $os == "darwin" {
-    # nix flake check evaluates all nixosConfigurations even on Darwin,
-    # which fails for Linux-only derivations — check only Darwin outputs instead
+  if $os == "darwin" or $os == "macos" {
     nix eval .#darwinConfigurations --apply builtins.attrNames | ignore
     nix eval .#homeConfigurations --apply builtins.attrNames | ignore
   } else {
@@ -187,29 +159,28 @@ def "main hooks" [
   --status (-s)  # show hook status instead of installing
 ] {
   if $status {
-    print "🪝 Hook status:"
-    let global = ($"($env.HOME)/.config/git/templates/hooks/pre-push" | path exists)
-    let repo = (".githooks/pre-push" | path exists)
-    let local_hook = (".git/hooks/pre-push" | path exists)
+    print "🪝  Hook status:"
+    let global = ($env.HOME | path join ".config" "git" "templates" "hooks" "pre-push" | path exists)
+    let repo = (".githooks" | path join "pre-push" | path exists)
+    let local_hook = (".git" | path join "hooks" "pre-push" | path exists)
     let td_raw = (do { git config --global init.templateDir } | complete | get stdout | str trim)
     let template_dir = if ($td_raw | is-empty) { "not set" } else { $td_raw }
-    print $"  Global template dir: ($template_dir)"
-    print $"  Global pre-push:     (if $global { '✅ installed' } else { '❌ missing (run home-manager switch)' })"
-    print $"  .git/hooks/pre-push: (if $local_hook { '✅ installed (chains to .githooks/)' } else { '❌ run: git init' })"
-    print $"  Repo-local pre-push: (if $repo { '✅ .githooks/pre-push' } else { '—  none' })"
+    
+    [
+      { Component: "Global template dir", Status: $template_dir }
+      { Component: "Global pre-push", Status: (if $global { "✅ installed" } else { "❌ missing (run home-manager switch)" }) }
+      { Component: ".git/hooks/pre-push", Status: (if $local_hook { "✅ installed (chains to .githooks/)" } else { "❌ run: git init" }) }
+      { Component: "Repo-local pre-push", Status: (if $repo { "✅ .githooks/pre-push" } else { "— none" }) }
+    ]
     return
   }
-  print "🪝 Seeding hooks from template..."
-  # Re-init copies template hooks into .git/hooks/ (safe, non-destructive)
+
+  print "🪝  Seeding hooks from template..."
   git init out+err>| ignore
-  # Ensure repo-local hooks are executable
   if (".githooks" | path exists) {
-    ls .githooks | get name | each { |f| chmod +x $f }
+    ls .githooks | each { |f| chmod +x $f.name }
   }
   print "✅ Hooks installed!"
-  print "   .git/hooks/pre-push (global: secret scan + flake check)"
-  print "   .githooks/pre-push  (repo-local: system attr eval)"
-  print "   Global hooks are managed via home-manager (modules/tools/git.nix)"
 }
 
 # Format all nix files
@@ -222,83 +193,80 @@ def "main fmt" [] {
 # Show current system info and available commands
 def "main info" [] {
   let os = get-os-str
-  let user = $env.USER
-  let host = get_hostname
+  let host = get-hostname
 
-  print $"📊 Current system: ($os)"
-  print $"👤 Current user: ($user)"
-  print $"🖥️  Hostname: ($host)"
-  print ""
-  print "Available commands:"
-  print "  nu setup.nu system [switch|build|test]    # Full system (NixOS/macOS)"
-  print "  nu setup.nu home [linux|darwin|android]    # Home-manager only (android = nix-on-droid)"
-  print "  nu setup.nu secrets sync                   # Sync secrets from Bitwarden to sops"
-  print "  nu setup.nu update [input]                 # Update flake inputs"
-  print "  nu setup.nu gc [-d 7d]                     # Garbage collection"
-  print "  nu setup.nu check                          # Check flake"
-  print "  nu setup.nu fmt                            # Format nix files"
-  print "  nu setup.nu hooks                          # Install repo-local git hooks"
-  print "  nu setup.nu hooks --status                  # Show hook status"
-  print "  nu setup.nu info                           # Show this info"
+  print $"📊 System Info:"
+  [
+    { Metric: "OS", Value: $os }
+    { Metric: "User", Value: $env.USER }
+    { Metric: "Hostname", Value: $host }
+  ]
+
+  print "\n🚀 Available commands:"
+  [
+    { Command: "system [switch|build|test]", Description: "Full system rebuild (NixOS/macOS)" }
+    { Command: "home [linux|darwin|termux]", Description: "Home-manager standalone switch" }
+    { Command: "secrets sync", Description: "Sync secrets from Bitwarden to sops" }
+    { Command: "update [input]", Description: "Update flake inputs" }
+    { Command: "gc [-d 7d]", Description: "Run garbage collection" }
+    { Command: "check", Description: "Check flake for errors" }
+    { Command: "fmt", Description: "Format nix files" }
+    { Command: "hooks [--status]", Description: "Install or check git hooks" }
+  ]
 }
 
 # Sync secrets from Bitwarden to encrypted sops file
 def "main secrets sync" [] {
-  if (which bw | is-empty) {
-    print "❌ bitwarden-cli (bw) not found"
-    return
-  }
-  
-  if (which sops | is-empty) {
-    print "❌ sops not found"
-    return
+  let missing_deps = (["bw", "sops", "ssh-to-age"] | where { (which $in | is-empty) })
+  if ($missing_deps | is-not-empty) {
+    error make { msg: $"❌ Missing dependencies: ($missing_deps | str join ', ')" }
   }
 
   print "🔐 Syncing secrets from Bitwarden..."
   
-  # Ensure secrets and sops directories exist
   mkdir secrets
-  mkdir $"($env.HOME)/.config/sops/age"
+  let age_dir = ($env.HOME | path join ".config" "sops" "age")
+  mkdir $age_dir
 
   # Fetch SSH key for decryption
   print "  - Fetching Default SSH Key Pair..."
   let ssh_item = (bw get item 3859a223-3757-4676-bdca-b40a00cb7488 | from json)
-  let private_key = $ssh_item.sshKey.privateKey
+  let private_key = ($ssh_item | get -o sshKey.privateKey)
   
-  if ($private_key | is-empty) {
-    print "❌ SSH Private Key not found in Bitwarden"
-  } else {
-    # Prepare temporary file for ssh-to-age conversion
+  if ($private_key | is-not-empty) {
     let temp_ssh = (mktemp --suffix .ssh)
-    $private_key | save -f $temp_ssh
-    chmod 600 $temp_ssh
-    
-    # Convert and save as age key
-    (ssh-to-age -private-key -i $temp_ssh) | save -f $"($env.HOME)/.config/sops/age/keys.txt"
-    rm $temp_ssh
-    print "  - Age key derived from SSH and saved to ~/.config/sops/age/keys.txt"
+    try {
+      $private_key | save -f $temp_ssh
+      chmod 600 $temp_ssh
+      (ssh-to-age -private-key -i $temp_ssh) | save -f ($age_dir | path join "keys.txt")
+      print "  ✅ Age key derived and saved."
+    } catch { |err|
+        print $"⚠️  Error deriving age key: ($err.msg)"
+    }
+    rm -f $temp_ssh
+  } else {
+    print "⚠️  SSH Private Key not found in Bitwarden"
   }
 
   # Fetch context7 API key
   print "  - Fetching Context7 API Key..."
   let ctx7_item = (bw list items --search context7 | from json | first)
-  let ctx7_key = ($ctx7_item.fields | where name == "API Key" | get value | first)
+  let ctx7_key = ($ctx7_item | get -o fields | where name == "API Key" | get -o value.0)
   
   if ($ctx7_key | is-empty) {
     print "❌ Context7 API Key not found in Bitwarden"
     return
   }
 
-  # Prepare temporary cleartext yaml
   let temp_yaml = (mktemp --suffix .yaml)
-  $"context7-api-key: ($ctx7_key)" | save -f $temp_yaml
-
-  # Encrypt with sops
-  print "  - Encrypting to secrets/secrets.yaml..."
-  sops --encrypt --config .sops.yaml --output secrets/secrets.yaml $temp_yaml
-  
-  rm $temp_yaml
-  print "✅ Secrets synced and encrypted!"
+  try {
+    { "context7-api-key": $ctx7_key } | to yaml | save -f $temp_yaml
+    sops --encrypt --config .sops.yaml --output secrets/secrets.yaml $temp_yaml
+    print "✅ Secrets synced and encrypted!"
+  } catch { |err|
+      print $"⚠️  Error syncing secrets: ($err.msg)"
+  }
+  rm -f $temp_yaml
 }
 
 # Helper script written in Nushell to build and switch system configurations
