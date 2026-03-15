@@ -12,8 +12,6 @@
       ast-grep
       bat
       bitwarden-cli
-      # broot
-      btop
       cachix
       cargo-binstall
       cargo-watch
