@@ -1,0 +1,21 @@
+{
+  description = "Basic example of Nix-on-Droid system config.";
+
+  inputs = {
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid/prerelease-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, nix-on-droid }: {
+
+    nixOnDroidConfigurations.default = nix-on-droid.lib.nixOnDroidConfiguration {
+      pkgs = import nixpkgs { system = "aarch64-linux"; };
+      modules = [ ./nix-on-droid.nix ];
+    };
+
+  };
+}

@@ -6,7 +6,7 @@
     { pkgs, lib, ... }:
     {
       programs.neovide = {
-        enable = true;
+        enable = false;
         settings = {
           neovim-bin = "${lib.getExe pkgs.neovim}";
         };

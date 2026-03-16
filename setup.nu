@@ -20,6 +20,7 @@ def "to conf" [] : record -> string {
 
 # Ensure nix-command and flake experimental features are enabled
 def setup-nix-config []: nothing -> nothing {
+  print "setup nix config..."
   let nix_conf_path = ($env.HOME | path join ".config" "nix" "nix.conf")
   let default_config = { "experimental-features": ["nix-command", "flakes"] }
 
@@ -120,7 +121,8 @@ def "main home" [
   if $os == "nixos" { $os = "linux" }
 
   print $"🏠 ($action)ing home configuration for ($os)..."
-  nh home $action . -c $os -o result -b backup -a
+  nix run home-manager -- $action --flake $".#($system)"
+  # nh home $action . -c $os -o result -b backup -a
   print "✅ Home configuration applied!"
 }
 
