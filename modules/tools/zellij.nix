@@ -26,7 +26,11 @@
       };
       zellijForgot = pkgs.fetchurl {
         url = "https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm";
-        hash = lib.faskhash;
+        hash = "sha256-MRlBRVGdvcEoaFtFb5cDdDePoZ/J2nQvvkoyG6zkSds=";
+      };
+      zellijVerticalTabs = pkgs.fetchurl {
+        url = "https://github.com/cfal/zellij-vertical-tabs/releases/download/v0.1.0/zellij-vertical-tabs.wasm";
+        hash = "sha256-UxCRtWqzvAAIvRTeGfcZheOrhYURDuAh747kE1ViAqI=";
       };
     };
   in {
@@ -49,6 +53,59 @@
           font = "JetBrains Mono";
         };
       };
+      layouts = {
+        datetime =
+          # kdl
+          ''
+            layout {
+                pane size=1 borderless=true {
+                    plugin location="file:${zellijPlugins.datetime}"
+                }
+                pane size=1 borderless=true {
+                    plugin location="zellij:tab-bar"
+                }
+                pane
+                pane size=1 borderless=true {
+                    plugin location="zellij:status-bar"
+                }
+            }
+          '';
+        vertical-tab-left =
+          # kdl
+          ''
+            layout {
+                pane split_direction="vertical" {
+                    pane size=18 borderless=true {
+                        plugin location="file:${zellijPlugins.zellijVerticalTabs}" {
+                            // Tab format (inactive tabs)
+                            format "{index}:{name}"
+                            // Active tab format
+                            format_active "{index}:{name}*"
+                            // Status indicators
+                            indicator_active "*"
+                            indicator_fullscreen "Z"
+                            indicator_sync "S"
+                            // Maximum name length before truncation
+                            max_name_length 15
+                            // Right border (with optional color)
+                            border "#[fg=dim]│"
+                            // Start tab numbering from (default: 1)
+                            start_index 1
+                            // Empty rows above the tab list (default: 0)
+                            padding_top 0
+                            // Overflow indicator formats (when tabs don't fit)
+                            overflow_above "  ^ +{count}"
+                            overflow_below "  v +{count}"
+                        }
+                    }
+                    pane
+                }
+                pane size=1 borderless=true {
+                    plugin location="zellij:status-bar"
+                }
+            }
+          '';
+      };
       extraConfig =
         # kdl
         ''
@@ -57,18 +114,6 @@
               vimZellijNavigator location="file:${zellijPlugins.vimZellijNavigator}"
               harpoon location="file:${zellijPlugins.harpoon}"
               zellijForgot location="file:${zellijPlugins.zellijForgot}"
-          }
-          layout {
-              pane size=1 borderless=true {
-                  plugin location="file:${zellijPlugins.datetime}"
-              }
-              pane size=1 borderless=true {
-                  plugin location="zellij:tab-bar"
-              }
-              pane
-              pane size=1 borderless=true {
-                  plugin location="zellij:status-bar"
-              }
           }
           keybinds {
               pane {
@@ -95,12 +140,9 @@
                   }
               }
               shared_except "locked" {
-                  bind "Ctrl /" {
-                      LaunchOrFocusPlugin "file:~/zellij-plugins/zellij_forgot.wasm" {
-                          LOAD_ZELLIJ_BINDINGS "false"
-                          "buy eggs" "5x"
-                          "learn rust" "5h"
-                          "clean up code" "tomorrow"
+                  bind "Ctrl y" {
+                      LaunchOrFocusPlugin "zellijForgot" {
+                          // LOAD_ZELLIJ_BINDINGS "false"
                           floating true
                       }
                   }
@@ -170,6 +212,8 @@
                   }
               }
           }
+
+
         '';
     };
   };
