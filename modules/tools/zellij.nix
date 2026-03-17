@@ -86,6 +86,12 @@
                             quick_jump true
                         }
                     }
+                    bind "Shift h" {
+                        MoveTab "Left"
+                    }
+                    bind "Shift l" {
+                        MoveTab "Right"
+                    }
                 }
                 shared_except "locked" {
                     bind "Ctrl h" {
