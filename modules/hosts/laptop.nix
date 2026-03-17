@@ -14,6 +14,7 @@
       ../_nixos/core/users.nix
       ../_nixos/core/fonts.nix
       ../_nixos/core/locale.nix
+      ../_nixos/core/nix-ld.nix
       ../_nixos/desktop
       ../_nixos/development
       ../_nixos/stacks/ai.nix
@@ -52,7 +53,6 @@
         less
         wezterm
         wl-clipboard-rs
-        nodejs
       ]
       ++ [
         inputs.zen-browser.packages.x86_64-linux.twilight
@@ -71,7 +71,10 @@
 
     # Nix settings
     nix.extraOptions = "experimental-features = nix-command flakes";
-    nix.settings.auto-optimise-store = true;
+    nix.settings = {
+      auto-optimise-store = true;
+      trusted-users = ["root" "@wheel" "@sudo" "ray"];
+    };
     nix.gc = {
       automatic = true;
       dates = "weekly";
