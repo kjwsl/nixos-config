@@ -50,6 +50,7 @@
       just
       lazygit
       lazyjj
+      gopass # CLI password manager written in Go
       lemmeknow
       lsd
       mcfly

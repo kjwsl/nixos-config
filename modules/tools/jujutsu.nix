@@ -38,6 +38,19 @@ in
             # Ensure we don't try to push to read-only remote branches
             push-bookmark-prefix = "jj/";
           };
+          templates = {
+            draft_commit_description = ''
+              concat(
+                description,
+                surround(
+                  "\nJJ: Changes:\n",
+                  "",
+                  indent("JJ: ", diff.stat(72)),
+                ),
+                surround("\nJJ: Diff:\n", "", indent("JJ: ", diff.git(4)))
+              )
+            '';
+          };
           merge-tools = {
             nvim = {
               # diff-args: Opens a vertical split comparing the two states.
