@@ -12,6 +12,10 @@
       ast-grep
       bat
       bitwarden-cli
+      gnumake
+      cmake
+      ninja
+      unzip
       cachix
       cargo-binstall
       cargo-watch
