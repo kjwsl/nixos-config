@@ -6,10 +6,10 @@
   }: {
     programs.helix = {
       enable = true;
-      package = pkgs.evil-helix;
+      package = pkgs.helix;
       settings = {
         editor = {
-          evil = true; # evil-helix option
+          # evil = true; # evil-helix option
           line-number = "relative";
           lsp = {
             enable = true;
