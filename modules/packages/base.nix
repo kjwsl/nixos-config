@@ -95,6 +95,16 @@
       # Fonts
       nerd-fonts.jetbrains-mono
 
+      # LLM Agents
+      inputs.llm-agents.packages.${hostSystem}.claude-code
+      inputs.llm-agents.packages.${hostSystem}.gemini-cli
+      inputs.llm-agents.packages.${hostSystem}.opencode
+      inputs.llm-agents.packages.${hostSystem}.beads
+      inputs.llm-agents.packages.${hostSystem}.beads-viewer
+      inputs.llm-agents.packages.${hostSystem}.rtk
+      inputs.llm-agents.packages.${hostSystem}.happy-coder
+      inputs.llm-agents.packages.${hostSystem}.openskills
+      inputs.llm-agents.packages.${hostSystem}.jules
     ];
   };
 }
