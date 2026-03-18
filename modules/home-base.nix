@@ -14,6 +14,7 @@
   }: {
     imports = [
       inputs.catppuccin.homeModules.catppuccin
+      inputs.nix-index-database.hmModules.nix-index
     ];
 
     home.username = lib.mkDefault config.username;
@@ -23,6 +24,7 @@
       else "/home/${config.username}"
     );
 
+    home.shell.enableShellIntegration = true;
     home.shellAliases = {
       v = "nvim";
       "v." = "nvim .";
@@ -40,8 +42,12 @@
 
       GITHUB_USERNAME = lib.mkDefault config.github_username;
       GITHUB_HTTPS = "https://github.com/${config.github_username}";
-      GITHUB_SSH = "git@github:${config.github_username}";
+      GITHUB_SSH = "git@github.com:${config.github_username}";
     };
+
+    services.ssh-agent.enable = true;
+    services.gpg-agent.enable = true;
+    services.tldr-update.enable = true;
 
     fonts.fontconfig.enable = true;
 
