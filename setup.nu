@@ -98,7 +98,7 @@ def "main home" [
   let info = if $system != null { $SYSTEMS | get $system } else { get-os-info }
   
   print $"🏠 ($action)ing Home configuration for ($info.home)..."
-  nh home $action . -c $info.home
+  nh home $action '.' -c $info.home -b bak -o result -a
   print "✅ Done!"
 }
 
@@ -176,7 +176,7 @@ def "main secrets sync" [] {
   let missing = ($deps | where { (which $in | is-empty) })
   if ($missing | is-not-empty) { error make { msg: $"❌ Missing dependencies: ($missing | str join ', ')" } }
 
-  if not (do { bw status } | from json | get status == "unlocked") {
+  if not ((do { bw status } | from json | get status) == "unlocked") {
     error make { msg: "❌ Bitwarden is locked. Run 'bw unlock' first." }
   }
 
@@ -214,9 +214,10 @@ def "main secrets sync" [] {
   }
 
   try {
-    { "context7-api-key": $ctx7_key } 
-    | to yaml 
-    | sops --encrypt --config .sops.yaml --output secrets/secrets.yaml /dev/stdin
+    let tmp = (mktemp --suffix .yaml)
+    { "context7-api-key": $ctx7_key } | to yaml | save -f $tmp
+    sops --encrypt --config .sops.yaml --output secrets/secrets.yaml $tmp
+    rm $tmp
     print "✅ Secrets synced and encrypted!"
   } catch { |err|
       print $"⚠️  Error syncing secrets: ($err.msg)"
