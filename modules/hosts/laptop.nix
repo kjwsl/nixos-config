@@ -58,12 +58,6 @@
         inputs.zen-browser.packages.x86_64-linux.twilight
       ];
 
-    # Docker
-    virtualisation.docker = {
-      enable = true;
-      enableOnBoot = true;
-      storageDriver = "overlay2";
-    };
 
     # Profile & stacks
     my.profile = "desktop";
