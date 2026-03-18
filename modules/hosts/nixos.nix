@@ -7,7 +7,13 @@
   inputs,
   ...
 }: {
-  configurations.nixos.nixos.module = {pkgs, ...}: {
+  configurations.nixos.nixos.module = {
+    pkgs,
+    lib,
+    ...
+  }: let
+    defaultShell = pkgs.fish;
+  in {
     imports = [
       ../_hardware/nixos.nix
       ../_nixos/options.nix
@@ -38,6 +44,12 @@
 
     # Printing
     services.printing.enable = true;
+
+    # Torrent
+    services.qbittorrent = {
+        enable = true;
+        user = config.username;
+    };
 
     # Base packages
     environment.systemPackages = with pkgs;
@@ -72,6 +84,25 @@
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 7d";
+    };
+
+    programs = {
+      bash.interactiveShellInit =
+        # zsh
+        ''
+          if ! [ "$TERM" = "dumb" ] && [ -z "$BASH_EXECUTION_STRING" ]; then
+              exec "${lib.getExe defaultShell}"
+                  fi
+        '';
+
+      zsh.interactiveShellInit =
+        # zsh
+        ''
+          if ! [ "$TERM" = "dumb" ] && [ -z "$ZSH_EXECUTION_STRING" ]; then
+              exec "${lib.getExe defaultShell}"
+                  fi
+        '';
+      fish.enable = true;
     };
 
     # Gaming stack
