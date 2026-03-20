@@ -1,19 +1,15 @@
 # Nushell configuration.
 # Contributes to flake.modules.homeManager.base.
-{ pkgs
-, config
-, ...
-}: {
+{
+  ...
+}:
+{
   flake.modules.homeManager.base =
-    { pkgs
-    , config
-    , ...
+    {
+      pkgs,
+      config,
+      ...
     }:
-    let
-      modules = {
-        lsi = ./lsi.nu;
-      };
-    in
     {
       programs.nushell = {
         enable = true;
@@ -30,9 +26,6 @@
           completions.external = {
             enable = true;
             max_results = 200;
-          };
-          history = {
-              format = "sqlite";
           };
         };
         plugins = with pkgs.nushellPlugins; [
