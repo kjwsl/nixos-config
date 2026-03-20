@@ -31,6 +31,9 @@
             enable = true;
             max_results = 200;
           };
+          history = {
+              format = "sqlite";
+          };
         };
         plugins = with pkgs.nushellPlugins; [
           formats
