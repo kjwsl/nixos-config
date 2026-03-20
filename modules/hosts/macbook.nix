@@ -14,7 +14,7 @@
       ...
     }:
     let
-      defaultShell = pkgs.fish;
+      defaultShell = pkgs.nushell;
     in
     {
       imports = [
